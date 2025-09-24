@@ -1,4 +1,8 @@
 package com.demo.model;
 
-public interface GameObject {
+public class GameObject {
+    public int x;
+    public int y;
+    public int width;
+    public int height;
 }
