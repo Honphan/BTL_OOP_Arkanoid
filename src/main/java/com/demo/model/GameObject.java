@@ -5,4 +5,9 @@ public class GameObject {
     public int y;
     public int width;
     public int height;
+
+    public GameObject(int x, int y, int width, int height) {
+        this.x = x;
+        this.y = y;
+    }
 }
