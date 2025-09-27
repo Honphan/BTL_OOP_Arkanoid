@@ -69,13 +69,16 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.demo/com.demo.HelloApplication</mainClass>
+                            <mainClass>com.demo/com.demo.GameApplication</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
+                            <jvmArgs>
+                                <jvmArg>--enable-native-access=javafx.graphics</jvmArg>
+                            </jvmArgs>
                         </configuration>
                     </execution>
                 </executions>

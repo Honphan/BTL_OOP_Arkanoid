@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.demo.controller.menuController"
+           prefWidth="800" prefHeight="600"
+           stylesheets="@styles.css"
+           styleClass="main-background">
+
+    <VBox alignment="CENTER" spacing="30">
+        <!-- Title -->
+        <Label text="ARKANOID" styleClass="game-title"/>
+
+        <!-- Buttons -->
+        <Button fx:id="startButton" text="START GAME" onAction="#startGame" styleClass="menu-button"/>
+        <Button fx:id="optionsButton" text="OPTIONS" onAction="#openOptions" styleClass="menu-button"/>
+        <Button fx:id="scoresButton" text="HIGH SCORES" onAction="#showScores" styleClass="menu-button"/>
+        <Button fx:id="exitButton" text="EXIT" onAction="#exitGame" styleClass="menu-button"/>
+
+        <!-- Footer -->
+        <Label text="TEAM HHH STUDIO" styleClass="footer-label"/>
+    </VBox>
+</StackPane>
