@@ -5,6 +5,7 @@ module com.demo {
     requires org.controlsfx.controls;
     requires org.kordamp.bootstrapfx.core;
 
-    opens com.demo to javafx.fxml;
-    exports com.demo;
+    exports com.demo to javafx.graphics;
+    exports com.demo.controller to javafx.fxml;
+    opens com.demo.controller to javafx.fxml; // <-- add this line
 }
