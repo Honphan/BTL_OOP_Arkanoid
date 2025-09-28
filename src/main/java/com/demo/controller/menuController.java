@@ -16,7 +16,12 @@ public class menuController {
 
     @FXML
     private void start(ActionEvent event) throws IOException {
-        GameManager.getInstance().startGame();
+//        GameManager.getInstance().startGame();
+        Parent root = FXMLLoader.load(getClass().getResource("/com/demo/view/gamePane.fxml"));
+        Scene scene = new Scene(root, 1000, 600);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
     }
 
 
