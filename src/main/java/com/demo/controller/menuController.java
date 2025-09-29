@@ -25,21 +25,18 @@ public class menuController {
     }
 
 
-    @FXML
-    public void openOptions() {
-        System.out.println("Options clicked!");
-        // TODO: load options scene
-    }
+
 
     @FXML
-    public void showScores() {
-        System.out.println("High Scores clicked!");
-        // TODO: load scores scene
-    }
+    public void openOptions(ActionEvent event) throws IOException {}
 
     @FXML
-    public void exitGame() {
-        System.out.println("Exit clicked!");
-        System.exit(0);
-    }
+    public void showScores(ActionEvent event) throws IOException {}
+
+    @FXML
+    public void exitGame(ActionEvent event) throws IOException {}
+
+
+
+
 }
