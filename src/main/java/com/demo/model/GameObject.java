@@ -1,6 +1,7 @@
 package com.demo.model;
 
 import javafx.scene.Node;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.shape.Rectangle;
 
 public class GameObject {

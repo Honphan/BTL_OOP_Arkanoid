@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.layout.AnchorPane?>
 <BorderPane styleClass="main-background" stylesheets="@gamePane.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.demo.model.GameManager">
 
     <!--  Header -->
@@ -61,7 +62,9 @@
 
             <!-- Game Canvas Area -->
             <StackPane styleClass="game-area" HBox.hgrow="ALWAYS">
+                <AnchorPane fx:id="gameArea" prefHeight="500.0" prefWidth="600.0">
                 <Canvas fx:id="gameCanvas" height="500.0" width="600.0" />
+                </AnchorPane>
 
                 <!-- Game Status Overlay -->
                 <VBox fx:id="gameStatusOverlay" alignment="CENTER" spacing="20.0" styleClass="game-overlay" visible="false">
