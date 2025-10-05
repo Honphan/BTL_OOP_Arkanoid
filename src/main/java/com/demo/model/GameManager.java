@@ -51,8 +51,9 @@ public class GameManager {
         double paddleHeight = 20;
         double paddleX = (gameCanvas.getWidth() - paddleWidth) / 2;
         double paddleY = gameCanvas.getHeight() - paddleHeight - 10;
-        paddle = new Paddle(paddleX, paddleY, paddleWidth, paddleHeight, gameCanvas.getWidth());
-        paddle.draw(gc);
+        double paddleSpeed = 5.0;
+        paddle = new Paddle(paddleX, paddleY, paddleWidth, paddleHeight, paddleSpeed, gameCanvas.getWidth());
+        paddle.render(gc);
     }
 
     @FXML

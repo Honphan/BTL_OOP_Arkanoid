@@ -1,14 +1,17 @@
 package com.demo.model;
 
 import javafx.scene.Node;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.shape.Rectangle;
 
-public class GameObject {
-    public double x;
-    public double y;
-    public double width;
-    public double height;
-    public Rectangle node;
+public abstract class GameObject {
+    protected double x;
+    protected double y;
+    protected double width;
+    protected double height;
+    protected Rectangle node;
+
+
 
     public GameObject(double x, double y, double width, double height) {
         this.x = x;
@@ -17,15 +20,28 @@ public class GameObject {
         this.height = height;
     }
 
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
     public Node getNode() {
         return node;
     }
 
-    public void update() {
+    public abstract void update();
 
-    }
 
-    public void render() {
-
-    }
+    public abstract void render(GraphicsContext gc);
 }
