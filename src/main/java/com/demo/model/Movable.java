@@ -1,8 +1,8 @@
 package com.demo.model;
 
-public class Movable extends GameObject {
-    public double dx;
-    public double dy;
+public abstract class Movable extends GameObject {
+    protected double dx;
+    protected double dy;
 
     public Movable(double dx, double dy, double x, double y,double width, double height) {
         super(x, y, width, height);
@@ -10,6 +10,6 @@ public class Movable extends GameObject {
         this.dy = dy;
     }
 
-    public void move(){}
+    public  abstract void move();
 
 }

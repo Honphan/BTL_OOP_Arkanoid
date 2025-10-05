@@ -1,5 +1,6 @@
 package com.demo.model;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Brick extends GameObject{
@@ -49,6 +50,16 @@ public class Brick extends GameObject{
 
     public int getType(){
         return type;
+    }
+
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public void render(GraphicsContext gc) {
+
     }
 
 }
