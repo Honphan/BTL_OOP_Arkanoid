@@ -1,7 +1,7 @@
 /* Background */
 .main-background {
     -fx-background-color: linear-gradient(to bottom, #000010, #000000);
-    -fx-background-image: url("background1.png"); /* bạn có thể thay hình nền */
+    -fx-background-image: url("../fxml/images/background1.png"); /* bạn có thể thay hình nền */
     -fx-background-size: cover;
 }
 
