@@ -4,9 +4,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Brick extends GameObject {
-    private int hitPoints;
-    private String type;
-    private boolean destroyed;
+    private int hitPoints;  // Điểm máu của khối gạch
+    private String type;  // Loại gạch
+    private boolean destroyed;  // Kiểm tra gạch bị phá chưa
 
     public Brick(double x, double y, double width, double height, int hitPoints, String type) {
         super(x, y, width, height);
