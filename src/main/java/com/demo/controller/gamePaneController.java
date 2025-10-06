@@ -128,7 +128,8 @@ public class gamePaneController {
         gameCanvas.widthProperty().addListener((obs, oldVal, newVal) -> {
             if (paddle != null) {
                 double width = newVal.doubleValue();
-                
+                //xxxxxxx
+
                 // Nếu oldVal là 0, đặt paddle ở giữa
                 if (oldVal.doubleValue() <= 0) {
                     paddle.setX((width - paddle.getWidth()) / 2);
