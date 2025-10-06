@@ -9,16 +9,14 @@ public class Paddle {
     private double width;
     private double height;
     private double speed;
-    private double canvasWidth; // Đã sửa tên biến để tuân theo quy ước đặt tên
     private double dx = 0; // Thêm biến để lưu hướng di chuyển
     
-    public Paddle(double x, double y, double width, double height, double speed, double canvasWidth) {
+    public Paddle(double x, double y, double width, double height, double speed) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.speed = speed;
-        this.canvasWidth = canvasWidth;
     }
     
     public void render(GraphicsContext gc) {
@@ -27,7 +25,7 @@ public class Paddle {
     }
     
     // Thêm phương thức update để cập nhật vị trí dựa trên dx
-    public void update() {
+    public void update(double canvasWidth) {
         // Cập nhật vị trí dựa trên hướng di chuyển
         x += dx;
         
@@ -67,7 +65,7 @@ public class Paddle {
     public double getY() {
         return y;
     }
-    
+
     public void setY(double y) {
         this.y = y;
     }
@@ -88,7 +86,4 @@ public class Paddle {
         this.speed = speed;
     }
 
-    public void setCanvasWidth(double canvasWidth) {
-        this.canvasWidth = canvasWidth;
-    }
 }
