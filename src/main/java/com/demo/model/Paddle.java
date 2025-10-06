@@ -4,10 +4,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Paddle extends Movable {
-    private double x;
-    private double y;
-    private double width;
-    private double height;
     private double speed;
 
     public Paddle(double x, double y, double width, double height, double speed, double dx, double dy) {
