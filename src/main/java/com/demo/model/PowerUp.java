@@ -1,5 +1,7 @@
 package com.demo.model;
 
+import javafx.scene.canvas.GraphicsContext;
+
 public class PowerUp extends GameObject {
     private int type;
     private int duration;
@@ -13,4 +15,13 @@ public class PowerUp extends GameObject {
     public void applyPowerUp(){}
     public void removePowerUp(){}
 
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public void render(GraphicsContext gc) {
+
+    }
 }

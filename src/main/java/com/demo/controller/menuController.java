@@ -1,7 +1,5 @@
 package com.demo.controller;
 
-import com.demo.GameApplication;
-import com.demo.model.GameManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,7 +8,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -20,7 +17,7 @@ public class menuController {
     private void start(ActionEvent event) throws IOException {
 //        GameManager.getInstance().startGame();
         Parent root = null;
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/demo/view/gamePane.fxml")));
+        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/demo/view/fxml/gamePane.fxml")));
 
 //        try {
 //        } catch (IOException e){
