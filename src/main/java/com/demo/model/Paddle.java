@@ -3,22 +3,16 @@ package com.demo.model;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class Paddle {
-    private double x;
-    private double y;
-    private double width;
-    private double height;
+public class Paddle extends Movable {
     private double speed;
-    private double canvasWidth; // Đã sửa tên biến để tuân theo quy ước đặt tên
-    private double dx = 0; // Thêm biến để lưu hướng di chuyển
-    
-    public Paddle(double x, double y, double width, double height, double speed, double canvasWidth) {
+
+    public Paddle(double x, double y, double width, double height, double speed, double dx, double dy) {
+        super(dx, dy, 0, 0, 0, 0);
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.speed = speed;
-        this.canvasWidth = canvasWidth;
     }
     
     public void render(GraphicsContext gc) {
@@ -27,7 +21,7 @@ public class Paddle {
     }
     
     // Thêm phương thức update để cập nhật vị trí dựa trên dx
-    public void update() {
+    public void update(double canvasWidth) {
         // Cập nhật vị trí dựa trên hướng di chuyển
         x += dx;
         
@@ -67,7 +61,7 @@ public class Paddle {
     public double getY() {
         return y;
     }
-    
+
     public void setY(double y) {
         this.y = y;
     }
@@ -79,7 +73,12 @@ public class Paddle {
     public double getHeight() {
         return height;
     }
-    
+
+    @Override
+    public void update() {
+
+    }
+
     public double getSpeed() {
         return speed;
     }
@@ -88,7 +87,8 @@ public class Paddle {
         this.speed = speed;
     }
 
-    public void setCanvasWidth(double canvasWidth) {
-        this.canvasWidth = canvasWidth;
+    @Override
+    public void move() {
+
     }
 }
