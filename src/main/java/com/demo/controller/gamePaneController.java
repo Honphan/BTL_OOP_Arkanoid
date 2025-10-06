@@ -161,6 +161,8 @@ public class gamePaneController {
         double paddleWidth = 100;
         double paddleHeight = 20;
         double paddleSpeed = 8;
+        double dx = 0;
+        double dy = 0;
 
         double canvasWidth = gameCanvas.getWidth();
         double canvasHeight = gameCanvas.getHeight();
@@ -178,7 +180,7 @@ public class gamePaneController {
         double paddleX = (canvasWidth - paddleWidth) / 2;
         double paddleY = canvasHeight - paddleHeight - 20;
 
-        paddle = new Paddle(paddleX, paddleY, paddleWidth, paddleHeight, paddleSpeed);
+        paddle = new Paddle(paddleX, paddleY, paddleWidth, paddleHeight, paddleSpeed,dx,dy);
         paddleInitialized = true;
         
         // Vẽ paddle ngay lập tức sau khi khởi tạo
