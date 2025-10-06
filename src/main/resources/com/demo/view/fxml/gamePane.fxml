@@ -61,9 +61,10 @@
                 <Region VBox.vgrow="ALWAYS"/>
             </VBox>
 
-            <!-- Game Canvas Area -->
-            <StackPane styleClass="game-area" HBox.hgrow="ALWAYS">
-                <Canvas fx:id="gameCanvas" height="500.0" width="600.0"/>
+            <!-- Game Canvas Area - Thêm fx:id="gameArea" -->
+            <StackPane fx:id="gameArea" styleClass="game-area" HBox.hgrow="ALWAYS">
+                <!-- Canvas không còn có width và height cố định -->
+                <Canvas fx:id="gameCanvas"/>
 
                 <!-- Game Status Overlay -->
                 <VBox fx:id="gameStatusOverlay" alignment="CENTER" spacing="20.0" styleClass="game-overlay"

@@ -20,9 +20,6 @@ public class menuController {
         render.loadGame(event);
     }
 
-
-
-
     @FXML
     public void openOptions(ActionEvent event) throws IOException {}
 
