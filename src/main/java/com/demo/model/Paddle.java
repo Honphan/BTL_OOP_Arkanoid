@@ -8,21 +8,19 @@ import javafx.scene.paint.Color;
 public class Paddle extends Movable {
     private double speed;
     private PowerUp currentPowerUp; // null nếu không có power-up
-    private double canvasWidth; // Để giới hạn di chuyển
 
 
-    public Paddle(double x, double y, double width, double height, double speed, double canvasWidth) {
+    public Paddle(double x, double y, double width, double height, double speed) {
         super(0, 0, x, y, width, height);
         this.speed = speed;
         this.currentPowerUp = null;
-        this.canvasWidth = canvasWidth;
     }
 
 
-    @Override
-    public void move() {
+    // Thêm phương thức update để cập nhật vị trí dựa trên dx
+    public void update(double canvasWidth) {
+        // Cập nhật vị trí dựa trên hướng di chuyển
         x += dx;
-
 
         // Giới hạn không cho paddle vượt ra ngoài màn hình
         if (x < 0) {
@@ -35,9 +33,8 @@ public class Paddle extends Movable {
 
     @Override
     public void update() {
-        move();
-    }
 
+    }
 
     public void render(GraphicsContext gc) {
         if (currentPowerUp != null) {
@@ -88,10 +85,6 @@ public class Paddle extends Movable {
     }
 
 
-    public void setCanvasWidth(double canvasWidth) {
-        this.canvasWidth = canvasWidth;
-    }
-
 
     public double getCenterX() {
         return x + width / 2;
@@ -100,6 +93,11 @@ public class Paddle extends Movable {
 
     public double getCenterY() {
         return y + height / 2;
+    }
+
+    @Override
+    public void move() {
+
     }
 }
 
