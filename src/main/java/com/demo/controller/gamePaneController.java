@@ -128,8 +128,7 @@ public class gamePaneController {
         gameCanvas.widthProperty().addListener((obs, oldVal, newVal) -> {
             if (paddle != null) {
                 double width = newVal.doubleValue();
-                paddle.setCanvasWidth(width);
-                
+
                 // Nếu oldVal là 0, đặt paddle ở giữa
                 if (oldVal.doubleValue() <= 0) {
                     paddle.setX((width - paddle.getWidth()) / 2);
@@ -179,7 +178,7 @@ public class gamePaneController {
         double paddleX = (canvasWidth - paddleWidth) / 2;
         double paddleY = canvasHeight - paddleHeight - 20;
 
-        paddle = new Paddle(paddleX, paddleY, paddleWidth, paddleHeight, paddleSpeed, canvasWidth);
+        paddle = new Paddle(paddleX, paddleY, paddleWidth, paddleHeight, paddleSpeed);
         paddleInitialized = true;
         
         // Vẽ paddle ngay lập tức sau khi khởi tạo
@@ -208,7 +207,7 @@ public class gamePaneController {
         updatePaddle();
         
         // Cập nhật vị trí paddle
-        paddle.update();
+        paddle.update(gameCanvas.getWidth());
         
         // Vẽ lại paddle
         paddle.render(gc);
