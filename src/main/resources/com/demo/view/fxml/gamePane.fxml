@@ -10,12 +10,10 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<<<<<<<<< Temporary merge branch 1
-<BorderPane styleClass="main-background" stylesheets="@gamePane.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.demo.model.GameManager">
-=========
-<BorderPane styleClass="main-background" stylesheets="@gamePane.css" xmlns="http://javafx.com/javafx/24.0.1"
+
+<BorderPane styleClass="main-background" stylesheets="@../css/gamePane.css" xmlns="http://javafx.com/javafx/24.0.1"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.demo.controller.gamePaneController">
->>>>>>>>> Temporary merge branch 2
+
 
     <!--  Header -->
     <top>
@@ -66,7 +64,7 @@
             </VBox>
 
             <!-- Game Canvas Area -->
-            <StackPane styleClass="game-area" HBox.hgrow="ALWAYS">
+            <StackPane styleClass="game-area" HBox.hgrow="ALWAYS" fx:id="gameArea">
                 <Canvas fx:id="gameCanvas" height="500.0" width="600.0"/>
 
                 <!-- Game Status Overlay -->
