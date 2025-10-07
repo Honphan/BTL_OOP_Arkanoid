@@ -77,11 +77,11 @@ public class Level {
 
     // Chuyển sang level tiếp theo
     public Level nextLevel(double startX, double startY, double totalWidth, double totalHeight) {
-        int next = currentLevel++;
+        currentLevel++;
         if (currentLevel > MAX_LEVEL_BRICK) {
             currentLevel = 1;
         }
-        return new Level(next, startX, startY, totalWidth, totalHeight);
+        return new Level(currentLevel, startX, startY, totalWidth, totalHeight);
     }
 
     // Render các viên gạch
