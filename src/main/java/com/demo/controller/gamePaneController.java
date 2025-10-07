@@ -1,6 +1,7 @@
 package com.demo.controller;
 
 import com.demo.model.Paddle;
+import com.demo.model.Level;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -44,6 +45,8 @@ public class gamePaneController {
 
     private GraphicsContext gc;
     private Paddle paddle;
+    private Level level;
+    private int currentLevel = 1;
     private boolean leftKeyPressed = false;
     private boolean rightKeyPressed = false;
     private AnimationTimer gameLoop;
@@ -80,6 +83,8 @@ public class gamePaneController {
         
         // Khởi tạo paddle
         initializePaddle();
+
+        initializeLevel(currentLevel);
         
         // Bắt đầu game loop
         gameLoop.start();
@@ -142,6 +147,11 @@ public class gamePaneController {
                 // Vẽ lại paddle khi kích thước thay đổi
                 redrawCanvas();
             }
+
+            if (level != null) {
+                initializeLevel(currentLevel); // vẽ lại bricks theo kích thước mới
+            }
+
         });
 
         gameCanvas.heightProperty().addListener((obs, oldVal, newVal) -> {
@@ -162,6 +172,8 @@ public class gamePaneController {
         double paddleWidth = 100;
         double paddleHeight = 20;
         double paddleSpeed = 8;
+        double dx = 0;
+        double dy = 0;
 
         double canvasWidth = gameCanvas.getWidth();
         double canvasHeight = gameCanvas.getHeight();
@@ -186,12 +198,31 @@ public class gamePaneController {
         redrawCanvas();
     }
 
+    private void initializeLevel(int levelNumber) {
+        double canvasWidth = gameCanvas.getWidth();
+        double totalWidth = canvasWidth * 0.8; // gạch chiếm 80% chiều ngang canvas
+        double totalHeight = 100;              // chiều cao vùng chứa gạch
+        double startX = (canvasWidth - totalWidth) / 2; // căn giữa
+        double startY = 40;                    // cách đỉnh 50px
+
+        level = new Level(levelNumber, startX, startY, totalWidth, totalHeight);
+    }
+
     private void setupGameLoop() {
         gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 if (gameRunning && paddleInitialized) {
                     redrawCanvas();
+
+                    if (level != null && level.isCleared()) {
+                        currentLevel++;
+                        if (currentLevel > 3) {
+                            gameRunning = false;
+                        } else {
+                            initializeLevel(currentLevel);
+                        }
+                    }
                 }
             }
         };
@@ -208,10 +239,14 @@ public class gamePaneController {
         updatePaddle();
         
         // Cập nhật vị trí paddle
-        paddle.update();
+        paddle.update(gameCanvas.getWidth());
         
         // Vẽ lại paddle
         paddle.render(gc);
+
+        if (level != null) {
+            level.render(gc);
+        }
     }
 
     private void setupKeyHandlers() {

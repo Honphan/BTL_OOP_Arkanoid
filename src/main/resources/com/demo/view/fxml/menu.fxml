@@ -5,21 +5,18 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane prefHeight="600" prefWidth="800" styleClass="main-background" stylesheets="@../css/styles.css"
-           xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="com.demo.controller.menuController">
+<StackPane prefHeight="600" prefWidth="446.0" styleClass="main-background" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.demo.controller.menuController">
 
-    <VBox alignment="CENTER" spacing="30">
+    <VBox alignment="CENTER" spacing="40.0">
         <!-- Title -->
-        <Label styleClass="game-title" text="ARKANOID"/>
+        <Label styleClass="game-title" text="ARKANOID" />
 
         <!-- Buttons -->
-        <Button fx:id="startButton" onAction="#start" styleClass="menu-button" text="START GAME"/>
-        <Button fx:id="optionsButton" onAction="#openOptions" styleClass="menu-button" text="OPTIONS"/>
-        <Button fx:id="scoresButton" onAction="#showScores" styleClass="menu-button" text="HIGH SCORES"/>
-        <Button fx:id="exitButton" onAction="#exitGame" styleClass="menu-button" text="EXIT"/>
+        <Button fx:id="startButton" onAction="#start" styleClass="menu-button" text="START GAME" />
+        <Button fx:id="optionsButton" onAction="#openOptions" styleClass="menu-button" text="OPTIONS" />
+        <Button fx:id="exitButton" onAction="#exitGame" styleClass="menu-button" text="EXIT" />
 
         <!-- Footer -->
-        <Label styleClass="footer-label" text="TEAM HHH STUDIO"/>
+        <Label styleClass="footer-label" text="TEAM HHH STUDIO" />
     </VBox>
 </StackPane>
