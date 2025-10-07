@@ -68,7 +68,7 @@ public class Paddle extends Movable {
         this.dx = 0;
     }
 
-
+// getter and setter
 
     public double getSpeed() {
         return speed;
