@@ -49,6 +49,21 @@ public class Brick extends GameObject {
             if (hitPoints <= 0) destroyed = true;
         }
     }
+    // Kiểm tra va chạm với bóng
+    public boolean checkCollision(Ball ball) {
+        double ballX = ball.getX();
+        double ballY = ball.getY();
+        double radius = ball.getRadius();
+
+        boolean collision = ballX + radius >= x && ballX - radius <= x + width
+                && ballY + radius >= y && ballY - radius <= y + height;
+
+        if (collision) {
+            takeHit(); // giảm máu hoặc phá hủy gạch
+        }
+
+        return collision;
+    }
 
     public boolean isDestroyed() { return destroyed; }
 
