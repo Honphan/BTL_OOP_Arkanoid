@@ -178,6 +178,7 @@ public class GamePaneController {
 
         ball = new Ball(startX, startY, ballSpeed);
     }
+//dafdasfds
 
     /**
      * Khởi tạo paddle với vị trí và kích thước phù hợp
