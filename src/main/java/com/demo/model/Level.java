@@ -75,6 +75,15 @@ public class Level {
         }
     }
 
+    // Chuyển sang level tiếp theo
+    public Level nextLevel(double startX, double startY, double totalWidth, double totalHeight) {
+        currentLevel++;
+        if (currentLevel > MAX_LEVEL_BRICK) {
+            currentLevel = 1;
+        }
+        return new Level(currentLevel, startX, startY, totalWidth, totalHeight);
+    }
+
     // Render các viên gạch
     public void render(GraphicsContext gc) {
         for (int r = 0; r < row; r++) {
@@ -85,15 +94,6 @@ public class Level {
                 }
             }
         }
-    }
-
-    // Chuyển sang level tiếp theo
-    public Level nexLevel(double startX, double startY, double totalWidth, double totalHeight) {
-        int next = currentLevel++;
-        if (currentLevel > MAX_LEVEL_BRICK) {
-            currentLevel = 1;
-        }
-        return new Level(next, startX, startY, totalWidth, totalHeight);
     }
 
     // Kiểm tra xem tất cả gạch thường đã bị phá chưa
