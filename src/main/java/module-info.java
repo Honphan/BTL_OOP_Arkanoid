@@ -2,6 +2,7 @@ module com.demo {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.graphics;
+    requires java.desktop;
 
     // Mở các package cho JavaFX FXML
     opens com.demo to javafx.fxml;
@@ -10,6 +11,10 @@ module com.demo {
 
     // Export các API public
     exports com.demo;
+    opens com.demo.model.brick to javafx.fxml;
+    opens com.demo.model.powerup to javafx.fxml;
+    opens com.demo.model.ball to javafx.fxml;
+    opens com.demo.model.paddle to javafx.fxml;
 
     // Chỉ cần export các model nếu chúng được sử dụng bởi các module khác
     // exports com.demo.model;

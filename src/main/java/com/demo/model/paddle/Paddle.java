@@ -1,6 +1,8 @@
-package com.demo.model;
+package com.demo.model.paddle;
 
 
+import com.demo.model.Movable;
+import com.demo.model.powerup.PowerUp;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -40,12 +42,12 @@ public class Paddle extends Movable {
         if (currentPowerUp != null) {
             gc.setFill(Color.GOLD); // Màu vàng khi có power-up
         } else {
-            gc.setFill(Color.BLUE);
+            gc.setFill(Color.LIGHTBLUE);
         }
 
 
         gc.fillRect(x, y, width, height);
-        gc.setStroke(Color.BLACK);
+        gc.setStroke(Color.DARKGRAY);
         gc.setLineWidth(2);
         gc.strokeRect(x, y, width, height);
     }

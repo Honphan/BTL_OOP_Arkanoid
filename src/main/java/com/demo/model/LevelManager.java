@@ -1,8 +1,12 @@
 package com.demo.model;
 
+import com.demo.model.brick.Brick;
+import com.demo.model.brick.NormalBrick;
+import com.demo.model.brick.UnbreakableBrick;
+import com.demo.model.brick.PowerUpBrick;
 import javafx.scene.canvas.GraphicsContext;
 
-public class Level {
+public class LevelManager {
     // Mảng lưu trữ các viên gạch của level
     private Brick[][] bricks;
     private int currentLevel;
@@ -10,7 +14,7 @@ public class Level {
     private int col;
     private double brickWidth;
     private double brickHeight;
-    private double spacing = 5;
+    private double spacing = 2;
 
     public static final int MAX_LEVEL_BRICK = 3; // số level tối đa
 
@@ -31,7 +35,7 @@ public class Level {
             {0, 2, 1, -1, 3, 0}
     };
 
-    public Level(int currentLevel, double startX, double startY, double totalWidth, double totalHeight) {
+    public LevelManager(int currentLevel, double startX, double startY, double totalWidth, double totalHeight) {
         this.currentLevel = currentLevel;
 
         int[][] layout = layoutByLevel(currentLevel); // lấy layout theo level
@@ -55,33 +59,41 @@ public class Level {
         };
     }
 
-    // Tạo các viên gạch dựa trên layout
     private void createBricks(int[][] layout, double startX, double startY) {
         for (int r = 0; r < row; r++) {
             for (int c = 0; c < col; c++) {
                 int value = layout[r][c];
-                if (value != 0) { // nếu không phải ô trống
-                    double x = startX + c * (brickWidth + spacing);
-                    double y = startY + r * (brickHeight + spacing);
-
-                    String type = (value == -1) ? "unbreakable" : "normal";
-                    int hitPoints = (type.equals("unbreakable")) ? Integer.MAX_VALUE : value;
-
-                    bricks[r][c] = new Brick(x, y, brickWidth, brickHeight, hitPoints, type);
-                } else {
+                if (value == 0) {
                     bricks[r][c] = null;
+                    continue;
                 }
+
+                double x = startX + c * (brickWidth + spacing);
+                double y = startY + r * (brickHeight + spacing);
+
+                Brick brick;
+
+                if (value == -1) {
+                    // Gạch không phá được
+                    brick = new UnbreakableBrick(x, y, brickWidth, brickHeight);
+                } else {
+                    // Gạch thường
+                    brick = new NormalBrick(x, y, brickWidth, brickHeight, value);
+                }
+
+                bricks[r][c] = brick;
             }
         }
     }
 
+
     // Chuyển sang level tiếp theo
-    public Level nextLevel(double startX, double startY, double totalWidth, double totalHeight) {
+    public LevelManager nextLevel(double startX, double startY, double totalWidth, double totalHeight) {
         currentLevel++;
         if (currentLevel > MAX_LEVEL_BRICK) {
             currentLevel = 1;
         }
-        return new Level(currentLevel, startX, startY, totalWidth, totalHeight);
+        return new LevelManager(currentLevel, startX, startY, totalWidth, totalHeight);
     }
 
     // Render các viên gạch
@@ -89,7 +101,7 @@ public class Level {
         for (int r = 0; r < row; r++) {
             for (int c = 0; c < col; c++) {
                 Brick brick = bricks[r][c];
-                if (brick != null && !brick.isDestroyed()) { // chỉ render gạch chưa bị phá
+                if (brick != null && !brick.getDestroyed()) { // chỉ render gạch chưa bị phá
                     brick.render(gc);
                 }
             }
@@ -101,7 +113,7 @@ public class Level {
         for (int r = 0; r < row; r++) {
             for (int c = 0; c < col; c++) {
                 Brick brick = bricks[r][c];
-                if (brick != null && !"unbreakable".equals(brick.getType()) && !brick.isDestroyed()) {
+                if (brick != null && !"unbreakable".equals(brick.getType()) && !brick.getDestroyed()) {
                     return false;
                 }
             }

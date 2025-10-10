@@ -1,7 +1,7 @@
 package com.demo.controller;
 
-import com.demo.model.Paddle;
-import com.demo.model.Level;
+import com.demo.model.paddle.Paddle;
+import com.demo.model.LevelManager;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -15,7 +15,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-public class gamePaneController {
+public class GamePaneController {
     @FXML
     private Canvas gameCanvas;
 
@@ -45,7 +45,7 @@ public class gamePaneController {
 
     private GraphicsContext gc;
     private Paddle paddle;
-    private Level level;
+    private LevelManager level;
     private int currentLevel = 1;
     private boolean leftKeyPressed = false;
     private boolean rightKeyPressed = false;
@@ -205,7 +205,7 @@ public class gamePaneController {
         double startX = (canvasWidth - totalWidth) / 2; // căn giữa
         double startY = 40;                    // cách đỉnh 50px
 
-        level = new Level(levelNumber, startX, startY, totalWidth, totalHeight);
+        level = new LevelManager(levelNumber, startX, startY, totalWidth, totalHeight);
     }
 
     private void setupGameLoop() {

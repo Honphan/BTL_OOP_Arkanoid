@@ -1,5 +1,7 @@
-package com.demo.model;
+package com.demo.model.ball;
 
+import com.demo.model.GameObject;
+import com.demo.model.Movable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 

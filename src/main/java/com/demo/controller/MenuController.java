@@ -1,6 +1,6 @@
 package com.demo.controller;
 
-import com.demo.GameView.Render;
+import com.demo.view.Render;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Optional;
 
-public class menuController {
+public class MenuController {
     private String difficultyLevel = "Easy";
 
     @FXML
