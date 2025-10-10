@@ -11,6 +11,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -55,11 +56,37 @@ public class GamePaneController {
     private AnimationTimer gameLoop;
     private boolean gameRunning = false;
     private boolean paddleInitialized = false;
+    private Image backgroundImage;
+
+    private void loadBackgroundImage() {
+        try {
+            backgroundImage = new Image(getClass().getResource("/com/demo/view/image/game/bg3.png").toExternalForm());
+            System.out.println("Tải bg3.png thành công!");
+        } catch (Exception e) {
+            System.err.println("Không thể load background image: " + e.getMessage());
+            backgroundImage = null;
+        }
+    }
+
+    // Phương thức render background
+    public void renderBackground(GraphicsContext gc, double canvasWidth, double canvasHeight) {
+        if (backgroundImage != null) {
+            gc.drawImage(backgroundImage, 0, 0, canvasWidth, canvasHeight);
+        } else {
+            // Fallback: vẽ màu nền mặc định
+            gc.setFill(Color.BLACK);
+            gc.fillRect(0, 0, canvasWidth, canvasHeight);
+        }
+    }
+
 
     @FXML
     private void initialize() {
         gc = gameCanvas.getGraphicsContext2D();
         gameRunning = true;
+
+        // Load background image
+        loadBackgroundImage();
 
         // Đặt màu nền cho Canvas để dễ nhìn
         gameCanvas.setStyle("-fx-background-color: black;");
@@ -73,9 +100,10 @@ public class GamePaneController {
         // Khởi tạo game loop
         setupGameLoop();
 
-        // Khởi tạo paddle sau khi JavaFX đã render (đảm bảo kích thước canvas đã sẵn sàng)
+        // Khởi tạo paddle sau khi JavaFX đã render
         Platform.runLater(this::delayedInitialize);
     }
+
 
     private void delayedInitialize() {
         // In kích thước canvas để kiểm tra
@@ -185,7 +213,7 @@ public class GamePaneController {
      * Khởi tạo paddle với vị trí và kích thước phù hợp
      */
     private void initializePaddle() {
-        double paddleWidth = 100;
+        double paddleWidth = 200;
         double paddleHeight = 20;
         double paddleSpeed = 5;
         double dx = 0;
@@ -267,13 +295,14 @@ public class GamePaneController {
 
 
     private void redrawCanvas() {
-        // Tô nền đen thay
-        gc.setFill(Color.BLACK);
-        gc.fillRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
+            // Vẽ background image thay vì màu đen
+            renderBackground(gc, gameCanvas.getWidth(), gameCanvas.getHeight());
 
-        if (level != null) level.render(gc);
-        if (paddle != null) paddle.render(gc);
-        if (ball != null) ball.render(gc);
+            if (level != null) level.render(gc);
+            if (paddle != null) paddle.render(gc);
+            if (ball != null) ball.render(gc);
+
+
     }
 
 
