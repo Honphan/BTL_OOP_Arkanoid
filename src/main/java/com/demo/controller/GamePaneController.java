@@ -165,6 +165,17 @@ public class GamePaneController {
         });
     }
 
+    private void initializeBall() {
+        double radius = 10; // Bán kính của bóng trong Ball.java
+        double ballSpeed = 5;
+
+        double startX = (gameCanvas.getWidth() / 2) - radius;
+        double startY = gameCanvas.getHeight() - 2 * radius - 20;
+
+        ball = new Ball(startX, startY, ballSpeed);
+    }
+//dafdasfds
+
     /**
      * Khởi tạo paddle với vị trí và kích thước phù hợp
      */
