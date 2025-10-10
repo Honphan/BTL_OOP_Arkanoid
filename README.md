@@ -6,10 +6,10 @@
   + Ball.java
   + Paddle.java
     
-- ✅ Xử lý UI brick, va chạm brick, tạo nhiều loại brick, có thể thêm powerup
+- ✅ Xử lý UI brick, va chạm brick, tạo nhiều loại brick, có thể thêm powerup : VoHoang
   + Brick.java
   + Powerup.java
 
-- ✅ Tối ưu hóa code, sửa lại phần ui, logic chung:
+- ✅ Tối ưu hóa code, sửa lại phần ui, logic chung : Hon
   + fxml, css
   + GamePane.java
