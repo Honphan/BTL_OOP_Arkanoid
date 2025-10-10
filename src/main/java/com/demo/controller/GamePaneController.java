@@ -1,6 +1,10 @@
 
 package com.demo.controller;
 
+import com.demo.Utils.Background;
+import com.demo.Utils.CanvasUtil;
+import com.demo.Utils.InputHandle;
+import com.demo.Utils.SoundManager;
 import com.demo.model.Ball;
 import com.demo.model.Paddle;
 import com.demo.model.Level;
@@ -51,55 +55,35 @@ public class GamePaneController {
     private Paddle paddle;
     private Level level;
     private int currentLevel = 1;
-    private boolean leftKeyPressed = false;
-    private boolean rightKeyPressed = false;
     private AnimationTimer gameLoop;
     private boolean gameRunning = false;
     private boolean paddleInitialized = false;
     private Image backgroundImage;
+    private SoundManager soundManager;
+    private InputHandle inputHandle;
 
-    private void loadBackgroundImage() {
-        try {
-            backgroundImage = new Image(getClass().getResource("/com/demo/view/image/game/bg3.png").toExternalForm());
-            System.out.println("Tải bg3.png thành công!");
-        } catch (Exception e) {
-            System.err.println("Không thể load background image: " + e.getMessage());
-            backgroundImage = null;
-        }
-    }
-
-    // Phương thức render background
-    public void renderBackground(GraphicsContext gc, double canvasWidth, double canvasHeight) {
-        if (backgroundImage != null) {
-            gc.drawImage(backgroundImage, 0, 0, canvasWidth, canvasHeight);
-        } else {
-            // Fallback: vẽ màu nền mặc định
-            gc.setFill(Color.BLACK);
-            gc.fillRect(0, 0, canvasWidth, canvasHeight);
-        }
-    }
 
 
     @FXML
     private void initialize() {
         gc = gameCanvas.getGraphicsContext2D();
         gameRunning = true;
-
         // Load background image
-        loadBackgroundImage();
-
-        // Đặt màu nền cho Canvas để dễ nhìn
-        gameCanvas.setStyle("-fx-background-color: black;");
-
+        backgroundImage = Background.loadBackgroundImage();
         // Liên kết kích thước Canvas với StackPane chứa nó
-        bindCanvasSize();
+        CanvasUtil.bindCanvasSize(
+                gameCanvas,      // Canvas
+                gameArea,        // Parent container
+                paddle,          // Paddle object
+                this::redrawCanvas,  // Redraw callback
+                this::initializeLevel,// Level initializer callback
+                currentLevel     // Current level
+        );
 
         // Thiết lập xử lý phím
-        setupKeyHandlers();
-
+        inputHandle = new InputHandle(this, gameCanvas);
         // Khởi tạo game loop
         setupGameLoop();
-
         // Khởi tạo paddle sau khi JavaFX đã render
         Platform.runLater(this::delayedInitialize);
     }
@@ -110,7 +94,7 @@ public class GamePaneController {
         System.out.println("Canvas size after runLater: " + gameCanvas.getWidth() + "x" + gameCanvas.getHeight());
 
         // Tạm thời vẽ một khung để xác nhận canvas hoạt động
-        drawDebugGrid();
+        CanvasUtil.drawDebugGrid(gc, gameCanvas.getWidth(), gameCanvas.getHeight());
 
         // Khởi tạo paddle
         initializePaddle();
@@ -126,77 +110,6 @@ public class GamePaneController {
         gameCanvas.requestFocus();
     }
 
-    private void drawDebugGrid() {
-        gc.setStroke(Color.DARKGRAY);
-        gc.setLineWidth(1);
-
-        double w = gameCanvas.getWidth();
-        double h = gameCanvas.getHeight();
-
-        // Vẽ đường viền
-        gc.strokeRect(0, 0, w, h);
-
-        // Vẽ đường chéo
-        gc.strokeLine(0, 0, w, h);
-        gc.strokeLine(0, h, w, 0);
-
-        // Vẽ đường giữa
-        gc.strokeLine(w / 2, 0, w / 2, h);
-        gc.strokeLine(0, h / 2, w, h / 2);
-    }
-
-    /**
-     * Liên kết kích thước Canvas với StackPane cha để co giãn theo khung hình
-     */
-    private void bindCanvasSize() {
-        // Đặt kích thước ban đầu cho canvas (để tránh kích thước 0)
-        if (gameArea.getWidth() <= 0) {
-            gameCanvas.setWidth(600);
-            gameCanvas.setHeight(400);
-        } else {
-            gameCanvas.setWidth(gameArea.getWidth());
-            gameCanvas.setHeight(gameArea.getHeight());
-        }
-
-        // Bind chiều rộng và chiều cao của Canvas với StackPane
-        gameCanvas.widthProperty().bind(gameArea.widthProperty());
-        gameCanvas.heightProperty().bind(gameArea.heightProperty());
-
-        // Lắng nghe thay đổi kích thước để cập nhật vị trí paddle
-        gameCanvas.widthProperty().addListener((obs, oldVal, newVal) -> {
-            if (paddle != null) {
-                double width = newVal.doubleValue();
-                //xxxxxxx
-
-                // Nếu oldVal là 0, đặt paddle ở giữa
-                if (oldVal.doubleValue() <= 0) {
-                    paddle.setX((width - paddle.getWidth()) / 2);
-                } else {
-                    // Giữ paddle ở vị trí tương đối khi resize
-                    double relativePos = paddle.getX() / oldVal.doubleValue();
-                    paddle.setX(relativePos * width);
-                }
-
-                // Vẽ lại paddle khi kích thước thay đổi
-                redrawCanvas();
-            }
-
-            if (level != null) {
-                initializeLevel(currentLevel); // vẽ lại bricks theo kích thước mới
-            }
-
-        });
-
-        gameCanvas.heightProperty().addListener((obs, oldVal, newVal) -> {
-            if (paddle != null) {
-                double height = newVal.doubleValue();
-                paddle.setY(height - paddle.getHeight() - 20);
-
-                // Vẽ lại paddle khi kích thước thay đổi
-                redrawCanvas();
-            }
-        });
-    }
 
     private void initializeBall() {
         double radius = 10; // Bán kính của bóng trong Ball.java
@@ -207,8 +120,6 @@ public class GamePaneController {
 
         ball = new Ball(startX, startY, ballSpeed);
     }
-//dafdasfds
-
     /**
      * Khởi tạo paddle với vị trí và kích thước phù hợp
      */
@@ -271,6 +182,10 @@ public class GamePaneController {
         };
     }
 
+    public boolean isGameRunning() {
+        return gameRunning;
+    }
+
 
     private void updateGame() {
         updatePaddle();
@@ -295,64 +210,14 @@ public class GamePaneController {
 
 
     private void redrawCanvas() {
-            // Vẽ background image thay vì màu đen
-            renderBackground(gc, gameCanvas.getWidth(), gameCanvas.getHeight());
-
-            if (level != null) level.render(gc);
-            if (paddle != null) paddle.render(gc);
-            if (ball != null) ball.render(gc);
-
-
-    }
-
-
-    private void setupKeyHandlers() {
-        // Đảm bảo canvas có thể nhận sự kiện bàn phím
-        gameCanvas.setFocusTraversable(true);
-
-        // Xử lý phím trực tiếp trên canvas
-        gameCanvas.setOnKeyPressed(this::handleKeyPressed);
-        gameCanvas.setOnKeyReleased(this::handleKeyReleased);
-    }
-
-    private void handleKeyPressed(KeyEvent event) {
-        if (gameRunning) {
-            switch (event.getCode()) {
-                case LEFT:
-                    leftKeyPressed = true;
-                    event.consume();
-                    break;
-                case RIGHT:
-                    rightKeyPressed = true;
-                    event.consume();
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    private void handleKeyReleased(KeyEvent event) {
-        if (gameRunning) {
-            switch (event.getCode()) {
-                case LEFT:
-                    leftKeyPressed = false;
-                    event.consume();
-                    break;
-                case RIGHT:
-                    rightKeyPressed = false;
-                    event.consume();
-                    break;
-                default:
-                    break;
-            }
-        }
+            CanvasUtil.redrawCanvas(gc, gameCanvas, paddle, level, ball, backgroundImage);
     }
 
     private void updatePaddle() {
-        if (leftKeyPressed && !rightKeyPressed) {
+        // Use inputHandle instead of class fields
+        if (inputHandle.isLeftKeyPressed() && !inputHandle.isRightKeyPressed()) {
             paddle.moveLeft();
-        } else if (rightKeyPressed && !leftKeyPressed) {
+        } else if (inputHandle.isRightKeyPressed() && !inputHandle.isLeftKeyPressed()) {
             paddle.moveRight();
         } else {
             paddle.stop();
@@ -362,13 +227,13 @@ public class GamePaneController {
     @FXML
     public void startGame() {
         gameRunning = true;
-        gameCanvas.requestFocus();
+        inputHandle.requestCanvasFocus();
     }
 
     @FXML
     public void pauseGame() {
         gameRunning = false;
-        gameCanvas.requestFocus();
+        inputHandle.requestCanvasFocus();
     }
 
     @FXML
@@ -377,18 +242,18 @@ public class GamePaneController {
         double paddleWidth = paddle.getWidth();
         paddle.setX((gameCanvas.getWidth() - paddleWidth) / 2);
         gameRunning = true;
-        gameCanvas.requestFocus();
+        inputHandle.requestCanvasFocus();
         ball.reset(gameCanvas.getWidth() / 2 - 10, gameCanvas.getHeight() - 10 - 20);
     }
 
     @FXML
     public void maxBet() {
-        gameCanvas.requestFocus();
+        inputHandle.requestCanvasFocus();
     }
 
     @FXML
     public void showPayTable() {
-        gameCanvas.requestFocus();
+        inputHandle.requestCanvasFocus();
     }
 }
 
