@@ -1,11 +1,8 @@
 package com.demo.model;
 
-import com.demo.Utils.Util;
+import com.demo.Utils.Background;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 public class Paddle extends Movable {
@@ -27,7 +24,7 @@ public class Paddle extends Movable {
             Image originalImage = new Image(getClass().getResource("/com/demo/view/image/paddle/paddle_laser2.png").toExternalForm());
 
             // Xử lý để loại bỏ background
-            paddleImage = Util.removeBackground(originalImage);
+            paddleImage = Background.remove(originalImage);
             System.out.println("Tải và xử lý paddle_laser2.png thành công!");
 
         } catch (Exception e) {

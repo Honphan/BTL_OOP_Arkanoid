@@ -1,6 +1,7 @@
 package com.demo.controller;
 
 import com.demo.GameView.Render;
+import com.demo.Utils.SoundManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -13,6 +14,16 @@ import java.util.Optional;
 
 public class menuController {
     private String difficultyLevel = "Easy";
+    private SoundManager soundManager;
+
+
+    @FXML
+    private void initialize() {
+        soundManager = SoundManager.getInstance();
+
+        // Phát nhạc nền menu khi controller được khởi tạo
+        soundManager.playBackgroundMusic("/com/demo/view/sound/barkanoid_background.mp3");
+    }
 
     @FXML
     private void start(ActionEvent event) throws IOException {

@@ -1,13 +1,14 @@
 package com.demo.Utils;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
-public class Util {
-    public static Image removeBackground(Image originalImage) {
+public class Background {
+    public static Image remove(Image originalImage) {
         if (originalImage == null) return null;
 
         int width = (int) originalImage.getWidth();
@@ -55,6 +56,29 @@ public class Util {
         double blueDiff = Math.abs(color.getBlue() - backgroundColor.getBlue());
 
         return redDiff <= tolerance && greenDiff <= tolerance && blueDiff <= tolerance;
+    }
+
+    public static  Image loadBackgroundImage() {
+        Image backgroundImage = null;
+        try {
+            backgroundImage = new Image(Background.class.getResource("/com/demo/view/image/game/bg3.png").toExternalForm());
+            System.out.println("Tải bg3.png thành công!");
+        } catch (Exception e) {
+            System.err.println("Không thể load background image: " + e.getMessage());
+            backgroundImage = null;
+        }
+        return backgroundImage;
+    }
+
+    // Phương thức render background
+    public static void renderBackground(GraphicsContext gc, double canvasWidth, double canvasHeight, Image backgroundImage) {
+        if (backgroundImage != null) {
+            gc.drawImage(backgroundImage, 0, 0, canvasWidth, canvasHeight);
+        } else {
+            // Fallback: vẽ màu nền mặc định
+            gc.setFill(Color.BLACK);
+            gc.fillRect(0, 0, canvasWidth, canvasHeight);
+        }
     }
 
 
