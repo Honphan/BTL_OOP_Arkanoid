@@ -11,6 +11,10 @@
 <?import javafx.scene.shape.Polygon?>
 <?import java.lang.Double?>
 
+<<<<<<< HEAD
+=======
+<StackPane prefHeight="600" prefWidth="446.0" styleClass="main-background" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.demo.controller.MenuController">
+>>>>>>> 838080f3b0d2d93cfba54a5e9231de2230cecc33
 
 
 <StackPane prefHeight="700" prefWidth="600" styleClass="main-background" stylesheets="@../css/menu.css"

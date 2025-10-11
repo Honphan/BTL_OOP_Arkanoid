@@ -1,11 +1,14 @@
-package com.demo.GameView;
+package com.demo.view;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+<<<<<<< HEAD:src/main/java/com/demo/GameView/Render.java
 import javafx.stage.Screen;
+=======
+>>>>>>> 838080f3b0d2d93cfba54a5e9231de2230cecc33:src/main/java/com/demo/view/Render.java
 import javafx.stage.Stage;
 
 import java.io.IOException;

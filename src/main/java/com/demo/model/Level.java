@@ -3,7 +3,7 @@ package com.demo.model;
 import com.demo.model.bricks.*;
 import javafx.scene.canvas.GraphicsContext;
 
-public class Level {
+public class LevelManager {
 
     private Brick[][] bricks;
     private int currentLevel;
@@ -32,7 +32,7 @@ public class Level {
             {0, 2, 1, -1, 3, 0}
     };
 
-    public Level(int currentLevel, double startX, double startY, double totalWidth, double totalHeight) {
+    public LevelManager(int currentLevel, double startX, double startY, double totalWidth, double totalHeight) {
         this.currentLevel = currentLevel;
         int[][] layout = layoutByLevel(currentLevel);
 
@@ -79,12 +79,12 @@ public class Level {
         }
     }
 
-    public Level nextLevel(double startX, double startY, double totalWidth, double totalHeight) {
+    public LevelManager nextLevel(double startX, double startY, double totalWidth, double totalHeight) {
         currentLevel++;
         if (currentLevel > MAX_LEVEL_BRICK) {
             currentLevel = 1;
         }
-        return new Level(currentLevel, startX, startY, totalWidth, totalHeight);
+        return new LevelManager(currentLevel, startX, startY, totalWidth, totalHeight);
     }
 
     public void render(GraphicsContext gc) {
