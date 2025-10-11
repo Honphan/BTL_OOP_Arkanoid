@@ -45,7 +45,7 @@ public class SoundManager {
 
             backgroundMusicPlayer = new MediaPlayer(media);
             backgroundMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            backgroundMusicPlayer.setVolume(0.3);
+            backgroundMusicPlayer.setVolume(0.8);
 
             backgroundMusicPlayer.setOnReady(() -> {
                 backgroundMusicPlayer.play();
@@ -85,7 +85,7 @@ public class SoundManager {
             }
 
             effectPlayer = new MediaPlayer(media);
-            effectPlayer.setVolume(0.5);
+            effectPlayer.setVolume(1);
             effectPlayer.setOnReady(() -> effectPlayer.play());
 
         } catch (Exception e) {
