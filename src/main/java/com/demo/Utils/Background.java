@@ -61,7 +61,7 @@ public class Background {
     public static  Image loadBackgroundImage() {
         Image backgroundImage = null;
         try {
-            backgroundImage = new Image(Background.class.getResource("/com/demo/view/image/game/bg3.png").toExternalForm());
+            backgroundImage = new Image(Background.class.getResource("/com/demo/view/image/levels/bg3.png").toExternalForm());
             System.out.println("Tải bg3.png thành công!");
         } catch (Exception e) {
             System.err.println("Không thể load background image: " + e.getMessage());
@@ -80,6 +80,4 @@ public class Background {
             gc.fillRect(0, 0, canvasWidth, canvasHeight);
         }
     }
-
-
 }

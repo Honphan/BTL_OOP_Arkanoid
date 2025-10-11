@@ -3,6 +3,9 @@ module com.demo {
     requires javafx.fxml;
     requires javafx.graphics;
     requires javafx.media;
+    requires java.desktop;
+    requires javafx.swing;
+
 
     // Mở các package cho JavaFX FXML
     opens com.demo to javafx.fxml;

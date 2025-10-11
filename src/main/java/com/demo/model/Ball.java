@@ -1,5 +1,6 @@
 package com.demo.model;
 
+import com.demo.Utils.SoundManager;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -8,13 +9,16 @@ public class Ball extends Movable {
     private int directionX; // -1 = trái, +1 = phải
     private int directionY; // -1 = lên, +1 = xuống
     private int radius;
+    private SoundManager soundManager;
+
 
     public Ball(double x, double y, double speed) {
         super(0, 0, x, y, 20, 20);
         this.radius = 10;
         this.speed = speed;
         this.directionX = 1;   // mặc định đi sang phải
-        this.directionY = -1;  // mặc định đi lên
+        this.directionY = -1;
+        this.soundManager = SoundManager.getInstance();
         updateVelocity();
     }
 
@@ -175,6 +179,8 @@ public class Ball extends Movable {
      * Xử lý bật bóng khi va chạm với paddle (có góc bật)
      */
     public void bounceOffPaddle(GameObject paddle) {
+        // Phát âm thanh khi chạm paddle
+        soundManager.playSound("/com/demo/view/sound/barkanoid-wallbounce.wav");
         // Tính vị trí bóng chạm vào paddle (-1 đến +1)
         double paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
         double ballCenterX = this.getCenterX();
@@ -268,21 +274,29 @@ public class Ball extends Movable {
      * Bật lại khi chạm tường
      */
     public void bounceOffWall(double canvasWidth, double canvasHeight) {
+        boolean hitWall = false;
         // Chạm tường trái
         if (this.x <= 0) {
             this.x = 0;
             bounceHorizontally();
+            hitWall = true;
         }
         // Chạm tường phải
         else if (this.x + 2 * radius >= canvasWidth) {
             this.x = canvasWidth - 2 * radius;
             bounceHorizontally();
+            hitWall = true;
         }
 
         // Chạm tường trên
         if (this.y <= 0) {
             this.y = 0;
             bounceVertically();
+            hitWall = true;
+        }
+        // Phát âm thanh khi chạm tường
+        if (hitWall) {
+            soundManager.playSound("/com/demo/view/sound/barkanoid-wallbounce.wav");
         }
     }
 
