@@ -1,9 +1,11 @@
-package com.demo.model;
+package com.demo.model.bricks;
 
+import com.demo.model.Ball;
+import com.demo.model.GameObject;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class Brick extends GameObject {
+public abstract class Brick extends GameObject {
     private int hitPoints;  // Điểm máu của khối gạch
     private String type;  // Loại gạch
     private boolean destroyed;  // Kiểm tra gạch bị phá chưa
@@ -15,40 +17,12 @@ public class Brick extends GameObject {
         this.destroyed = false;
     }
 
-    @Override
-    public void update() {
-        // Gạch không di chuyển
-    }
+    public abstract void update();
 
-    @Override
-    public void render(GraphicsContext gc) {
-        if (!destroyed) {
-            // Chọn màu theo độ bền hoặc loại
-            Color color = switch (type) {
-                case "unbreakable" -> Color.GREY;
-                default -> switch (hitPoints) {
-                    case 3 -> Color.RED;
-                    case 2 -> Color.GREEN;
-                    case 1 -> Color.ORANGE;
-                    default -> Color.BLACK;
-                };
-            };
+    public abstract void render(GraphicsContext gc);
 
-            // Vẽ khối gạch hình chữ nhật
-            gc.setFill(color);
-            gc.fillRect(x, y, width, height);
-            gc.setStroke(Color.BLACK);
-            gc.strokeRect(x, y, width, height);
-        }
-    }
+    public abstract void takeHit();
 
-    // Giảm máu gạch khi bóng va chạm
-    public void takeHit() {
-        if (!destroyed && !"unbreakable".equals(type)) {
-            hitPoints--;
-            if (hitPoints <= 0) destroyed = true;
-        }
-    }
     // Kiểm tra va chạm với bóng
     public boolean checkCollision(Ball ball) {
         double ballX = ball.getX();
@@ -64,8 +38,15 @@ public class Brick extends GameObject {
 
         return collision;
     }
+    public void setDestroyed(boolean destroyed) {
+        this.destroyed = destroyed;
+    }
 
     public boolean isDestroyed() { return destroyed; }
+
+    public void setHitPoints(int hitPoints) {
+        this.hitPoints = hitPoints;
+    }
 
     public int getHitPoints() { return hitPoints; }
 

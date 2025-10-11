@@ -1,8 +1,12 @@
 package com.demo.controller;
 
+<<<<<<< HEAD:src/main/java/com/demo/controller/menuController.java
 import com.demo.GameView.Render;
 import com.demo.Utils.LevelPreviewGenerator;
 import com.demo.Utils.SoundManager;
+=======
+import com.demo.view.Render;
+>>>>>>> 838080f3b0d2d93cfba54a5e9231de2230cecc33:src/main/java/com/demo/controller/MenuController.java
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -23,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
+<<<<<<< HEAD:src/main/java/com/demo/controller/menuController.java
 public class menuController {
     private int selectedLevel = 1;
     private SoundManager soundManager;
@@ -139,6 +144,10 @@ public class menuController {
             soundManager.playSound("/com/demo/view/sound/barkanoid-wallbounce.wav");
         }
     }
+=======
+public class MenuController {
+    private String difficultyLevel = "Easy";
+>>>>>>> 838080f3b0d2d93cfba54a5e9231de2230cecc33:src/main/java/com/demo/controller/MenuController.java
 
     @FXML
     private void start(ActionEvent event) throws IOException {

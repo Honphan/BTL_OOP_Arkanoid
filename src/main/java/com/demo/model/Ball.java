@@ -1,6 +1,11 @@
-package com.demo.model;
+package com.demo.model.ball;
 
+<<<<<<< HEAD:src/main/java/com/demo/model/Ball.java
 import com.demo.Utils.SoundManager;
+=======
+import com.demo.model.GameObject;
+import com.demo.model.Movable;
+>>>>>>> 838080f3b0d2d93cfba54a5e9231de2230cecc33:src/main/java/com/demo/model/ball/Ball.java
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
