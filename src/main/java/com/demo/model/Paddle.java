@@ -1,6 +1,7 @@
 package com.demo.model;
 
 import com.demo.Utils.Background;
+import com.demo.model.powerup.PowerUp;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
