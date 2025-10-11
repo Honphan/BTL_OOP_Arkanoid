@@ -1,0 +1,57 @@
+[33m390a7f3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mHonPhan[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HonPhan[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: pull origin main: Fast-forward
+[33m60aa5f9[m HEAD@{1}: commit: build: thay đổi menuController, thêm âm thanh
+[33me563671[m HEAD@{2}: commit: refactor: tối ưu hóa lại code cho ngắn gọn trong folder: Utils
+[33m1fabc2f[m HEAD@{3}: commit: style: thêm ảnh background và ảnh cho paddle
+[33m19662d3[m HEAD@{4}: pull origin main: Fast-forward
+[33mf6843a1[m[33m ([m[1;32mmain[m[33m)[m HEAD@{5}: checkout: moving from ThayHoang to HonPhan
+[33m09879d0[m[33m ([m[1;32mThayHoang[m[33m)[m HEAD@{6}: checkout: moving from HonPhan to ThayHoang
+[33mf6843a1[m[33m ([m[1;32mmain[m[33m)[m HEAD@{7}: checkout: moving from main to HonPhan
+[33mf6843a1[m[33m ([m[1;32mmain[m[33m)[m HEAD@{8}: pull: Fast-forward
+[33m09879d0[m[33m ([m[1;32mThayHoang[m[33m)[m HEAD@{9}: checkout: moving from HonPhan to main
+[33mf6843a1[m[33m ([m[1;32mmain[m[33m)[m HEAD@{10}: pull origin main: Fast-forward
+[33m6ecd2d9[m HEAD@{11}: commit: refactor: arkanoid.drario,GamePaneController
+[33mcd20089[m HEAD@{12}: pull origin main: Fast-forward
+[33md632280[m HEAD@{13}: pull origin main: Fast-forward
+[33mc168526[m HEAD@{14}: commit: fix: insert id gameArea
+[33m3c2c854[m HEAD@{15}: pull origin main: Fast-forward
+[33m0354601[m HEAD@{16}: pull origin main: Fast-forward
+[33m75345ec[m HEAD@{17}: pull origin main: Fast-forward
+[33m2e8aa65[m HEAD@{18}: checkout: moving from ThayHoang to HonPhan
+[33m09879d0[m[33m ([m[1;32mThayHoang[m[33m)[m HEAD@{19}: pull origin main: Fast-forward
+[33m9bab059[m HEAD@{20}: checkout: moving from main to ThayHoang
+[33m09879d0[m[33m ([m[1;32mThayHoang[m[33m)[m HEAD@{21}: pull: Fast-forward
+[33m9bab059[m HEAD@{22}: checkout: moving from ThayHoang to main
+[33m9bab059[m HEAD@{23}: checkout: moving from HonPhan to ThayHoang
+[33m2e8aa65[m HEAD@{24}: commit: chore: update menuController
+[33med4f08e[m HEAD@{25}: checkout: moving from ThayHoang to HonPhan
+[33m9bab059[m HEAD@{26}: pull origin main: Fast-forward
+[33mf5aeb7e[m HEAD@{27}: checkout: moving from main to ThayHoang
+[33m9bab059[m HEAD@{28}: pull: Fast-forward
+[33mf5aeb7e[m HEAD@{29}: checkout: moving from ThayHoang to main
+[33mf5aeb7e[m HEAD@{30}: checkout: moving from HonPhan to ThayHoang
+[33med4f08e[m HEAD@{31}: commit: fix paddle
+[33mf43a97c[m HEAD@{32}: checkout: moving from ThayHoang to HonPhan
+[33mf5aeb7e[m HEAD@{33}: pull origin main: Fast-forward
+[33mbb6e0ea[m HEAD@{34}: checkout: moving from main to ThayHoang
+[33mf5aeb7e[m HEAD@{35}: pull: Fast-forward
+[33med97aa7[m HEAD@{36}: checkout: moving from ThayHoang to main
+[33mbb6e0ea[m HEAD@{37}: checkout: moving from HonPhan to ThayHoang
+[33mf43a97c[m HEAD@{38}: commit: fix: paddle
+[33m7fc676a[m HEAD@{39}: commit: fix: canvasWidth
+[33med97aa7[m HEAD@{40}: pull origin main: Fast-forward
+[33m8eed0c5[m HEAD@{41}: checkout: moving from main to HonPhan
+[33med97aa7[m HEAD@{42}: checkout: moving from main to main
+[33med97aa7[m HEAD@{43}: commit: feat: insert paddle
+[33m8eed0c5[m HEAD@{44}: merge HonPhan: Fast-forward
+[33mb8c6882[m HEAD@{45}: pull: Fast-forward
+[33m3018f71[m HEAD@{46}: checkout: moving from HonPhan to main
+[33m8eed0c5[m HEAD@{47}: commit (merge): sua code
+[33m57781b6[m HEAD@{48}: commit: feat: sửa giao diện
+[33m2fb1896[m HEAD@{49}: checkout: moving from main to HonPhan
+[33m3018f71[m HEAD@{50}: checkout: moving from HonPhan to main
+[33m2fb1896[m HEAD@{51}: commit: refactor: base project
+[33m3018f71[m HEAD@{52}: checkout: moving from main to HonPhan
+[33m3018f71[m HEAD@{53}: checkout: moving from ThayHoang to main
+[33mbb6e0ea[m HEAD@{54}: checkout: moving from HonPhan to ThayHoang
+[33m3018f71[m HEAD@{55}: checkout: moving from main to HonPhan
+[33m3018f71[m HEAD@{56}: clone: from https://github.com/Honphan/BTL_OOP_Arkanoid.git
