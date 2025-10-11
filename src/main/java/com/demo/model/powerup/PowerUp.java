@@ -1,5 +1,6 @@
-package com.demo.model;
+package com.demo.model.powerup;
 
+import com.demo.model.GameObject;
 import javafx.scene.canvas.GraphicsContext;
 
 public class PowerUp extends GameObject {
