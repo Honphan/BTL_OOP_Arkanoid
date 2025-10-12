@@ -54,6 +54,7 @@ public class GamePaneController {
     private Paddle paddle;
     private LevelManager level;
     private int currentLevel = 1;
+    private int score = 0;
     private AnimationTimer gameLoop;
     private boolean gameRunning = false;
     private boolean paddleInitialized = false;
@@ -215,6 +216,14 @@ public class GamePaneController {
                         if (ball.checkCollision(brick)) {
                             ball.bounceOff(brick);
                             brick.takeHit();
+
+
+                            // Add score when brick is destroyed
+                            if (brick.isDestroyed()) {
+                                addScore(brick.getScoreValue());
+//                                powerUpManager.trySpawnPowerUp(brick.getX() + brick.getWidth()/2,
+//                                        brick.getY() + brick.getHeight()/2);
+                            }
                         }
                     }
                 }
@@ -228,6 +237,17 @@ public class GamePaneController {
             } else {
                 initializeLevel(currentLevel);
             }
+        }
+    }
+
+    private void addScore(int points) {
+        score += points;
+        updateScoreDisplay();
+    }
+
+    private void updateScoreDisplay() {
+        if (scoreLabel != null) {
+            scoreLabel.setText(String.valueOf(score));
         }
     }
 
@@ -270,6 +290,7 @@ public class GamePaneController {
     @FXML
     public void restartGame() {
         // Reset to starting level
+        score = 0;
         currentLevel = 1;
         initializeLevel(currentLevel);
 
