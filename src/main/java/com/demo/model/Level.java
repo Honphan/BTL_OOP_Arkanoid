@@ -1,5 +1,8 @@
 package com.demo.model;
 
+import com.demo.model.bricks.Brick;
+import com.demo.model.bricks.NormalBrick;
+import com.demo.model.bricks.UnbreakableBrick;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Level {
@@ -16,9 +19,15 @@ public class Level {
 
     // Layout các level, -1 = unbreakable, 0 = trống, >0 = hit points của gạch
     public static final int[][] LEVEL1 = {
-            {-1, 1, 0, 2, -1, 1},
-            {2, 0, -1, 3, 0, 2},
-            {1, 3, 0, -1, 1, 0}
+            { 0,  3, -1,  1,  0,  2, -1,  5,  0,  1},
+            { 2, -1,  0,  4,  1,  0,  3,  0, -1,  2},
+            { 0,  1,  2, -1,  0,  3,  1,  0,  4, -1},
+            { 3,  0, -1,  2,  0,  1,  0,  5,  2,  0},
+            { 1,  4,  0, -1,  3,  0, -1,  2,  0,  3},
+            { 0, -1,  2,  0,  5,  1,  0, -1,  3,  0},
+            {-1,  0,  3,  1,  0,  2,  4,  0, -1,  1},
+            { 2,  0, -1,  3,  0,  1,  0,  4,  2,  0},
+            { 0,  1,  0, -1,  2,  0,  3,  0,  5, -1}
     };
     public static final int[][] LEVEL2 = {
             {0, 2, -1, 1, 3, -1},
@@ -60,14 +69,20 @@ public class Level {
         for (int r = 0; r < row; r++) {
             for (int c = 0; c < col; c++) {
                 int value = layout[r][c];
+
+                double x = startX + c * (brickWidth + spacing);
+                double y = startY + r * (brickHeight + spacing);
+
                 if (value != 0) { // nếu không phải ô trống
-                    double x = startX + c * (brickWidth + spacing);
-                    double y = startY + r * (brickHeight + spacing);
+                    Brick brick;
 
-                    String type = (value == -1) ? "unbreakable" : "normal";
-                    int hitPoints = (type.equals("unbreakable")) ? Integer.MAX_VALUE : value;
+                    if (value == -1) {
+                        brick = new UnbreakableBrick(x, y, brickWidth, brickHeight);
+                    } else {
+                        brick = new NormalBrick(x, y, brickWidth, brickHeight, value);
+                    }
 
-                    bricks[r][c] = new Brick(x, y, brickWidth, brickHeight, hitPoints, type);
+                    bricks[r][c] = brick;
                 } else {
                     bricks[r][c] = null;
                 }

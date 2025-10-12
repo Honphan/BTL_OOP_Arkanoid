@@ -154,8 +154,8 @@ public class GamePaneController {
 
     private void initializeLevel(int levelNumber) {
         double canvasWidth = gameCanvas.getWidth();
-        double totalWidth = canvasWidth * 0.8;
-        double totalHeight = 100;
+        double totalWidth = canvasWidth * 0.65;
+        double totalHeight = 200;
         double startX = (canvasWidth - totalWidth) / 2;
         double startY = 40;
 
