@@ -5,7 +5,7 @@ import com.demo.model.bricks.NormalBrick;
 import com.demo.model.bricks.UnbreakableBrick;
 import javafx.scene.canvas.GraphicsContext;
 
-public class Level {
+public class LevelManager {
     // Mảng lưu trữ các viên gạch của level
     private Brick[][] bricks;
     private int currentLevel;
@@ -19,15 +19,12 @@ public class Level {
 
     // Layout các level, -1 = unbreakable, 0 = trống, >0 = hit points của gạch
     public static final int[][] LEVEL1 = {
-            { 0,  3, -1,  1,  0,  2, -1,  5,  0,  1},
-            { 2, -1,  0,  4,  1,  0,  3,  0, -1,  2},
-            { 0,  1,  2, -1,  0,  3,  1,  0,  4, -1},
-            { 3,  0, -1,  2,  0,  1,  0,  5,  2,  0},
-            { 1,  4,  0, -1,  3,  0, -1,  2,  0,  3},
-            { 0, -1,  2,  0,  5,  1,  0, -1,  3,  0},
-            {-1,  0,  3,  1,  0,  2,  4,  0, -1,  1},
-            { 2,  0, -1,  3,  0,  1,  0,  4,  2,  0},
-            { 0,  1,  0, -1,  2,  0,  3,  0,  5, -1}
+            { 3,  0,  1,  2,  0,  1,  0,  5,  2,  0},
+            { 1,  4,  0,  1,  3,  0,  1,  2,  0,  3},
+            { 0,  1,  2,  0,  5,  1,  0,  1,  3,  0},
+            { 1,  5,  3,  1,  0,  2,  4,  0,  1,  1},
+            { 2,  1,  1,  3,  0,  1,  0,  4,  2,  0},
+            { 1,  1,  0,  1,  2,  0,  3,  0,  5,  1}
     };
     public static final int[][] LEVEL2 = {
             {0, 2, -1, 1, 3, -1},
@@ -40,7 +37,7 @@ public class Level {
             {0, 2, 1, -1, 3, 0}
     };
 
-    public Level(int currentLevel, double startX, double startY, double totalWidth, double totalHeight) {
+    public LevelManager(int currentLevel, double startX, double startY, double totalWidth, double totalHeight) {
         this.currentLevel = currentLevel;
 
         int[][] layout = layoutByLevel(currentLevel); // lấy layout theo level
@@ -91,12 +88,12 @@ public class Level {
     }
 
     // Chuyển sang level tiếp theo
-    public Level nextLevel(double startX, double startY, double totalWidth, double totalHeight) {
+    public LevelManager nextLevel(double startX, double startY, double totalWidth, double totalHeight) {
         currentLevel++;
         if (currentLevel > MAX_LEVEL_BRICK) {
             currentLevel = 1;
         }
-        return new Level(currentLevel, startX, startY, totalWidth, totalHeight);
+        return new LevelManager(currentLevel, startX, startY, totalWidth, totalHeight);
     }
 
     // Render các viên gạch

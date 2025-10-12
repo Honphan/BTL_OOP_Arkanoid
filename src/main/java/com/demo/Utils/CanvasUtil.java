@@ -2,9 +2,7 @@ package com.demo.Utils;
 
 import com.demo.model.Ball;
 import com.demo.model.Paddle;
-import com.demo.model.Level;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.value.ChangeListener;
+import com.demo.model.LevelManager;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -89,7 +87,7 @@ public class CanvasUtil {
         });
     }
 
-    public static void redrawCanvas(GraphicsContext gc, Canvas gameCanvas, Paddle paddle, Level level, Ball ball, Image backgroundImage) {
+    public static void redrawCanvas(GraphicsContext gc, Canvas gameCanvas, Paddle paddle, LevelManager level, Ball ball, Image backgroundImage) {
         // Vẽ background image thay vì màu đen
         Background.renderBackground(gc, gameCanvas.getWidth(), gameCanvas.getHeight(), backgroundImage);
 

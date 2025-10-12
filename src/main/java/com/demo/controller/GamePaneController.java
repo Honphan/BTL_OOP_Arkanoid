@@ -6,7 +6,9 @@ import com.demo.Utils.InputHandle;
 import com.demo.Utils.SoundManager;
 import com.demo.model.Ball;
 import com.demo.model.Paddle;
-import com.demo.model.Level;
+import com.demo.model.bricks.Brick;
+import com.demo.model.LevelManager;
+import com.demo.model.PowerUpManager;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -50,7 +52,7 @@ public class GamePaneController {
     private GraphicsContext gc;
     private Ball ball;
     private Paddle paddle;
-    private Level level;
+    private LevelManager level;
     private int currentLevel = 1;
     private AnimationTimer gameLoop;
     private boolean gameRunning = false;
@@ -119,7 +121,7 @@ public class GamePaneController {
 
     private void initializeBall() {
         double radius = 10;
-        double ballSpeed = 5;
+        double ballSpeed = 8;
 
         double startX = (gameCanvas.getWidth() / 2) - radius;
         double startY = gameCanvas.getHeight() - 2 * radius - 20;
@@ -130,7 +132,7 @@ public class GamePaneController {
     private void initializePaddle() {
         double paddleWidth = 200;
         double paddleHeight = 20;
-        double paddleSpeed = 5;
+        double paddleSpeed = 15;
 
         double canvasWidth = gameCanvas.getWidth();
         double canvasHeight = gameCanvas.getHeight();
@@ -159,7 +161,7 @@ public class GamePaneController {
         double startX = (canvasWidth - totalWidth) / 2;
         double startY = 40;
 
-        level = new Level(levelNumber, startX, startY, totalWidth, totalHeight);
+        level = new LevelManager(levelNumber, startX, startY, totalWidth, totalHeight);
 
         // Update level label
         if (levelLabel != null) {
@@ -201,11 +203,28 @@ public class GamePaneController {
             ball.bounceOffPaddle(paddle);
         }
 
+        if (level != null) {
+            Brick[][] bricks = level.getBricks(); // lấy mảng 2 chiều gạch
+            int rows = level.getRows();
+            int cols = level.getCols();
+
+            for (int r = 0; r < rows; r++) {
+                for (int c = 0; c < cols; c++) {
+                    Brick brick = bricks[r][c];
+                    if (brick != null && !brick.isDestroyed()) {
+                        if (ball.checkCollision(brick)) {
+                            ball.bounceOff(brick);
+                            brick.takeHit();
+                        }
+                    }
+                }
+            }
+        }
+
         if (level != null && level.isCleared()) {
             currentLevel++;
             if (currentLevel > 3) {
                 gameRunning = false;
-                showGameOver("YOU WIN!");
             } else {
                 initializeLevel(currentLevel);
             }

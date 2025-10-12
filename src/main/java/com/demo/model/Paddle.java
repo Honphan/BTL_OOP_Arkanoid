@@ -22,7 +22,7 @@ public class Paddle extends Movable {
     private void loadImages() {
         try {
             // Load hình ảnh paddle gốc
-            Image originalImage = new Image(getClass().getResource("/com/demo/view/image/paddle/paddle_laser2.png").toExternalForm());
+            Image originalImage = new Image(getClass().getResource("/com/demo/view/image/paddle/paddle.png").toExternalForm());
 
             // Xử lý để loại bỏ background
             paddleImage = Background.remove(originalImage);
