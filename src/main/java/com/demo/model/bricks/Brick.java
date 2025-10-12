@@ -19,18 +19,16 @@ public abstract class Brick extends GameObject {
 
     // Kiểm tra va chạm với bóng
     public boolean checkCollision(Ball ball) {
-        double ballX = ball.getX();
-        double ballY = ball.getY();
-        double radius = ball.getRadius();
+        if (destroyed) return false;
 
-        boolean collision = ballX + radius >= x && ballX - radius <= x + width
-                && ballY + radius >= y && ballY - radius <= y + height;
-
-        if (collision) {
-            takeHit(); // giảm máu hoặc phá hủy gạch
+        // Kiểm tra va chạm bằng thuật toán có sẵn trong Ball
+        if (ball.checkCollision(this)) {
+            // Bóng phản xạ lại
+            ball.bounceOff(this);
+            takeHit();
+            return true;
         }
-
-        return collision;
+        return false;
     }
 
     public abstract void update();

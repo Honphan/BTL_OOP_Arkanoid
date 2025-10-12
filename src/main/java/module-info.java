@@ -7,6 +7,7 @@ module com.demo {
     requires javafx.swing;
 
 
+
     // Mở các package cho JavaFX FXML
     opens com.demo to javafx.fxml;
     opens com.demo.model to javafx.fxml;

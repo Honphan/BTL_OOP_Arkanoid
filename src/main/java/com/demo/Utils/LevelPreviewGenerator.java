@@ -1,6 +1,6 @@
 package com.demo.Utils;
 
-import com.demo.model.Level;
+import com.demo.model.LevelManager;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -9,7 +9,6 @@ import javafx.scene.paint.Color;
 
 import javax.imageio.ImageIO;
 import java.io.File;
-import java.io.IOException;
 
 public class LevelPreviewGenerator {
 
@@ -43,7 +42,7 @@ public class LevelPreviewGenerator {
             double startX = (width - totalWidth) / 2;
             double startY = 40;
 
-            Level level = new Level(levelNumber, startX, startY, totalWidth, totalHeight);
+            LevelManager level = new LevelManager(levelNumber, startX, startY, totalWidth, totalHeight);
             level.render(gc);
 
             // Add level text
