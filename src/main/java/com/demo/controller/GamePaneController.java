@@ -6,9 +6,11 @@ import com.demo.Utils.InputHandle;
 import com.demo.Utils.SoundManager;
 import com.demo.model.Ball;
 import com.demo.model.Paddle;
-import com.demo.model.bricks.Brick;
+import com.demo.model.bricks.*;
+import com.demo.model.powerup.*;
 import com.demo.model.LevelManager;
 import com.demo.model.PowerUpManager;
+import com.demo.model.bricks.PowerUpBrick;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -54,6 +56,7 @@ public class GamePaneController {
     private Paddle paddle;
     private LevelManager level;
     private int currentLevel = 1;
+    private PowerUpManager powerup;
     private AnimationTimer gameLoop;
     private boolean gameRunning = false;
     private boolean paddleInitialized = false;
@@ -77,7 +80,7 @@ public class GamePaneController {
                 gameArea,
                 paddle,
                 this::redrawCanvas,
-                this::initializeLevel,
+                this::initializeLevelandPowerUp,
                 currentLevel
         );
 
@@ -107,7 +110,7 @@ public class GamePaneController {
         CanvasUtil.drawDebugGrid(gc, gameCanvas.getWidth(), gameCanvas.getHeight());
 
         initializePaddle();
-        initializeLevel(currentLevel);
+        initializeLevelandPowerUp(currentLevel);
         initializeBall();
 
         // Update level label
@@ -154,14 +157,12 @@ public class GamePaneController {
         redrawCanvas();
     }
 
-    private void initializeLevel(int levelNumber) {
-        double canvasWidth = gameCanvas.getWidth();
-        double totalWidth = canvasWidth * 0.65;
-        double totalHeight = 200;
-        double startX = (canvasWidth - totalWidth) / 2;
-        double startY = 40;
+    private void initializeLevelandPowerUp(int levelNumber) {
+        double totalWidth = gameCanvas.getWidth();
+        double totalHeight = gameCanvas.getHeight();
 
-        level = new LevelManager(levelNumber, startX, startY, totalWidth, totalHeight);
+        level = new LevelManager(levelNumber, totalWidth, totalHeight);
+        powerup = new PowerUpManager();
 
         // Update level label
         if (levelLabel != null) {
@@ -215,10 +216,20 @@ public class GamePaneController {
                         if (ball.checkCollision(brick)) {
                             ball.bounceOff(brick);
                             brick.takeHit();
+                            if (brick.isDestroyed() && brick instanceof PowerUpBrick powerbrick) {
+                                PowerUp newPU = powerbrick.spawnPowerUp();
+                                if (newPU != null) {
+                                    powerup.addPowerUp(newPU);
+                                }
+                            }
                         }
                     }
                 }
             }
+        }
+
+        if (powerup != null) {
+            powerup.update(gameCanvas.getHeight());
         }
 
         if (level != null && level.isCleared()) {
@@ -226,7 +237,7 @@ public class GamePaneController {
             if (currentLevel > 3) {
                 gameRunning = false;
             } else {
-                initializeLevel(currentLevel);
+                initializeLevelandPowerUp(currentLevel);
             }
         }
     }
@@ -240,6 +251,10 @@ public class GamePaneController {
 
     private void redrawCanvas() {
         CanvasUtil.redrawCanvas(gc, gameCanvas, paddle, level, ball, backgroundImage);
+
+        if (powerup != null) {
+            powerup.render(gc);
+        }
     }
 
     private void updatePaddle() {
@@ -271,7 +286,7 @@ public class GamePaneController {
     public void restartGame() {
         // Reset to starting level
         currentLevel = 1;
-        initializeLevel(currentLevel);
+        initializeLevelandPowerUp(currentLevel);
 
         // Reset paddle position
         double paddleWidth = paddle.getWidth();

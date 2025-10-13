@@ -2,6 +2,7 @@ package com.demo.model;
 
 import com.demo.model.bricks.Brick;
 import com.demo.model.bricks.NormalBrick;
+import com.demo.model.bricks.PowerUpBrick;
 import com.demo.model.bricks.UnbreakableBrick;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -11,20 +12,19 @@ public class LevelManager {
     private int currentLevel;
     private int row;
     private int col;
-    private double brickWidth;
-    private double brickHeight;
-    private double spacing = 5;
+
+    private static final double brickWidth = 60;
+    private static final double brickHeight = 35;
 
     public static final int MAX_LEVEL_BRICK = 3; // số level tối đa
 
     // Layout các level, -1 = unbreakable, 0 = trống, >0 = hit points của gạch
     public static final int[][] LEVEL1 = {
-            { 3,  0,  1,  2,  0,  1,  0,  5,  2,  0},
-            { 1,  4,  0,  1,  3,  0,  1,  2,  0,  3},
-            { 0,  1,  2,  0,  5,  1,  0,  1,  3,  0},
-            { 1,  5,  3,  1,  0,  2,  4,  0,  1,  1},
-            { 2,  1,  1,  3,  0,  1,  0,  4,  2,  0},
-            { 1,  1,  0,  1,  2,  0,  3,  0,  5,  1}
+            { 1,  1,  1,  1, -2, -2, -2, -2, -2, -2, -2, -2},
+            { 1,  0,  0,  1, -2, -2, -2, -2, -2, -2, -2, -2},
+            { 1,  0,  0,  1, -2, -2, -2, -2, -2, -2, -2, -2},
+            { 1,  1,  1,  1, -2, -2, -2, -2, -2, -2, -2, -2},
+            {-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2}
     };
     public static final int[][] LEVEL2 = {
             {0, 2, -1, 1, 3, -1},
@@ -37,15 +37,15 @@ public class LevelManager {
             {0, 2, 1, -1, 3, 0}
     };
 
-    public LevelManager(int currentLevel, double startX, double startY, double totalWidth, double totalHeight) {
+    public LevelManager(int currentLevel,double totalWidth, double totalHeight) {
         this.currentLevel = currentLevel;
 
         int[][] layout = layoutByLevel(currentLevel); // lấy layout theo level
         this.row = layout.length;
         this.col = layout[0].length;
 
-        this.brickWidth = (totalWidth - (col - 1) * spacing) / col;
-        this.brickHeight = (totalHeight - (row - 1) * spacing) / row;
+        double startX = (totalWidth - col * brickWidth) / 2;
+        double startY = 40;
 
         bricks = new Brick[row][col];
         createBricks(layout, startX, startY);
@@ -67,14 +67,17 @@ public class LevelManager {
             for (int c = 0; c < col; c++) {
                 int value = layout[r][c];
 
-                double x = startX + c * (brickWidth + spacing);
-                double y = startY + r * (brickHeight + spacing);
+                double x = startX + c * brickWidth;
+                double y = startY + r * brickHeight;
 
                 if (value != 0) { // nếu không phải ô trống
                     Brick brick;
 
                     if (value == -1) {
                         brick = new UnbreakableBrick(x, y, brickWidth, brickHeight);
+                    } else if (value == -2) {
+                        brick = new PowerUpBrick(x, y, brickWidth, brickHeight);
+
                     } else {
                         brick = new NormalBrick(x, y, brickWidth, brickHeight, value);
                     }
@@ -93,7 +96,7 @@ public class LevelManager {
         if (currentLevel > MAX_LEVEL_BRICK) {
             currentLevel = 1;
         }
-        return new LevelManager(currentLevel, startX, startY, totalWidth, totalHeight);
+        return new LevelManager(currentLevel, totalWidth, totalHeight);
     }
 
     // Render các viên gạch

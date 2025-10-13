@@ -42,7 +42,7 @@ public class LevelPreviewGenerator {
             double startX = (width - totalWidth) / 2;
             double startY = 40;
 
-            LevelManager level = new LevelManager(levelNumber, startX, startY, totalWidth, totalHeight);
+            LevelManager level = new LevelManager(levelNumber, totalWidth, totalHeight);
             level.render(gc);
 
             // Add level text

@@ -10,13 +10,9 @@ import javafx.scene.image.Image;
  */
 public class ExpandPaddlePowerUp extends PowerUp {
 
-    private double expandAmount;
-
     public ExpandPaddlePowerUp(double x, double y, double width, double height, double velocityY) {
         super(x, y, width, height, PowerUpType.EXPAND_PADDLE, 8000, velocityY,
                 new Image(ExpandPaddlePowerUp.class.getResourceAsStream("/com/demo/view/image/powerup/expandpaddle.png")));
-
-        this.expandAmount = 2;
     }
 
     @Override
