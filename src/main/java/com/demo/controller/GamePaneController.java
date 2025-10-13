@@ -282,12 +282,43 @@ public class GamePaneController {
 
     @FXML
     public void startGame() {
+        // Reset game state to beginning
+        score = 0;
+        currentLevel = 1;
+
+        // Update displays
+        updateScoreDisplay();
+        if (levelLabel != null) {
+            levelLabel.setText(String.valueOf(currentLevel));
+        }
+
+        // Reinitialize game components
+        initializeLevelandPowerUp(currentLevel);
+
+        // Reset paddle position
+        if (paddle != null) {
+            double paddleWidth = paddle.getWidth();
+            paddle.setX((gameCanvas.getWidth() - paddleWidth) / 2);
+        }
+
+        // Reset ball position
+        if (ball != null) {
+            ball.reset(gameCanvas.getWidth() / 2 - 10, gameCanvas.getHeight() - 10 - 20);
+        }
+
+        // Reset power-ups
+        if (powerup != null) {
+            powerup = new PowerUpManager();
+        }
+
+        // Start the game
         gameRunning = true;
         if (gameStatusOverlay != null) {
             gameStatusOverlay.setVisible(false);
         }
         inputHandle.requestCanvasFocus();
     }
+
 
     @FXML
     public void pauseGame() {

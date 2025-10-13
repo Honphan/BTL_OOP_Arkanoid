@@ -36,6 +36,10 @@ public class InputHandle {
                     rightKeyPressed = true;
                     event.consume();
                     break;
+                case UP:
+                case DOWN:
+                    event.consume(); // Prevent focus traversal
+                    break;
                 default:
                     break;
             }
@@ -52,6 +56,10 @@ public class InputHandle {
                 case RIGHT:
                     rightKeyPressed = false;
                     event.consume();
+                    break;
+                case UP:
+                case DOWN:
+                    event.consume(); // Prevent focus traversal
                     break;
                 default:
                     break;
