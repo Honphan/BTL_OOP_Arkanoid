@@ -31,6 +31,12 @@ public abstract class Brick extends GameObject {
         return false;
     }
 
+    public int getScoreValue(){
+        return 10;
+    }
+
+//    public abstract int getScoreValue();
+
     public abstract void update();
 
     public abstract void render(GraphicsContext gc);

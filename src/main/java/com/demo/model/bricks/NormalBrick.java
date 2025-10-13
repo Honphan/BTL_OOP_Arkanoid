@@ -45,6 +45,11 @@ public class NormalBrick extends Brick {
         // NormalBrick không có hành vi đặc biệt, chỉ cần check destroyed trong game loop
     }
 
+
+    public int getScoreValue() {
+        return 10; // Basic brick worth 10 points
+    }
+
     @Override
     public void render(GraphicsContext gc) {
         if (isDestroyed()) return;

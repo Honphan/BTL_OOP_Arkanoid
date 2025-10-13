@@ -57,6 +57,7 @@ public class GamePaneController {
     private LevelManager level;
     private int currentLevel = 1;
     private PowerUpManager powerup;
+    private int score = 0;
     private AnimationTimer gameLoop;
     private boolean gameRunning = false;
     private boolean paddleInitialized = false;
@@ -221,6 +222,7 @@ public class GamePaneController {
                                 if (newPU != null) {
                                     powerup.addPowerUp(newPU);
                                 }
+                                addScore(brick.getScoreValue());
                             }
                         }
                     }
@@ -239,6 +241,17 @@ public class GamePaneController {
             } else {
                 initializeLevelandPowerUp(currentLevel);
             }
+        }
+    }
+
+    private void addScore(int points) {
+        score += points;
+        updateScoreDisplay();
+    }
+
+    private void updateScoreDisplay() {
+        if (scoreLabel != null) {
+            scoreLabel.setText(String.valueOf(score));
         }
     }
 
@@ -285,6 +298,7 @@ public class GamePaneController {
     @FXML
     public void restartGame() {
         // Reset to starting level
+        score = 0;
         currentLevel = 1;
         initializeLevelandPowerUp(currentLevel);
 
