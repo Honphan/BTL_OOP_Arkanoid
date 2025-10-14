@@ -68,6 +68,9 @@ public class GamePaneController {
     @FXML
     private void initialize() {
         gc = gameCanvas.getGraphicsContext2D();
+        System.out.println(gameArea.getWidth());
+        System.out.println(gameArea.getHeight());
+
         gameRunning = true;
 
         soundManager = SoundManager.getInstance();
@@ -84,6 +87,39 @@ public class GamePaneController {
                 this::initializeLevelandPowerUp,
                 currentLevel
         );
+
+        gameCanvas.widthProperty().addListener((obs, oldVal, newVal) -> {
+            if (paddle != null) {
+                double width = newVal.doubleValue();
+                System.out.println(width);
+                // If oldVal is 0, center the paddle
+                if (oldVal.doubleValue() <= 0) {
+                    paddle.setX((width - paddle.getWidth()) / 2);
+                } else {
+                    // Keep paddle at relative position during resize
+                    double relativePos = paddle.getX() / oldVal.doubleValue();
+                    paddle.setX(relativePos * width);
+                }
+
+                // Redraw canvas when size changes
+                redrawCanvas();
+            }
+
+        });
+
+        gameCanvas.heightProperty().addListener((obs, oldVal, newVal) -> {
+            if (paddle != null) {
+                double height = newVal.doubleValue();
+                paddle.setY(height - paddle.getHeight() - 20);
+
+                // Redraw canvas when size changes
+                redrawCanvas();
+            }
+        });
+
+        System.out.println("After bindCanvasize");
+        System.out.println(gc.getCanvas().getWidth());
+        System.out.println(gc.getCanvas().getHeight());
 
         // Setup input handling
         inputHandle = new InputHandle(this, gameCanvas);
@@ -107,6 +143,8 @@ public class GamePaneController {
 
     private void delayedInitialize() {
         System.out.println("Canvas size after runLater: " + gameCanvas.getWidth() + "x" + gameCanvas.getHeight());
+        System.out.println("Game area size after runLater: " + gameArea.getWidth() + "x" + gameArea.getHeight());
+
 
         CanvasUtil.drawDebugGrid(gc, gameCanvas.getWidth(), gameCanvas.getHeight());
 
@@ -138,8 +176,8 @@ public class GamePaneController {
         double paddleHeight = 20;
         double paddleSpeed = 15;
 
-        double canvasWidth = gameCanvas.getWidth();
-        double canvasHeight = gameCanvas.getHeight();
+        double canvasWidth = gameArea.getWidth();
+        double canvasHeight = gameArea.getHeight();
 
         System.out.println("Initializing paddle with canvas size: " + canvasWidth + "x" + canvasHeight);
 
@@ -150,7 +188,7 @@ public class GamePaneController {
         }
 
         double paddleX = (canvasWidth - paddleWidth) / 2;
-        double paddleY = canvasHeight - paddleHeight - 20;
+        double paddleY = canvasHeight * 0.9;
 
         paddle = new Paddle(paddleX, paddleY, paddleWidth, paddleHeight, paddleSpeed);
         paddleInitialized = true;
@@ -285,7 +323,8 @@ public class GamePaneController {
         // Reset game state to beginning
         score = 0;
         currentLevel = 1;
-
+        System.out.println("Canvas size after startGame : " + gameCanvas.getWidth() + "x" + gameCanvas.getHeight());
+        System.out.println("Game area size after startGame: " + gameArea.getWidth() + "x" + gameArea.getHeight());
         // Update displays
         updateScoreDisplay();
         if (levelLabel != null) {

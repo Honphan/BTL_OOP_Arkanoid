@@ -55,9 +55,10 @@ public class CanvasUtil {
 
         // Width change listener
         gameCanvas.widthProperty().addListener((obs, oldVal, newVal) -> {
+            System.out.println(paddle);
             if (paddle != null) {
                 double width = newVal.doubleValue();
-
+                System.out.println(width);
                 // If oldVal is 0, center the paddle
                 if (oldVal.doubleValue() <= 0) {
                     paddle.setX((width - paddle.getWidth()) / 2);
