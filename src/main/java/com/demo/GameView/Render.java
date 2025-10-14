@@ -43,22 +43,24 @@ public class Render {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/demo/view/fxml/gamePane.fxml"));
         Parent root = loader.load();
 
-        // Get the controller and set the selected level
+        // Lấy controller và set level
         com.demo.controller.GamePaneController controller = loader.getController();
         controller.setStartingLevel(levelNumber);
 
-
-        double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
-        double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
-
-
-        Scene scene = new Scene(root);
+        // Lấy stage hiện tại
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+        // Lấy kích thước hiện tại của cửa sổ
+        double windowWidth = stage.getWidth();
+        double windowHeight = stage.getHeight();
+
+        // Tạo Scene mới có cùng kích thước
+        Scene scene = new Scene(root, windowWidth, windowHeight);
+
+        // Gán scene mới vào stage
         stage.setScene(scene);
-        stage.setMaximized(true); // Full screen
         stage.show();
     }
-
     public int getSelectedLevel() {
         return selectedLevel;
     }
