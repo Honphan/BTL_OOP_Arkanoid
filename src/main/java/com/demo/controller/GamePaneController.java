@@ -1,5 +1,6 @@
 package com.demo.controller;
 
+import com.demo.GameView.Render;
 import com.demo.Utils.Background;
 import com.demo.Utils.CanvasUtil;
 import com.demo.Utils.InputHandle;
@@ -11,6 +12,7 @@ import com.demo.model.powerup.*;
 import com.demo.model.LevelManager;
 import com.demo.model.PowerUpManager;
 import com.demo.model.bricks.PowerUpBrick;
+import com.demo.model.score.ScoreManager;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -32,6 +34,10 @@ public class GamePaneController {
 
     @FXML
     private Label levelLabel;
+
+    @FXML
+    private Label highScoreLabel;
+
 
     @FXML
     private HBox livesContainer;
@@ -64,9 +70,12 @@ public class GamePaneController {
     private Image backgroundImage;
     private SoundManager soundManager;
     private InputHandle inputHandle;
+    private ScoreManager scoreManager;
+
 
     @FXML
     private void initialize() {
+        this.currentLevel = Render.getCurrentLevel();
         gc = gameCanvas.getGraphicsContext2D();
         System.out.println(gameArea.getWidth());
         System.out.println(gameArea.getHeight());
@@ -75,8 +84,17 @@ public class GamePaneController {
 
         soundManager = SoundManager.getInstance();
 
+        // Khởi tạo ScoreManager
+        scoreManager = ScoreManager.getInstance();
+
+        // Hiển thị điểm cao ban đầu
+        updateHighScoreDisplay();
+
+
         // Load background image
         backgroundImage = Background.loadBackgroundImage();
+
+        System.out.println(currentLevel);
 
         // Bind canvas size
         CanvasUtil.bindCanvasSize(
@@ -131,31 +149,17 @@ public class GamePaneController {
         Platform.runLater(this::delayedInitialize);
     }
 
-    /**
-     * Set the starting level (called from Render)
-     */
-    public void setStartingLevel(int levelNumber) {
-        this.currentLevel = levelNumber;
-        if (levelLabel != null) {
-            levelLabel.setText(String.valueOf(levelNumber));
-        }
-    }
 
     private void delayedInitialize() {
         System.out.println("Canvas size after runLater: " + gameCanvas.getWidth() + "x" + gameCanvas.getHeight());
         System.out.println("Game area size after runLater: " + gameArea.getWidth() + "x" + gameArea.getHeight());
 
-
         CanvasUtil.drawDebugGrid(gc, gameCanvas.getWidth(), gameCanvas.getHeight());
-
         initializePaddle();
         initializeLevelandPowerUp(currentLevel);
         initializeBall();
-
-        // Update level label
-        if (levelLabel != null) {
-            levelLabel.setText(String.valueOf(currentLevel));
-        }
+        updateScoreDisplay();
+        updateLevelDisplay();
 
         gameLoop.start();
         gameCanvas.requestFocus();
@@ -192,21 +196,17 @@ public class GamePaneController {
 
         paddle = new Paddle(paddleX, paddleY, paddleWidth, paddleHeight, paddleSpeed);
         paddleInitialized = true;
-
         redrawCanvas();
     }
 
     private void initializeLevelandPowerUp(int levelNumber) {
+        System.out.println("Initializing level " + levelNumber);
         double totalWidth = gameCanvas.getWidth();
         double totalHeight = gameCanvas.getHeight();
 
         level = new LevelManager(levelNumber, totalWidth, totalHeight);
         powerup = new PowerUpManager();
 
-        // Update level label
-        if (levelLabel != null) {
-            levelLabel.setText(String.valueOf(levelNumber));
-        }
     }
 
     private void setupGameLoop() {
@@ -329,26 +329,75 @@ public class GamePaneController {
         }
 
         if (level != null && level.isCleared()) {
+            // Lưu điểm cao của level hiện tại trước khi chuyển level
+            scoreManager.updateHighScore(currentLevel, score);
+
             currentLevel++;
             if (currentLevel > 3) {
                 gameRunning = false;
+                showGameOver("Bạn đã hoàn thành tất cả các level!");
             } else {
                 initializeLevelandPowerUp(currentLevel);
+                // Cập nhật hiển thị điểm cao cho level mới
+                updateHighScoreDisplay();
             }
         }
+
     }
 
 
     private void addScore(int points) {
         score += points;
         updateScoreDisplay();
+
+        // Kiểm tra và cập nhật điểm cao nếu cần
+        boolean isNewHighScore = scoreManager.updateHighScore(currentLevel, score);
+        if (isNewHighScore) {
+            updateHighScoreDisplay();
+//            // Có thể thêm hiệu ứng đặc biệt khi đạt điểm cao mới
+//            showNewHighScoreAnimation();
+        }
     }
+
+    // Phương thức hiển thị hiệu ứng đạt điểm cao mới
+    private void showNewHighScoreAnimation() {
+        // Hiệu ứng khi đạt điểm cao mới, ví dụ:
+        // - Làm sáng label điểm cao
+        // - Phát âm thanh đặc biệt
+        highScoreLabel.setStyle("-fx-text-fill: gold;");
+
+        // Sau 2 giây, trở về bình thường
+        new Thread(() -> {
+            try {
+                Thread.sleep(2000);
+                Platform.runLater(() -> highScoreLabel.setStyle("-fx-text-fill: white;"));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
 
     private void updateScoreDisplay() {
         if (scoreLabel != null) {
             scoreLabel.setText(String.valueOf(score));
         }
     }
+
+    private void updateLevelDisplay() {
+        if (levelLabel != null) {
+            levelLabel.setText(String.valueOf(currentLevel));
+            System.out.println("Updating level label to: " + levelLabel.getText());
+        }
+    }
+
+    private void updateHighScoreDisplay() {
+        if (highScoreLabel != null) {
+            int highScore = scoreManager.getHighScore(currentLevel);
+            highScoreLabel.setText(String.valueOf(highScore));
+        }
+    }
+
 
     private void showGameOver(String message) {
         if (gameStatusLabel != null && gameStatusOverlay != null) {
@@ -432,7 +481,7 @@ public class GamePaneController {
     }
 
 
-    @FXML
+  @FXML
     public void startGame() {
         currentLevel = 1;
         System.out.println("Canvas size after startGame : " + gameCanvas.getWidth() + "x" + gameCanvas.getHeight());
@@ -469,6 +518,7 @@ public class GamePaneController {
     }
 
 
+
     @FXML
     public void pauseGame() {
         gameRunning = false;
@@ -481,6 +531,11 @@ public class GamePaneController {
         score = 0;
         currentLevel = 1;
         initializeLevelandPowerUp(currentLevel);
+
+        // Update displays
+        updateScoreDisplay();
+        updateLevelDisplay();
+        updateHighScoreDisplay();
 
         // Reset paddle position
         double paddleWidth = paddle.getWidth();
