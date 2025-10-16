@@ -1,5 +1,6 @@
 package com.demo.GameView;
 
+import com.demo.controller.GamePaneController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -14,6 +15,7 @@ import java.util.Objects;
 public class Render {
     private static Render instance;
     private int selectedLevel = 1;
+    private static int currentLevel = 1;
 
     private Render() {}
 
@@ -38,14 +40,13 @@ public class Render {
     }
 
     public void loadGame(ActionEvent event, int levelNumber) throws IOException {
-        this.selectedLevel = levelNumber;
+        Render.currentLevel = levelNumber;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/demo/view/fxml/gamePane.fxml"));
         Parent root = loader.load();
 
         // Lấy controller và set level
-        com.demo.controller.GamePaneController controller = loader.getController();
-        controller.setStartingLevel(levelNumber);
+        GamePaneController controller = loader.getController();
 
         // Lấy stage hiện tại
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -63,5 +64,8 @@ public class Render {
     }
     public int getSelectedLevel() {
         return selectedLevel;
+    }
+    public static int getCurrentLevel() {
+        return currentLevel;
     }
 }

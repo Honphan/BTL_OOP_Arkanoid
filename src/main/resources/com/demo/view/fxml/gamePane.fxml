@@ -40,12 +40,12 @@
 
                 <!-- Credits Section -->
                 <VBox alignment="CENTER" styleClass="panel-section">
-                    <Label prefHeight="36.0" prefWidth="117.0" styleClass="panel-header" text="CREDITS">
+                    <Label prefHeight="36.0" prefWidth="117.0" styleClass="panel-header" text="HIGHSCORE">
                         <VBox.margin>
                             <Insets bottom="20.0" top="50.0"/>
                         </VBox.margin>
                     </Label>
-                    <Label fx:id="creditsLabel" styleClass="panel-value" text="2656123"/>
+                    <Label fx:id="highScoreLabel" styleClass="panel-value" text="0"/>
                 </VBox>
 
                 <!-- Left Stats -->
@@ -120,30 +120,14 @@
                 <Insets bottom="15.0" left="20.0" right="20.0" top="15.0"/>
             </padding>
 
-            <!-- Left Control Group -->
-            <HBox spacing="10.0">
-                <VBox alignment="CENTER" styleClass="control-group">
-                    <Button fx:id="betButton" styleClass="control-button" text="BET"/>
-                    <Label fx:id="betValueLabel" styleClass="control-value" text="456125"/>
-                </VBox>
-
-                <VBox alignment="CENTER" styleClass="control-group">
-                    <Button fx:id="winButton" styleClass="control-button" text="WIN"/>
-                    <Label fx:id="winValueLabel" styleClass="control-value" text="345466125"/>
-                </VBox>
-
-                <Button fx:id="maxBetButton" onAction="#maxBet" styleClass="control-button" text="MAXBET"/>
-            </HBox>
-
             <!-- Spacer -->
             <Region HBox.hgrow="ALWAYS"/>
 
             <!-- Right Control Group -->
             <HBox spacing="10.0">
-                <Button fx:id="startButton" onAction="#startGame" prefHeight="17.0" prefWidth="163.0"
-                        styleClass="start-button" text="START"/>
+                <Button fx:id="startButton" onAction="#ReStartGame" prefHeight="17.0" prefWidth="163.0"
+                        styleClass="start-button" text="RESTART"/>
                 <Button fx:id="pauseButton" onAction="#pauseGame" styleClass="control-button" text="PAUSE"/>
-                <Button fx:id="payTableButton" onAction="#showPayTable" styleClass="paytable-button" text="PAYTABLE"/>
             </HBox>
         </HBox>
     </bottom>
