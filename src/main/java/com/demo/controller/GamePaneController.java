@@ -232,6 +232,56 @@ public class GamePaneController {
         return gameRunning;
     }
 
+//    private void updateGame() {
+//        updatePaddle();
+//        paddle.update(gameCanvas.getWidth());
+//
+//        ball.update();
+//        ball.bounceOffWall(gameCanvas.getWidth(), gameCanvas.getHeight());
+//
+//        if (ball.checkCollision(paddle)) {
+//            ball.bounceOffPaddle(paddle);
+//        }
+//
+//        if (level != null) {
+//            Brick[][] bricks = level.getBricks(); // lấy mảng 2 chiều gạch
+//            int rows = level.getRows();
+//            int cols = level.getCols();
+//
+//            for (int r = 0; r < rows; r++) {
+//                for (int c = 0; c < cols; c++) {
+//                    Brick brick = bricks[r][c];
+//                    if (brick != null && !brick.isDestroyed()) {
+//                        if (ball.checkCollision(brick)) {
+//                            ball.bounceOff(brick);
+//                            brick.takeHit();
+//                            if (brick.isDestroyed() && brick instanceof PowerUpBrick powerbrick) {
+//                                PowerUp newPU = powerbrick.spawnPowerUp();
+//                                if (newPU != null) {
+//                                    powerup.addPowerUp(newPU);
+//                                }
+//                                addScore(brick.getScoreValue());
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        if (powerup != null) {
+//            powerup.update(gameCanvas.getHeight());
+//        }
+//
+//        if (level != null && level.isCleared()) {
+//            currentLevel++;
+//            if (currentLevel > 3) {
+//                gameRunning = false;
+//            } else {
+//                initializeLevelandPowerUp(currentLevel);
+//            }
+//        }
+//    }
+
     private void updateGame() {
         updatePaddle();
         paddle.update(gameCanvas.getWidth());
@@ -244,7 +294,7 @@ public class GamePaneController {
         }
 
         if (level != null) {
-            Brick[][] bricks = level.getBricks(); // lấy mảng 2 chiều gạch
+            Brick[][] bricks = level.getBricks();
             int rows = level.getRows();
             int cols = level.getCols();
 
@@ -255,12 +305,16 @@ public class GamePaneController {
                         if (ball.checkCollision(brick)) {
                             ball.bounceOff(brick);
                             brick.takeHit();
-                            if (brick.isDestroyed() && brick instanceof PowerUpBrick powerbrick) {
-                                PowerUp newPU = powerbrick.spawnPowerUp();
-                                if (newPU != null) {
-                                    powerup.addPowerUp(newPU);
-                                }
+                            if (brick.isDestroyed()) {
                                 addScore(brick.getScoreValue());
+
+                                // Spawn power-up nếu là PowerUpBrick
+                                if (brick instanceof PowerUpBrick powerbrick) {
+                                    PowerUp newPU = powerbrick.spawnPowerUp();
+                                    if (newPU != null) {
+                                        powerup.addPowerUp(newPU);
+                                    }
+                                }
                             }
                         }
                     }
@@ -268,8 +322,10 @@ public class GamePaneController {
             }
         }
 
+        // CẬP NHẬT VÀ KIỂM TRA VA CHẠM POWER-UP
         if (powerup != null) {
             powerup.update(gameCanvas.getHeight());
+            checkPowerUpCollision();  // ← THÊM DÒNG NÀY
         }
 
         if (level != null && level.isCleared()) {
@@ -288,6 +344,7 @@ public class GamePaneController {
         }
 
     }
+
 
     private void addScore(int points) {
         score += points;
@@ -358,6 +415,9 @@ public class GamePaneController {
     }
 
     private void updatePaddle() {
+        if (paddle.getCurrentPowerUp() != null && System.currentTimeMillis() >= paddle.getPowerUpEndTime()) {
+            paddle.removePowerUp();
+        }
         if (inputHandle.isLeftKeyPressed() && !inputHandle.isRightKeyPressed()) {
             paddle.moveLeft();
         } else if (inputHandle.isRightKeyPressed() && !inputHandle.isLeftKeyPressed()) {
@@ -367,22 +427,74 @@ public class GamePaneController {
         }
     }
 
-    @FXML
-    public void ReStartGame() {
-        // Reset game state to beginning
-        score = 0;
+    private void checkPowerUpCollision() {
+        if (powerup == null || paddle == null) return;
+
+        java.util.List<PowerUp> powerUpList = powerup.getPowerUps();
+        java.util.Iterator<PowerUp> iterator = powerUpList.iterator();
+
+        while (iterator.hasNext()) {
+            PowerUp pu = iterator.next();
+
+            if (!pu.isActive()) {
+                iterator.remove();
+                continue;
+            }
+
+            // Kiểm tra va chạm: power-up chạm paddle
+            if (checkCollision(pu, paddle)) {
+                // Áp dụng hiệu ứng power-up lên paddle
+                paddle.applyPowerUp(pu);
+
+                // Vô hiệu hóa power-up
+                pu.setActive(false);
+                iterator.remove();
+
+                System.out.println("✨ Power-up collected: " + pu.getType());
+            }
+
+            // Xóa power-up nếu rơi ra ngoài màn hình
+            if (pu.getY() > gameCanvas.getHeight()) {
+                pu.setActive(false);
+                iterator.remove();
+            }
+        }
+    }
+
+    // Thêm method helper để kiểm tra va chạm:
+    private boolean checkCollision(PowerUp powerUp, Paddle paddle) {
+        double puX = powerUp.getX();
+        double puY = powerUp.getY();
+        double puWidth = powerUp.getWidth();
+        double puHeight = powerUp.getHeight();
+
+        double pX = paddle.getX();
+        double pY = paddle.getY();
+        double pWidth = paddle.getWidth();
+        double pHeight = paddle.getHeight();
+
+        // Kiểm tra hình chữ nhật có giao nhau không
+        return puX < pX + pWidth &&
+                puX + puWidth > pX &&
+                puY < pY + pHeight &&
+                puY + puHeight > pY;
+    }
+
+
+  @FXML
+    public void startGame() {
+        currentLevel = 1;
         System.out.println("Canvas size after startGame : " + gameCanvas.getWidth() + "x" + gameCanvas.getHeight());
-        System.out.println("Game area size after startGame: " + gameArea.getWidth() + "x" + gameArea.getHeight());
+        System.out.println("Game area size after startGame: "                                      + gameArea.getWidth() + "x" + gameArea.getHeight());
         // Update displays
         updateScoreDisplay();
-        updateLevelDisplay();
-        updateHighScoreDisplay();
+        if (levelLabel != null) {
+            levelLabel.setText(String.valueOf(currentLevel));
+        }
 
         // Reinitialize game components
         initializeLevelandPowerUp(currentLevel);
-
-        // Reset paddle position
-        if (paddle != null) {
+            if (paddle != null) {
             double paddleWidth = paddle.getWidth();
             paddle.setX((gameCanvas.getWidth() - paddleWidth) / 2);
         }
@@ -404,6 +516,7 @@ public class GamePaneController {
         }
         inputHandle.requestCanvasFocus();
     }
+
 
 
     @FXML
