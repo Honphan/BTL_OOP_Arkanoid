@@ -17,8 +17,19 @@ public class ExpandPaddlePowerUp extends PowerUp {
 
     @Override
     public void applyPowerUp(Movable target) {
+        if (target instanceof Paddle) {
+            Paddle paddle = (Paddle) target;
+            // x2 paddle
+            paddle.expandPaddle(2);
+        }
     }
 
     @Override
-    public void removePowerUp(Movable target) {}
+    public void removePowerUp(Movable target) {
+        if (target instanceof Paddle) {
+            Paddle paddle = (Paddle) target;
+            // Reset về kích thước gốc
+            paddle.resetPaddleSize();
+        }
+    }
 }

@@ -11,6 +11,8 @@ public class Paddle extends Movable {
     private PowerUp currentPowerUp;
     private Image paddleImage;
     private Image paddlePowerUpImage; // Hình ảnh khi có power-up
+    private double originalWidth = width;
+    private long powerUpEndTime = 0;
 
     public Paddle(double x, double y, double width, double height, double speed) {
         super(0, 0, x, y, width, height);
@@ -109,5 +111,45 @@ public class Paddle extends Movable {
     @Override
     public void move() {
         // Implementation rỗng
+    }
+
+    // Method để áp dụng power-up
+    public void applyPowerUp(PowerUp powerUp) {
+        // Nếu đang có power-up khác, xóa nó trước
+        if (currentPowerUp != null) {
+            removePowerUp();
+        }
+
+        currentPowerUp = powerUp;
+        powerUp.applyPowerUp(this);
+
+        // Set thời gian kết thúc
+        powerUpEndTime = System.currentTimeMillis() + powerUp.getDuration();
+    }
+
+    // Method để xóa power-up
+    public void removePowerUp() {
+        if (currentPowerUp != null) {
+            currentPowerUp.removePowerUp(this);
+            currentPowerUp = null;
+            powerUpEndTime = 0;
+        }
+    }
+
+    // Method để mở rộng paddle
+    public void expandPaddle(double multiplier) {
+        this.width = originalWidth * multiplier;
+    }
+    // Method để reset về kích thước gốc
+    public void resetPaddleSize() {
+        this.width = originalWidth;
+    }
+
+    public double getOriginalWidth() {
+        return originalWidth;
+    }
+
+    public long getPowerUpEndTime() {
+        return powerUpEndTime;
     }
 }
