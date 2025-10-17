@@ -79,11 +79,15 @@ public class GamePaneController {
     private SoundManager soundManager;
     private InputHandle inputHandle;
     private ScoreManager scoreManager;
+    private int lives = 3; // Số mạng ban đầu
+
 
 
     @FXML
     private void initialize() {
         this.currentLevel = Render.getCurrentLevel();
+        lives = 3;
+        updateLivesDisplay();
         gc = gameCanvas.getGraphicsContext2D();
         System.out.println(gameArea.getWidth());
         System.out.println(gameArea.getHeight());
@@ -296,6 +300,16 @@ public class GamePaneController {
 
         ball.update();
         ball.bounceOffWall(gameCanvas.getWidth(), gameCanvas.getHeight());
+        // Kiểm tra bóng rơi xuống dưới
+        if (ball.isOutOfBounds(gameCanvas.getHeight())) {
+            // Giảm mạng
+            loseLife();
+            // Reset vị trí bóng về giữa
+            double radius = 10;
+            double startX = (gameCanvas.getWidth() / 2) - radius;
+            double startY = gameCanvas.getHeight() - 2 * radius - 20;
+            ball.reset(startX, startY);
+        }
 
         if (ball.checkCollision(paddle)) {
             ball.bounceOffPaddle(paddle);
@@ -352,6 +366,35 @@ public class GamePaneController {
         }
 
     }
+    private void loseLife() {
+        lives--;
+        updateLivesDisplay(); // Cập nhật hiển thị số mạng
+
+        // Phát âm thanh khi mất mạng (nếu có)
+        if (soundManager != null) {
+            soundManager.playSound("loseLife");
+        }
+
+        // Nếu hết mạng thì kết thúc trò chơi
+        if (lives <= 0) {
+            gameRunning = false;
+            showGameOver("GAME OVER");
+        }
+    }
+
+    private void updateLivesDisplay() {
+        // Xóa tất cả hiển thị mạng hiện tại
+        livesContainer.getChildren().clear();
+
+        // Thêm lại số mạng còn lại
+        for (int i = 0; i < lives; i++) {
+            Label heartLabel = new Label("♥");
+            heartLabel.getStyleClass().add("heart");
+            livesContainer.getChildren().add(heartLabel);
+        }
+    }
+
+
 
 
     private void addScore(int points) {
@@ -525,12 +568,20 @@ public class GamePaneController {
         inputHandle.requestCanvasFocus();
     }
 
-
-
     @FXML
     public void pauseGame() {
-        gameRunning = false;
+        if (gameRunning) {
+            // Nếu game đang chạy, dừng lại và đổi nút thành "Continue"
+            gameRunning = false;
+            pauseButton.setText("CONTINUE");
+        } else {
+            // Nếu game đang dừng, tiếp tục chạy và đổi nút thành "Pause"
+            gameRunning = true;
+            pauseButton.setText("PAUSE");
+        }
+
         inputHandle.requestCanvasFocus();
+
     }
 
     @FXML
@@ -538,12 +589,15 @@ public class GamePaneController {
         // Reset to starting level
         score = 0;
         currentLevel = 1;
+        lives = 3;
+        updateLivesDisplay();
         initializeLevelandPowerUp(currentLevel);
 
         // Update displays
         updateScoreDisplay();
         updateLevelDisplay();
         updateHighScoreDisplay();
+        updateLevelDisplay();
 
         // Reset paddle position
         double paddleWidth = paddle.getWidth();
@@ -558,6 +612,7 @@ public class GamePaneController {
         }
         inputHandle.requestCanvasFocus();
     }
+
 
     @FXML
     public void returnGame(ActionEvent event) throws IOException {
@@ -597,13 +652,4 @@ public class GamePaneController {
         inputHandle.requestCanvasFocus();
     }
 
-    @FXML
-    public void maxBet() {
-        inputHandle.requestCanvasFocus();
-    }
-
-    @FXML
-    public void showPayTable() {
-        inputHandle.requestCanvasFocus();
-    }
 }
