@@ -30,8 +30,6 @@ public class Render {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/demo/view/fxml/menu.fxml"));
         Scene scene = new Scene(loader.load());
 
-        double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
-        double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
 
         stage.setScene(scene);
         stage.setTitle("Arkanoid Game");

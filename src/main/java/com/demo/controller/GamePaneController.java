@@ -15,7 +15,12 @@ import com.demo.model.bricks.PowerUpBrick;
 import com.demo.model.score.ScoreManager;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -24,6 +29,9 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class GamePaneController {
     @FXML
@@ -548,6 +556,44 @@ public class GamePaneController {
         if (gameStatusOverlay != null) {
             gameStatusOverlay.setVisible(false);
         }
+        inputHandle.requestCanvasFocus();
+    }
+
+    @FXML
+    public void returnGame(ActionEvent event) throws IOException {
+        // Stop game loop
+        if (gameLoop != null) {
+            gameLoop.stop();
+        }
+
+        // Save high score before returning
+        if (scoreManager != null) {
+            scoreManager.updateHighScore(currentLevel, score);
+        }
+
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+        // Get current window size
+        double windowWidth = stage.getWidth();
+        double windowHeight = stage.getHeight();
+
+        // Load the menu view
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/demo/view/fxml/menu.fxml"));
+        Parent root = loader.load();
+
+        // Create a scene with the same dimensions
+        Scene scene = new Scene(root, windowWidth, windowHeight);
+
+        // Play menu background music
+        if (soundManager != null) {
+            soundManager.stopBackgroundMusic();
+            soundManager.playBackgroundMusic("/com/demo/view/sound/barkanoid_background.mp3");
+        }
+
+        // Set the scene and show
+        stage.setScene(scene);
+        stage.show();
+
         inputHandle.requestCanvasFocus();
     }
 

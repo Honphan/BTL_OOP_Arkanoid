@@ -222,26 +222,33 @@
     -fx-scale-y: 1.05;
 }
 
-.paytable-button {
-    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #00ffaa, #00cc80);
+
+/* Thêm CSS cho exit button vào cuối file */
+.return-button {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #ff0000, #cc0000);
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-font-size: 14px;
     -fx-padding: 10px 20px;
     -fx-background-radius: 25px;
-    -fx-border-color: #00ff80;
+    -fx-border-color: #ff0000;
     -fx-border-width: 2px;
     -fx-border-radius: 25px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 255, 128, 0.5), 10, 0.3, 0, 0);
+    -fx-effect: dropshadow(gaussian, rgba(255, 0, 0, 0.6), 10, 0.3, 0, 0);
     -fx-cursor: hand;
-    -fx-min-width: 100px;
+    -fx-min-width: 80px;
 }
 
-.paytable-button:hover {
-    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #00ffaa, #00cc80);
-    -fx-effect: dropshadow(gaussian, rgba(0, 255, 128, 0.7), 15, 0.4, 0, 0);
+.return-button:hover {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #ff3333, #ff0000);
+    -fx-effect: dropshadow(gaussian, rgba(255, 0, 0, 0.8), 15, 0.4, 0, 0);
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
+}
+
+.return-button:pressed {
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
 }
 
 .control-value {
