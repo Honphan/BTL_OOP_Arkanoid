@@ -1,10 +1,7 @@
-package com.demo.model.bricks;
+package com.demo.model.brick;
 
-import com.demo.model.Ball;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 
 // Gạch bình thường: giảm máu khi trúng bóng, có thể bị phá hủy
 public class NormalBrick extends Brick {
@@ -47,13 +44,13 @@ public class NormalBrick extends Brick {
 
 
     public int getScoreValue() {
-        return 10; // Basic brick worth 10 points
+        return 10; // NormalBrick mang 10 điểm
     }
 
     @Override
     public void render(GraphicsContext gc) {
         if (isDestroyed()) return;
-
+        // Gán hình ảnh cho các case hitPoints
         Image img = switch (getHitPoints()) {
             case 5 -> imagebricks[5];
             case 4 -> imagebricks[4];

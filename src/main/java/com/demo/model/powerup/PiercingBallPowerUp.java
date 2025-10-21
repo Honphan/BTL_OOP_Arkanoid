@@ -11,7 +11,7 @@ import java.util.List;
 public class PiercingBallPowerUp extends PowerUp {
 
     public PiercingBallPowerUp(double x, double y, double width, double height, double velocityY) {
-        super(x, y, width, height, PowerUpType.PIERCING_BALL, 5000, velocityY,
+        super(x, y, width, height, PowerUpType.PIERCING_BALL, getDefaultDuration(), velocityY,
                 new Image(PiercingBallPowerUp.class.getResourceAsStream("/com/demo/view/image/powerup/piercingball.png")));
     }
 

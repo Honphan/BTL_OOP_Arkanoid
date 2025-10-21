@@ -1,13 +1,13 @@
 package com.demo.model;
 
-import com.demo.Utils.SoundManager;
+import com.demo.util.SoundManager;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Ball extends Movable {
     private double speed;
-    private int directionX; // -1 = trái, +1 = phải
-    private int directionY; // -1 = lên, +1 = xuống
+    private double directionX; // -1 = trái, +1 = phải
+    private double directionY; // -1 = lên, +1 = xuống
     private int radius;
     private SoundManager soundManager;
 
@@ -16,15 +16,21 @@ public class Ball extends Movable {
         super(0, 0, x, y, 20, 20);
         this.radius = 10;
         this.speed = speed;
-        this.directionX = 1;   // mặc định đi sang phải
+        this.directionX = 0.7;
         this.directionY = -1;
         this.soundManager = SoundManager.getInstance();
         updateVelocity();
     }
 
     private void updateVelocity() {
-        this.dx = directionX * speed;
-        this.dy = directionY * speed;
+        double mag = Math.sqrt(directionX * directionX + directionY * directionY);
+        if (mag > 0) {
+            this.dx = (directionX / mag) * speed;
+            this.dy = (directionY / mag) * speed;
+        } else {
+            this.dx = 0;
+            this.dy = 0;
+        }
     }
 
     @Override
@@ -45,8 +51,6 @@ public class Ball extends Movable {
         gc.setLineWidth(2);
         gc.strokeOval(x, y, 2 * radius, 2 * radius);
     }
-
-    // ==================== KIỂM TRA VA CHẠM ====================
 
     /**
      * Kiểm tra va chạm với GameObject (hình chữ nhật)
@@ -92,8 +96,6 @@ public class Ball extends Movable {
         return distance <= (this.radius + other.radius);
     }
 
-    // ==================== XỬ LÝ BẬT BÓNG ====================
-
     /**
      * Bật bóng theo chiều ngang (trái/phải)
      */
@@ -118,94 +120,63 @@ public class Ball extends Movable {
         double ballCenterY = this.y + radius;
 
         // Tìm điểm gần nhất trên hình chữ nhật
-        double closestX = ballCenterX;
-        if (ballCenterX < other.getX()) {
-            closestX = other.getX();
-        } else if (ballCenterX > other.getX() + other.getWidth()) {
-            closestX = other.getX() + other.getWidth();
-        }
+        double closestX = Math.max(other.getX(), Math.min(ballCenterX, other.getX() + other.getWidth()));
+        double closestY = Math.max(other.getY(), Math.min(ballCenterY, other.getY() + other.getHeight()));
 
-        double closestY = ballCenterY;
-        if (ballCenterY < other.getY()) {
-            closestY = other.getY();
-        } else if (ballCenterY > other.getY() + other.getHeight()) {
-            closestY = other.getY() + other.getHeight();
-        }
-
-        // Tính khoảng cách theo 2 trục
+        // Vector khoảng cách từ tâm bóng tới điểm gần nhất
         double dx = ballCenterX - closestX;
         double dy = ballCenterY - closestY;
 
-        // Ngưỡng để nhận diện va chạm góc
-        double epsilon = 0.01;
+        double absDx = Math.abs(dx);
+        double absDy = Math.abs(dy);
+        double epsilon = radius * 0.25;
 
-        if (Math.abs(Math.abs(dx) - Math.abs(dy)) < epsilon) {
-            // 🔹 Va chạm góc → đảo cả hai hướng
+        // Âm thanh va chạm
+        soundManager.playSound("/com/demo/view/sound/barkanoid-wallbounce.wav");
+
+        if (Math.abs(absDx - absDy) < epsilon * 0.5) {
+            // 🔹 Va góc → đảo cả hai hướng
             bounceHorizontally();
             bounceVertically();
-
-            // Đẩy bóng ra ngoài góc
-            if (dx > 0) {
-                this.x = other.getX() + other.getWidth();
-            } else {
-                this.x = other.getX() - 2 * radius;
-            }
-
-            if (dy > 0) {
-                this.y = other.getY() + other.getHeight();
-            } else {
-                this.y = other.getY() - 2 * radius;
-            }
-
-        } else if (Math.abs(dx) > Math.abs(dy)) {
-            // 🔹 Bật ngang
+        } else if (absDx > absDy) {
+            // 🔹 Va cạnh dọc (trái/phải)
             bounceHorizontally();
-            if (dx > 0) {
+            if (dx > 0)
                 this.x = other.getX() + other.getWidth();
-            } else {
+            else
                 this.x = other.getX() - 2 * radius;
-            }
         } else {
-            // 🔹 Bật dọc
+            // 🔹 Va cạnh ngang (trên/dưới)
             bounceVertically();
-            if (dy > 0) {
+            if (dy > 0)
                 this.y = other.getY() + other.getHeight();
-            } else {
+            else
                 this.y = other.getY() - 2 * radius;
-            }
         }
+
+        // Đẩy nhẹ để tránh kẹt
+        this.x += Math.signum(dx) * 0.5;
+        this.y += Math.signum(dy) * 0.5;
     }
+
     /**
      * Xử lý bật bóng khi va chạm với paddle (có góc bật)
      */
     public void bounceOffPaddle(GameObject paddle) {
-        // Phát âm thanh khi chạm paddle
-        soundManager.playSound("/com/demo/view/sound/barkanoid-wallbounce.wav");
-        // Tính vị trí bóng chạm vào paddle (-1 đến +1)
         double paddleCenterX = paddle.getX() + paddle.getWidth() / 2;
         double ballCenterX = this.getCenterX();
         double hitPosition = (ballCenterX - paddleCenterX) / (paddle.getWidth() / 2);
+        hitPosition = Math.max(-1, Math.min(1, hitPosition));
 
-        // Giới hạn trong khoảng -1 đến +1
-        if (hitPosition < -1) hitPosition = -1;
-        if (hitPosition > 1) hitPosition = 1;
+        // Góc bật: -75° (trái) → +75° (phải)
+        double angle = hitPosition * Math.toRadians(75);
+        directionX = Math.sin(angle);
+        directionY = -Math.cos(angle); // luôn bật lên
 
-        // Điều chỉnh hướng X theo vị trí chạm
-        // Chạm giữa: đi thẳng lên, giữ nguyên directionX
-        // Chạm rìa trái: đi sang trái
-        // Chạm rìa phải: đi sang phải
-        if (hitPosition < -0.3) {
-            directionX = -1;
-        } else if (hitPosition > 0.3) {
-            directionX = 1;
-        }
-        // Nếu từ -0.3 đến 0.3 thì giữ nguyên directionX
-
-        // Luôn bật lên trên
-        bounceVertically();
-
-        // Đẩy bóng ra khỏi paddle
+        updateVelocity();
         this.y = paddle.getY() - 2 * radius;
+        soundManager.playSound("/com/demo/view/sound/barkanoid-wallbounce.wav");
+
     }
 
     /**
@@ -268,8 +239,6 @@ public class Ball extends Movable {
         other.directionY = (int) Math.signum(other.dy);
     }
 
-    // ==================== XỬ LÝ TƯỜNG ====================
-
     /**
      * Bật lại khi chạm tường
      */
@@ -318,8 +287,6 @@ public class Ball extends Movable {
         updateVelocity();
     }
 
-    // ==================== GETTERS / SETTERS ====================
-
     public double getSpeed() {
         return speed;
     }
@@ -329,11 +296,11 @@ public class Ball extends Movable {
         updateVelocity();
     }
 
-    public int getDirectionX() {
+    public double getDirectionX() {
         return directionX;
     }
 
-    public int getDirectionY() {
+    public double getDirectionY() {
         return directionY;
     }
 

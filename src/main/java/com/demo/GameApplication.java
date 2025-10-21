@@ -1,6 +1,6 @@
 package com.demo;
 
-import com.demo.GameView.Render;
+import com.demo.view.Render;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

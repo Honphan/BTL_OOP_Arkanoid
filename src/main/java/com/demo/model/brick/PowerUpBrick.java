@@ -1,4 +1,4 @@
-package com.demo.model.bricks;
+package com.demo.model.brick;
 
 import com.demo.model.powerup.*;
 import javafx.scene.canvas.GraphicsContext;
@@ -10,6 +10,8 @@ public class PowerUpBrick extends Brick {
 
     private PowerUpType spawnType;
     private Image image;
+
+    protected static final int defaultVelocityY = 3;
 
     public PowerUpBrick(double x, double y, double width, double height) {
         super(x, y, width, height, 1, "powerup");
@@ -46,10 +48,10 @@ public class PowerUpBrick extends Brick {
         double spawnY = getY() + getHeight();
 
         return switch (spawnType) {
-            case EXPAND_PADDLE -> new ExpandPaddlePowerUp(spawnX, spawnY, powerupWidth, powerupHeight, 3);
-            case EXTRA_LIFE -> new ExtraLifePowerUp(spawnX, spawnY, powerupWidth, powerupHeight, 3);
-            case PIERCING_BALL -> new PiercingBallPowerUp(spawnX, spawnY, powerupWidth, powerupHeight, 3);
-            case MULTI_BALL -> new MultiBallPowerUp(spawnX, spawnY, powerupWidth, powerupHeight, 3);
+            case EXPAND_PADDLE -> new ExpandPaddlePowerUp(spawnX, spawnY, powerupWidth, powerupHeight, defaultVelocityY);
+            case EXTRA_LIFE -> new ExtraLifePowerUp(spawnX, spawnY, powerupWidth, powerupHeight, defaultVelocityY);
+            case PIERCING_BALL -> new PiercingBallPowerUp(spawnX, spawnY, powerupWidth, powerupHeight, defaultVelocityY);
+            case MULTI_BALL -> new MultiBallPowerUp(spawnX, spawnY, powerupWidth, powerupHeight, defaultVelocityY);
             default -> null;
         };
     }

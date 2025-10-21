@@ -1,6 +1,7 @@
 package com.demo.model.powerup;
 
 import com.demo.model.Movable;
+import com.demo.model.Paddle;
 import javafx.scene.image.Image;
 
 /**
@@ -9,7 +10,7 @@ import javafx.scene.image.Image;
 public class ExtraLifePowerUp extends PowerUp {
 
     public ExtraLifePowerUp(double x, double y, double width, double height, double velocityY) {
-        super(x, y, width, height, PowerUpType.EXTRA_LIFE, 8000, velocityY,
+        super(x, y, width, height, PowerUpType.EXTRA_LIFE, 0, velocityY,
                 new Image(ExtraLifePowerUp.class.getResourceAsStream("/com/demo/view/image/powerup/extralife.png")));
     }
 
