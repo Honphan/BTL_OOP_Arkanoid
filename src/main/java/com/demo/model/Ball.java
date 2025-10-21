@@ -168,7 +168,7 @@ public class Ball extends Movable {
         double hitPosition = (ballCenterX - paddleCenterX) / (paddle.getWidth() / 2);
         hitPosition = Math.max(-1, Math.min(1, hitPosition));
 
-        // Góc bật: -60° (trái) → +60° (phải)
+        // Góc bật: -75° (trái) → +75° (phải)
         double angle = hitPosition * Math.toRadians(75);
         directionX = Math.sin(angle);
         directionY = -Math.cos(angle); // luôn bật lên
