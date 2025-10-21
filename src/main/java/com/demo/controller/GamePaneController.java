@@ -32,6 +32,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.List;
 
 public class GamePaneController {
     @FXML
@@ -80,6 +81,7 @@ public class GamePaneController {
     private InputHandle inputHandle;
     private ScoreManager scoreManager;
     private int lives = 3; // Số mạng ban đầu
+    private List<Ball> balls = new java.util.ArrayList<>();
 
 
 
@@ -185,7 +187,42 @@ public class GamePaneController {
         double startY = gameCanvas.getHeight() - 2 * radius - 20;
 
         ball = new Ball(startX, startY, ballSpeed);
+        balls.clear();
+        balls.add(ball);
     }
+
+    private void createMultiBalls(Ball originalBall) {
+        double radius = 10;
+
+        Ball ball1 = new Ball(originalBall.getX(), originalBall.getY(), originalBall.getSpeed());
+        Ball ball2 = new Ball(originalBall.getX(), originalBall.getY(), originalBall.getSpeed());
+
+        // Lấy vận tốc hiện tại của bóng gốc
+        double originalDx = originalBall.getDx();
+        double originalDy = originalBall.getDy();
+
+        // Tính góc hiện tại của bóng gốc
+        double currentAngle = Math.atan2(originalDy, originalDx);
+
+        // Tạo 2 góc lệch 30 độ sang 2 bên
+        double angle1 = currentAngle - Math.toRadians(30);
+        double angle2 = currentAngle + Math.toRadians(30);
+
+        double speed = originalBall.getSpeed();
+
+        // Set vận tốc cho bóng 1 (lệch trái)
+        ball1.setDx(Math.cos(angle1) * speed);
+        ball1.setDy(Math.sin(angle1) * speed);
+
+        // Set vận tốc cho bóng 2 (lệch phải)
+        ball2.setDx(Math.cos(angle2) * speed);
+        ball2.setDy(Math.sin(angle2) * speed);
+
+        balls.add(ball1);
+        balls.add(ball2);
+
+    }
+
 
     private void initializePaddle() {
         double paddleWidth = 200;
@@ -244,97 +281,56 @@ public class GamePaneController {
         return gameRunning;
     }
 
-//    private void updateGame() {
-//        updatePaddle();
-//        paddle.update(gameCanvas.getWidth());
-//
-//        ball.update();
-//        ball.bounceOffWall(gameCanvas.getWidth(), gameCanvas.getHeight());
-//
-//        if (ball.checkCollision(paddle)) {
-//            ball.bounceOffPaddle(paddle);
-//        }
-//
-//        if (level != null) {
-//            Brick[][] bricks = level.getBricks(); // lấy mảng 2 chiều gạch
-//            int rows = level.getRows();
-//            int cols = level.getCols();
-//
-//            for (int r = 0; r < rows; r++) {
-//                for (int c = 0; c < cols; c++) {
-//                    Brick brick = bricks[r][c];
-//                    if (brick != null && !brick.isDestroyed()) {
-//                        if (ball.checkCollision(brick)) {
-//                            ball.bounceOff(brick);
-//                            brick.takeHit();
-//                            if (brick.isDestroyed() && brick instanceof PowerUpBrick powerbrick) {
-//                                PowerUp newPU = powerbrick.spawnPowerUp();
-//                                if (newPU != null) {
-//                                    powerup.addPowerUp(newPU);
-//                                }
-//                                addScore(brick.getScoreValue());
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        if (powerup != null) {
-//            powerup.update(gameCanvas.getHeight());
-//        }
-//
-//        if (level != null && level.isCleared()) {
-//            currentLevel++;
-//            if (currentLevel > 3) {
-//                gameRunning = false;
-//            } else {
-//                initializeLevelandPowerUp(currentLevel);
-//            }
-//        }
-//    }
 
     private void updateGame() {
         updatePaddle();
         paddle.update(gameCanvas.getWidth());
 
-        ball.update();
-        ball.bounceOffWall(gameCanvas.getWidth(), gameCanvas.getHeight());
-        // Kiểm tra bóng rơi xuống dưới
-        if (ball.isOutOfBounds(gameCanvas.getHeight())) {
-            // Giảm mạng
-            loseLife();
-            // Reset vị trí bóng về giữa
-            double radius = 10;
-            double startX = (gameCanvas.getWidth() / 2) - radius;
-            double startY = gameCanvas.getHeight() - 2 * radius - 20;
-            ball.reset(startX, startY);
-        }
+        // CẬP NHẬT TẤT CẢ BÓNG
+        java.util.Iterator<Ball> ballIterator = balls.iterator();
+        while (ballIterator.hasNext()) {
+            Ball currentBall = ballIterator.next();
 
-        if (ball.checkCollision(paddle)) {
-            ball.bounceOffPaddle(paddle);
-        }
+            currentBall.update();
+            currentBall.bounceOffWall(gameCanvas.getWidth(), gameCanvas.getHeight());
 
-        if (level != null) {
-            Brick[][] bricks = level.getBricks();
-            int rows = level.getRows();
-            int cols = level.getCols();
+            if (currentBall.checkCollision(paddle)) {
+                currentBall.bounceOffPaddle(paddle);
+            }
 
-            for (int r = 0; r < rows; r++) {
-                for (int c = 0; c < cols; c++) {
-                    Brick brick = bricks[r][c];
-                    if (brick != null && !brick.isDestroyed()) {
-                        if (ball.checkCollision(brick)) {
-                            ball.bounceOff(brick);
-                            brick.takeHit();
-                            if (brick.isDestroyed()) {
-                                addScore(brick.getScoreValue());
+            // Kiểm tra bóng rơi ra ngoài
+            if (currentBall.getY() > gameCanvas.getHeight()) {
+                ballIterator.remove();
+                // Nếu hết bóng → Game Over
+                if (balls.isEmpty()) {
+                    gameRunning = false;
+                    showGameOver("GAME OVER!");
+                    return;
+                }
+            }
 
-                                // Spawn power-up nếu là PowerUpBrick
-                                if (brick instanceof PowerUpBrick powerbrick) {
-                                    PowerUp newPU = powerbrick.spawnPowerUp();
-                                    if (newPU != null) {
-                                        powerup.addPowerUp(newPU);
+            // KIỂM TRA VA CHẠM VỚI GẠCH
+            if (level != null) {
+                Brick[][] bricks = level.getBricks();
+                int rows = level.getRows();
+                int cols = level.getCols();
+
+                for (int r = 0; r < rows; r++) {
+                    for (int c = 0; c < cols; c++) {
+                        Brick brick = bricks[r][c];
+                        if (brick != null && !brick.isDestroyed()) {
+                            if (currentBall.checkCollision(brick)) {
+                                currentBall.bounceOff(brick);
+                                brick.takeHit();
+                                if (brick.isDestroyed()) {
+                                    addScore(brick.getScoreValue());
+
+                                    // Spawn power-up nếu là PowerUpBrick
+                                    if (brick instanceof PowerUpBrick powerbrick) {
+                                        PowerUp newPU = powerbrick.spawnPowerUp();
+                                        if (newPU != null) {
+                                            powerup.addPowerUp(newPU);
+                                        }
                                     }
                                 }
                             }
@@ -344,27 +340,25 @@ public class GamePaneController {
             }
         }
 
-        // CẬP NHẬT VÀ KIỂM TRA VA CHẠM POWER-UP
+        // ⚡ KIỂM TRA VA CHẠM GIỮA CÁC BÓNG VỚI NHAU
+        checkBallCollisions();
+
+        // CẬP NHẬT POWER-UP
         if (powerup != null) {
             powerup.update(gameCanvas.getHeight());
-            checkPowerUpCollision();  // ← THÊM DÒNG NÀY
+            checkPowerUpCollision();
         }
 
+        // KIỂM TRA HOÀN THÀNH LEVEL
         if (level != null && level.isCleared()) {
-            // Lưu điểm cao của level hiện tại trước khi chuyển level
-            scoreManager.updateHighScore(currentLevel, score);
-
             currentLevel++;
             if (currentLevel > 3) {
                 gameRunning = false;
-                showGameOver("Bạn đã hoàn thành tất cả các level!");
+                showGameOver("YOU WIN!");
             } else {
                 initializeLevelandPowerUp(currentLevel);
-                // Cập nhật hiển thị điểm cao cho level mới
-                updateHighScoreDisplay();
             }
         }
-
     }
     private void loseLife() {
         lives--;
@@ -460,6 +454,11 @@ public class GamePaneController {
     private void redrawCanvas() {
         CanvasUtil.redrawCanvas(gc, gameCanvas, paddle, level, ball, backgroundImage);
 
+        for (Ball currentBall : balls) {
+            if (currentBall != null) {
+                currentBall.render(gc);
+            }
+        }
         if (powerup != null) {
             powerup.render(gc);
         }
@@ -494,15 +493,23 @@ public class GamePaneController {
 
             // Kiểm tra va chạm: power-up chạm paddle
             if (checkCollision(pu, paddle)) {
-                // Áp dụng hiệu ứng power-up lên paddle
-                paddle.applyPowerUp(pu);
+                // Xử lý đặc biệt cho Multi Ball
+                if (pu.getType() == PowerUpType.MULTI_BALL) {
+                    // Tạo thêm 2 bóng mới từ bóng chính
+                    if (!balls.isEmpty()) {
+                        createMultiBalls(balls.get(0)); // Dùng bóng đầu tiên làm gốc
+                    }
+                } else {
+                    // Áp dụng power-up bình thường cho paddle
+                    paddle.applyPowerUp(pu);
+                }
 
                 // Vô hiệu hóa power-up
                 pu.setActive(false);
                 iterator.remove();
 
-                System.out.println("✨ Power-up collected: " + pu.getType());
             }
+
 
             // Xóa power-up nếu rơi ra ngoài màn hình
             if (pu.getY() > gameCanvas.getHeight()) {
@@ -531,10 +538,28 @@ public class GamePaneController {
                 puY + puHeight > pY;
     }
 
+    // Kiểm tra va chạm giữa các bóng với nhau
+    private void checkBallCollisions() {
+        // Duyệt qua tất cả các cặp bóng
+        for (int i = 0; i < balls.size(); i++) {
+            for (int j = i + 1; j < balls.size(); j++) {
+                Ball ball1 = balls.get(i);
+                Ball ball2 = balls.get(j);
+
+                // Kiểm tra va chạm giữa 2 bóng
+                if (ball1.checkCollisionWithBall(ball2)) {
+                    // Xử lý bật bóng
+                    ball1.bounceOffBall(ball2);
+                }
+            }
+        }
+    }
+
 
   @FXML
     public void startGame() {
         currentLevel = 1;
+        score = 0;
         System.out.println("Canvas size after startGame : " + gameCanvas.getWidth() + "x" + gameCanvas.getHeight());
         System.out.println("Game area size after startGame: "                                      + gameArea.getWidth() + "x" + gameArea.getHeight());
         // Update displays
@@ -553,6 +578,8 @@ public class GamePaneController {
         // Reset ball position
         if (ball != null) {
             ball.reset(gameCanvas.getWidth() / 2 - 10, gameCanvas.getHeight() - 10 - 20);
+            balls.clear();
+            balls.add(ball);
         }
 
         // Reset power-ups
