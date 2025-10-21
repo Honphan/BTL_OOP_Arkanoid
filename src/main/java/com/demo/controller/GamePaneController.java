@@ -1,17 +1,17 @@
 package com.demo.controller;
 
-import com.demo.GameView.Render;
-import com.demo.Utils.Background;
-import com.demo.Utils.CanvasUtil;
-import com.demo.Utils.InputHandle;
-import com.demo.Utils.SoundManager;
+import com.demo.view.Render;
+import com.demo.util.Background;
+import com.demo.util.CanvasUtil;
+import com.demo.util.InputHandle;
+import com.demo.util.SoundManager;
 import com.demo.model.Ball;
 import com.demo.model.Paddle;
-import com.demo.model.bricks.*;
+import com.demo.model.brick.*;
 import com.demo.model.powerup.*;
 import com.demo.model.LevelManager;
 import com.demo.model.PowerUpManager;
-import com.demo.model.bricks.PowerUpBrick;
+import com.demo.model.brick.PowerUpBrick;
 import com.demo.model.score.ScoreManager;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
@@ -30,7 +30,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
+import java.util.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -376,6 +376,18 @@ public class GamePaneController {
         }
     }
 
+    private void addLife() {
+        if (lives < 3) {
+            lives++;
+            updateLivesDisplay();
+        }
+
+        if (soundManager != null) {
+            soundManager.playSound("addLife");
+        }
+    }
+
+
     private void updateLivesDisplay() {
         // Xóa tất cả hiển thị mạng hiện tại
         livesContainer.getChildren().clear();
@@ -480,8 +492,8 @@ public class GamePaneController {
     private void checkPowerUpCollision() {
         if (powerup == null || paddle == null) return;
 
-        java.util.List<PowerUp> powerUpList = powerup.getPowerUps();
-        java.util.Iterator<PowerUp> iterator = powerUpList.iterator();
+        List<PowerUp> powerUpList = powerup.getPowerUps();
+        Iterator<PowerUp> iterator = powerUpList.iterator();
 
         while (iterator.hasNext()) {
             PowerUp pu = iterator.next();
@@ -491,25 +503,45 @@ public class GamePaneController {
                 continue;
             }
 
+           
             // Kiểm tra va chạm: power-up chạm paddle
-            if (checkCollision(pu, paddle)) {
-                // Xử lý đặc biệt cho Multi Ball
-                if (pu.getType() == PowerUpType.MULTI_BALL) {
+        if (checkCollision(pu, paddle)) {
+            // Xử lý theo từng loại power-up
+            switch (pu.getType()) {
+                case MULTI_BALL:
                     // Tạo thêm 2 bóng mới từ bóng chính
                     if (!balls.isEmpty()) {
-                        createMultiBalls(balls.get(0)); // Dùng bóng đầu tiên làm gốc
+                        createMultiBalls(balls.get(0));
                     }
-                } else {
-                    // Áp dụng power-up bình thường cho paddle
+                    break;
+                    
+                case EXTRA_LIFE:
+                    // Thêm mạng
+                    addLife();
+                    break;
+                    
+                case EXPAND_PADDLE:
+                    // Mở rộng paddle
                     paddle.applyPowerUp(pu);
-                }
-
-                // Vô hiệu hóa power-up
-                pu.setActive(false);
-                iterator.remove();
-
+                    break;
+                    
+                case PIERCING_BALL:
+                    // Bóng xuyên gạch (implement sau)
+                    paddle.applyPowerUp(pu);
+                    break;
+                    
+                default:
+                    // Power-up khác (dự phòng)
+                    paddle.applyPowerUp(pu);
+                    break;
             }
-
+            
+            // Vô hiệu hóa power-up
+            pu.setActive(false);
+            iterator.remove();
+            
+            System.out.println("✨ Power-up collected: " + pu.getType());
+        }
 
             // Xóa power-up nếu rơi ra ngoài màn hình
             if (pu.getY() > gameCanvas.getHeight()) {

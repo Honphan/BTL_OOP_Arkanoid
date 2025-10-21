@@ -1,4 +1,4 @@
-package com.demo.Utils;
+package com.demo.util;
 
 
 import javafx.scene.media.Media;

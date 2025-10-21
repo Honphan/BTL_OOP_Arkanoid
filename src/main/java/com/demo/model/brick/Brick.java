@@ -1,9 +1,8 @@
-package com.demo.model.bricks;
+package com.demo.model.brick;
 
 import com.demo.model.Ball;
 import com.demo.model.GameObject;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 public abstract class Brick extends GameObject {
     private int hitPoints;  // Điểm máu của khối gạch
@@ -30,6 +29,8 @@ public abstract class Brick extends GameObject {
         }
         return false;
     }
+
+
 
     public int getScoreValue(){
         return 10;

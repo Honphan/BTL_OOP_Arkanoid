@@ -1,9 +1,9 @@
 package com.demo.model;
 
-import com.demo.model.bricks.Brick;
-import com.demo.model.bricks.NormalBrick;
-import com.demo.model.bricks.PowerUpBrick;
-import com.demo.model.bricks.UnbreakableBrick;
+import com.demo.model.brick.Brick;
+import com.demo.model.brick.NormalBrick;
+import com.demo.model.brick.PowerUpBrick;
+import com.demo.model.brick.UnbreakableBrick;
 import javafx.scene.canvas.GraphicsContext;
 
 public class LevelManager {

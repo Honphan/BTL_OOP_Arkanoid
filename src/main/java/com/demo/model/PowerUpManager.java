@@ -24,11 +24,6 @@ public class PowerUpManager {
         while (iterator.hasNext()) {
             PowerUp p = iterator.next();
             p.update(); // di chuyển powerup xuống
-
-            // Nếu rơi ra ngoài màn hình
-            if (p.getY() > canvasHeight) {
-                iterator.remove();
-            }
         }
     }
 
