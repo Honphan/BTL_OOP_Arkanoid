@@ -1,4 +1,4 @@
-package com.demo.Utils;
+package com.demo.util;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;

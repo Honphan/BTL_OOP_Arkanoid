@@ -9,19 +9,25 @@ import javafx.scene.paint.Color;
 
 public abstract class PowerUp extends GameObject {
 
+    private static long defaultDuration = 8000L;
+
     protected PowerUpType type;
-    protected int duration;   // thời gian hiệu ứng tồn tại (ms hoặc tick)
+    protected long duration;   // thời gian hiệu ứng tồn tại (ms hoặc tick)
     protected double velocityY;
     protected Image image;
     protected boolean active; // power-up còn đang rơi hay đã kích hoạt
 
-    public PowerUp(double x, double y, double width, double height, PowerUpType type, int duration, double velocityY, Image image) {
+    public PowerUp(double x, double y, double width, double height, PowerUpType type, long duration, double velocityY, Image image) {
         super(x, y, width, height);
         this.type = type;
         this.duration = duration;
         this.velocityY = velocityY;
         this.image = image;
         this.active = true;
+    }
+
+    public PowerUp(double x, double y, double width, double height, PowerUpType type, double velocityY, Image image) {
+        this(x, y, width, height, type, defaultDuration, velocityY, image);
     }
 
     /** Cập nhật vị trí và trạng thái power-up mỗi frame */
@@ -62,7 +68,7 @@ public abstract class PowerUp extends GameObject {
         return type;
     }
 
-    public int getDuration() {
+    public long getDuration() {
         return duration;
     }
 
@@ -72,5 +78,13 @@ public abstract class PowerUp extends GameObject {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public static long getDefaultDuration() {
+        return defaultDuration;
+    }
+
+    public static void setDefaultDuration(long defaultDuration) {
+        PowerUp.defaultDuration = defaultDuration;
     }
 }

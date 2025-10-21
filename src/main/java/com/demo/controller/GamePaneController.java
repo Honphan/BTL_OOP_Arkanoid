@@ -1,17 +1,17 @@
 package com.demo.controller;
 
-import com.demo.GameView.Render;
-import com.demo.Utils.Background;
-import com.demo.Utils.CanvasUtil;
-import com.demo.Utils.InputHandle;
-import com.demo.Utils.SoundManager;
+import com.demo.view.Render;
+import com.demo.util.Background;
+import com.demo.util.CanvasUtil;
+import com.demo.util.InputHandle;
+import com.demo.util.SoundManager;
 import com.demo.model.Ball;
 import com.demo.model.Paddle;
-import com.demo.model.bricks.*;
+import com.demo.model.brick.*;
 import com.demo.model.powerup.*;
 import com.demo.model.LevelManager;
 import com.demo.model.PowerUpManager;
-import com.demo.model.bricks.PowerUpBrick;
+import com.demo.model.brick.PowerUpBrick;
 import com.demo.model.score.ScoreManager;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
@@ -30,7 +30,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
+import java.util.*;
 import java.io.IOException;
 
 public class GamePaneController {
@@ -382,6 +382,18 @@ public class GamePaneController {
         }
     }
 
+    private void addLife() {
+        if (lives < 3) {
+            lives++;
+            updateLivesDisplay();
+        }
+
+        if (soundManager != null) {
+            soundManager.playSound("addLife");
+        }
+    }
+
+
     private void updateLivesDisplay() {
         // Xóa tất cả hiển thị mạng hiện tại
         livesContainer.getChildren().clear();
@@ -481,8 +493,8 @@ public class GamePaneController {
     private void checkPowerUpCollision() {
         if (powerup == null || paddle == null) return;
 
-        java.util.List<PowerUp> powerUpList = powerup.getPowerUps();
-        java.util.Iterator<PowerUp> iterator = powerUpList.iterator();
+        List<PowerUp> powerUpList = powerup.getPowerUps();
+        Iterator<PowerUp> iterator = powerUpList.iterator();
 
         while (iterator.hasNext()) {
             PowerUp pu = iterator.next();
@@ -494,8 +506,14 @@ public class GamePaneController {
 
             // Kiểm tra va chạm: power-up chạm paddle
             if (checkCollision(pu, paddle)) {
-                // Áp dụng hiệu ứng power-up lên paddle
-                paddle.applyPowerUp(pu);
+
+                // Nếu là thêm mạng thì gọi addLife để thêm mạng
+                if (pu.getType() == PowerUpType.EXTRA_LIFE) {
+                    addLife();
+                } else if (pu.getType() == PowerUpType.EXPAND_PADDLE) {
+                    // Áp dụng hiệu ứng power-up lên paddle
+                    paddle.applyPowerUp(pu);
+                }
 
                 // Vô hiệu hóa power-up
                 pu.setActive(false);

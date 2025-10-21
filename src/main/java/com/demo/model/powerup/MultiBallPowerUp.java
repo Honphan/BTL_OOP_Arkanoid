@@ -11,7 +11,7 @@ import java.util.List;
 public class MultiBallPowerUp extends PowerUp {
 
     public MultiBallPowerUp(double x, double y, double width, double height, double velocityY) {
-        super(x, y, width, height, PowerUpType.MULTI_BALL, 8000, velocityY,
+        super(x, y, width, height, PowerUpType.MULTI_BALL, getDefaultDuration(), velocityY,
                 new Image(MultiBallPowerUp.class.getResourceAsStream("/com/demo/view/image/powerup/multiball.png")));
     }
 

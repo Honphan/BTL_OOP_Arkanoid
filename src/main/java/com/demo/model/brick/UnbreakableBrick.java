@@ -1,6 +1,5 @@
-package com.demo.model.bricks;
+package com.demo.model.brick;
 
-import com.demo.model.Ball;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
