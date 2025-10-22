@@ -302,11 +302,9 @@ public class GamePaneController {
             if (currentBall.getY() > gameCanvas.getHeight()) {
                 ballIterator.remove();
                 // Nếu hết bóng → Game Over
-                if (balls.isEmpty()) {
-                    gameRunning = false;
-                    showGameOver("GAME OVER!");
-                    return;
-                }
+                loseLife();
+                initializeBall();
+                initializePaddle();
             }
 
             // KIỂM TRA VA CHẠM VỚI GẠCH
