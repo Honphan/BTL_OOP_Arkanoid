@@ -10,7 +10,7 @@ public class LevelManager {
     private int row;
     private int col;
 
-    private static final double brickWidth = 15;
+    private static final double brickWidth = 30;
     private static final double brickHeight = 15;
 
     public static final int MAX_LEVEL_BRICK = 3; // số level tối đa
@@ -29,10 +29,10 @@ public class LevelManager {
             {-2, 1, 1, 1, -2, 1, 1, -2, 1, 1, 1, -2, 1, 1, 1, 1},
             {1, 1, 1, -2, 1, 1, -2, 1, 1, 1, -2, 1, 1, 1, 1, 1},
             {1, -2, 1, 1, 1, -2, 1, 1, 1, -2, 1, 1, -2, 1, 1, 1},
-            {1, 1, -2, 1, 1, 1, 1, -2, 1, 1, -2, 1, 1, 1, 1, 1},
-            {-2, 1, 1, 1, -2, 1, 1, 1, 1, -2, 1, 1, 1, -2, 1, 1},
-            {1, 1, 1, -2, 1, 1, -2, 1, 1, 1, -2, 1, 1, 1, 1, 1},
-            {-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, 1, -2, 1, 1, 1}
+            {1, 1, -2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+            {-2, 1, 1, 1, -2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+            {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, -2, 2, -2, 2, 2, 2}
     };
     public static final int[][] LEVEL2 = {
             {0, 2, -1, 1, 3, -1},
@@ -85,7 +85,8 @@ public class LevelManager {
                         brick = new UnbreakableBrick(x, y, brickWidth, brickHeight);
                     } else if (value == -2) {
                         brick = new BombBrick(x, y, brickWidth, brickHeight, bricks,r, c);
-
+                    } else if (value == 2) {
+                        brick = new HiddenBrick(x, y, brickWidth, brickHeight);
                     } else {
                         brick = new NormalBrick(x, y, brickWidth, brickHeight, value);
                     }
@@ -118,6 +119,17 @@ public class LevelManager {
             }
         }
     }
+    public void update() {
+        for (int r = 0; r < row; r++) {
+            for (int c = 0; c < col; c++) {
+                Brick brick = bricks[r][c];
+                if (brick != null && !brick.isDestroyed()) {
+                    brick.update();
+                }
+            }
+        }
+    }
+
 
     // Kiểm tra xem tất cả gạch thường đã bị phá chưa
     public boolean isCleared() {

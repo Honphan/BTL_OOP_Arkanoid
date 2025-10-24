@@ -1,6 +1,7 @@
 package com.demo.model.brick;
 
 import com.demo.model.Ball;
+import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -9,10 +10,10 @@ public class BombBrick extends Brick {
     private final Brick[][] field;
     private final int row, col;
 
-    private static final int MAX_HITPOINTS = 1;
+    private static final int MAX_HP = 1;
 
     // Ảnh viên bomb
-    private static Image intactImage;
+    private Image image;
 
     // Trạng thái nổ
     private boolean exploding = false;
@@ -25,20 +26,17 @@ public class BombBrick extends Brick {
     private static final double EXPLOSION_FADE_SPEED = 0.05;
 
     public BombBrick(double x, double y, double width, double height, Brick[][] field, int row, int col) {
-        super(x, y, width, height, MAX_HITPOINTS, "bomb");
+        super(x, y, width, height, MAX_HP, "bomb");
         this.field = field;
         this.row = row;
         this.col = col;
 
         // Tải ảnh bomb
         try {
-            if (intactImage == null) {
-                intactImage = new Image(
-                        BombBrick.class.getResourceAsStream("/com/demo/view/image/bricks/invincible_white1.png")
-                );
-            }
+            image = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/invincible_white1.png"));
         } catch (Exception e) {
-            intactImage = null;
+            e.printStackTrace();
+            System.err.println("Không load được ảnh gạch: " + e.getMessage());
         }
     }
 
@@ -84,8 +82,8 @@ public class BombBrick extends Brick {
         }
 
         // Nếu chưa bị phá hủy → vẽ ảnh bomb
-        if (!isDestroyed() && intactImage != null) {
-            gc.drawImage(intactImage, x, y, w, h);
+        if (!isDestroyed() && image != null) {
+            gc.drawImage(image, x, y, w, h);
         }
     }
 
@@ -129,7 +127,7 @@ public class BombBrick extends Brick {
                     if (!bb.isDestroyed()) {
                         bb.setDestroyed(true);
                         bb.startExplosion();
-                        bb.explode(); // lan nổ dây chuyền
+                        Platform.runLater(() ->bb.explode()); // lan nổ dây chuyền
                     }
                 } else {
                     neighbor.setDestroyed(true);
