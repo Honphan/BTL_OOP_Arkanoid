@@ -316,10 +316,33 @@ public class GamePaneController {
                 for (int r = 0; r < rows; r++) {
                     for (int c = 0; c < cols; c++) {
                         Brick brick = bricks[r][c];
+                        if (brick != null) {
+                            brick.update(); // <--- thêm dòng này
+                        }
+                    }
+                }
+
+                for (int r = 0; r < rows; r++) {
+                    for (int c = 0; c < cols; c++) {
+                        Brick brick = bricks[r][c];
                         if (brick != null && !brick.isDestroyed()) {
-                            if (currentBall.checkCollision(brick)) {
+                            // Cập nhật hiệu ứng cho BombBrick
+                            if (brick instanceof BombBrick bombBrick) {
+                                bombBrick.update();
+                            } else {
+                                brick.update();
+                            }
+
+                            if (!brick.isDestroyed() && currentBall.checkCollision(brick)) {
                                 currentBall.bounceOff(brick);
-                                brick.takeHit();
+
+                                // Nếu là bomb → cho phép nổ
+                                if (brick instanceof BombBrick bombBrick) {
+                                    bombBrick.takeHit(); // sẽ tự startExplosion + explode
+                                } else {
+                                    brick.takeHit();
+                                }
+
                                 if (brick.isDestroyed()) {
                                     addScore(brick.getScoreValue());
 
@@ -469,9 +492,24 @@ public class GamePaneController {
                 currentBall.render(gc);
             }
         }
-        if (powerup != null) {
-            powerup.render(gc);
+        if (level != null) {
+            Brick[][] bricks = level.getBricks();
+            int rows = level.getRows();
+            int cols = level.getCols();
+
+            for (int r = 0; r < rows; r++) {
+                for (int c = 0; c < cols; c++) {
+                    Brick brick = bricks[r][c];
+                    if (brick == null) continue;
+
+                    // Vẽ lại bomb nếu đang nổ, hoặc gạch chưa bị phá
+                    if (!brick.isDestroyed() || (brick instanceof BombBrick b && b.isExploding())) {
+                        brick.render(gc);
+                    }
+                }
+            }
         }
+
     }
 
     private void updatePaddle() {

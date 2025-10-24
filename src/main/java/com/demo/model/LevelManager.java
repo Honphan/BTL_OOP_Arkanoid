@@ -1,9 +1,6 @@
 package com.demo.model;
 
-import com.demo.model.brick.Brick;
-import com.demo.model.brick.NormalBrick;
-import com.demo.model.brick.PowerUpBrick;
-import com.demo.model.brick.UnbreakableBrick;
+import com.demo.model.brick.*;
 import javafx.scene.canvas.GraphicsContext;
 
 public class LevelManager {
@@ -13,18 +10,29 @@ public class LevelManager {
     private int row;
     private int col;
 
-    private static final double brickWidth = 60;
-    private static final double brickHeight = 35;
+    private static final double brickWidth = 15;
+    private static final double brickHeight = 15;
 
     public static final int MAX_LEVEL_BRICK = 3; // số level tối đa
 
     // Layout các level, -1 = unbreakable, 0 = trống, >0 = hit points của gạch
     public static final int[][] LEVEL1 = {
-            { 1,  1,  1,  1, -2, -2, -2, -2, -2, -2, -2, -2},
-            { 1,  0,  0,  1, -2, -2, -2, -2, -2, -2, -2, -2},
-            { 1,  0,  0,  1, -2, -2, -2, -2, -2, -2, -2, -2},
-            { 1,  1,  1,  1, -2, -2, -2, -2, -2, -2, -2, -2},
-            {-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2}
+            {1, 1, 1, -2, 1, 1, 1, -2, 1, 1, 1, -2, 1, 1, 1, 1},
+            {1, -2, 1, 1, 1, -2, 1, 1, 1, 1, -2, 1, 1, -2, 1, 1},
+            {1, 1, -2, 1, 1, 1, 1, -2, 1, 1, 1, -2, 1, 1, 1, 1},
+            {-2, 1, 1, 1, -2, 1, 1, 1, 1, -2, 1, 1, 1, -2, 1, 1},
+            {1, 1, 1, -2, 1, 1, -2, 1, 1, 1, -2, 1, 1, 1, 1, 1},
+            {1, -2, 1, 1, 1, 1, 1, -2, 1, 1, 1, 1, -2, 1, 1, 1},
+            {1, 1, -2, 1, 1, 1, -2, 1, 1, 1, 1, -2, 1, 1, 1, -2},
+            {1, 1, 1, 1, -2, 1, 1, 1, -2, 1, 1, 1, -2, 1, 1, 1},
+            {1, -2, 1, 1, 1, -2, 1, 1, 1, 1, -2, 1, 1, -2, 1, 1},
+            {-2, 1, 1, 1, -2, 1, 1, -2, 1, 1, 1, -2, 1, 1, 1, 1},
+            {1, 1, 1, -2, 1, 1, -2, 1, 1, 1, -2, 1, 1, 1, 1, 1},
+            {1, -2, 1, 1, 1, -2, 1, 1, 1, -2, 1, 1, -2, 1, 1, 1},
+            {1, 1, -2, 1, 1, 1, 1, -2, 1, 1, -2, 1, 1, 1, 1, 1},
+            {-2, 1, 1, 1, -2, 1, 1, 1, 1, -2, 1, 1, 1, -2, 1, 1},
+            {1, 1, 1, -2, 1, 1, -2, 1, 1, 1, -2, 1, 1, 1, 1, 1},
+            {-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, 1, -2, 1, 1, 1}
     };
     public static final int[][] LEVEL2 = {
             {0, 2, -1, 1, 3, -1},
@@ -76,7 +84,7 @@ public class LevelManager {
                     if (value == -1) {
                         brick = new UnbreakableBrick(x, y, brickWidth, brickHeight);
                     } else if (value == -2) {
-                        brick = new PowerUpBrick(x, y, brickWidth, brickHeight);
+                        brick = new BombBrick(x, y, brickWidth, brickHeight, bricks,r, c);
 
                     } else {
                         brick = new NormalBrick(x, y, brickWidth, brickHeight, value);
