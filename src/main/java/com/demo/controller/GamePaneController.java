@@ -14,6 +14,8 @@ import com.demo.model.PowerUpManager;
 import com.demo.model.brick.PowerUpBrick;
 import com.demo.model.score.ScoreManager;
 import javafx.animation.AnimationTimer;
+import javafx.animation.FadeTransition;
+import javafx.util.Duration;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -83,7 +85,13 @@ public class GamePaneController {
     private int lives = 3; // Số mạng ban đầu
     private List<Ball> balls = new java.util.ArrayList<>();
 
-
+    private enum gameState {
+        PLAYING,
+        LEVEL_ENDING,
+        LEVEL_TRANSITION
+    }
+    private gameState gamestate = GamePaneController.gameState.PLAYING;
+    private double levelEndTimer = 0;
 
     @FXML
     private void initialize() {
@@ -283,74 +291,60 @@ public class GamePaneController {
 
 
     private void updateGame() {
-        updatePaddle();
-        paddle.update(gameCanvas.getWidth());
+        switch (gamestate) {
+            case PLAYING -> {
+                updatePaddle();
+                paddle.update(gameCanvas.getWidth());
 
-        // CẬP NHẬT TẤT CẢ BÓNG
-        java.util.Iterator<Ball> ballIterator = balls.iterator();
-        while (ballIterator.hasNext()) {
-            Ball currentBall = ballIterator.next();
+                // CẬP NHẬT TẤT CẢ BÓNG
+                Iterator<Ball> ballIterator = balls.iterator();
+                while (ballIterator.hasNext()) {
+                    Ball currentBall = ballIterator.next();
 
-            currentBall.update();
-            currentBall.bounceOffWall(gameCanvas.getWidth(), gameCanvas.getHeight());
+                    currentBall.update();
+                    currentBall.bounceOffWall(gameCanvas.getWidth(), gameCanvas.getHeight());
 
-            if (currentBall.checkCollision(paddle)) {
-                currentBall.bounceOffPaddle(paddle);
-            }
-
-            // Kiểm tra bóng rơi ra ngoài
-            if (currentBall.getY() > gameCanvas.getHeight()) {
-                ballIterator.remove();
-                // Nếu hết bóng → Game Over
-                loseLife();
-                initializeBall();
-                initializePaddle();
-            }
-
-            // KIỂM TRA VA CHẠM VỚI GẠCH
-            if (level != null) {
-                Brick[][] bricks = level.getBricks();
-                int rows = level.getRows();
-                int cols = level.getCols();
-
-                for (int r = 0; r < rows; r++) {
-                    for (int c = 0; c < cols; c++) {
-                        Brick brick = bricks[r][c];
-                        if (brick != null) {
-                            brick.update(); // <--- thêm dòng này
-                        }
+                    if (currentBall.checkCollision(paddle)) {
+                        currentBall.bounceOffPaddle(paddle);
                     }
-                }
 
-                for (int r = 0; r < rows; r++) {
-                    for (int c = 0; c < cols; c++) {
-                        Brick brick = bricks[r][c];
-                        if (brick != null && !brick.isDestroyed()) {
-                            // Cập nhật hiệu ứng cho BombBrick
-                            if (brick instanceof BombBrick bombBrick) {
-                                bombBrick.update();
-                            } else {
-                                brick.update();
-                            }
+                    // Kiểm tra bóng rơi ra ngoài
+                    if (currentBall.getY() > gameCanvas.getHeight()) {
+                        ballIterator.remove();
+                        loseLife();
+                        initializeBall();
+                        initializePaddle();
+                        continue;
+                    }
 
-                            if (!brick.isDestroyed() && currentBall.checkCollision(brick)) {
-                                currentBall.bounceOff(brick);
+                    // KIỂM TRA VA CHẠM VỚI GẠCH
+                    if (level != null) {
+                        Brick[][] bricks = level.getBricks();
+                        int rows = level.getRows();
+                        int cols = level.getCols();
 
-                                // Nếu là bomb → cho phép nổ
-                                if (brick instanceof BombBrick bombBrick) {
-                                    bombBrick.takeHit(); // sẽ tự startExplosion + explode
-                                } else {
-                                    brick.takeHit();
-                                }
+                        for (int r = 0; r < rows; r++) {
+                            for (int c = 0; c < cols; c++) {
+                                Brick brick = bricks[r][c];
+                                if (brick != null && !brick.isDestroyed()) {
+                                    brick.update();
 
-                                if (brick.isDestroyed()) {
-                                    addScore(brick.getScoreValue());
+                                    if (currentBall.checkCollision(brick)) {
+                                        currentBall.bounceOff(brick);
 
-                                    // Spawn power-up nếu là PowerUpBrick
-                                    if (brick instanceof PowerUpBrick powerbrick) {
-                                        PowerUp newPU = powerbrick.spawnPowerUp();
-                                        if (newPU != null) {
-                                            powerup.addPowerUp(newPU);
+                                        if (brick instanceof BombBrick bombBrick) {
+                                            bombBrick.takeHit();
+                                        } else {
+                                            brick.takeHit();
+                                        }
+
+                                        if (brick.isDestroyed()) {
+                                            addScore(brick.getScoreValue());
+
+                                            if (brick instanceof PowerUpBrick powerbrick) {
+                                                PowerUp newPU = powerbrick.spawnPowerUp();
+                                                if (newPU != null) powerup.addPowerUp(newPU);
+                                            }
                                         }
                                     }
                                 }
@@ -358,29 +352,74 @@ public class GamePaneController {
                         }
                     }
                 }
+
+                checkBallCollisions();
+
+                if (powerup != null) {
+                    powerup.update(gameCanvas.getHeight());
+                    checkPowerUpCollision();
+                }
+
+                // 🟡 Khi phá hết gạch → chuyển sang giai đoạn kết thúc màn
+                if (level != null && level.isCleared()) {
+                    gamestate = gameState.LEVEL_ENDING;
+                    levelEndTimer = 0;
+                }
+            }
+
+            case LEVEL_ENDING -> {
+                // Cho phép hiệu ứng (bomb, fade, hidden brick...) tiếp tục
+                for (Ball ball : balls) {
+                    ball.update(); // chỉ update vị trí, KHÔNG kiểm tra va chạm gạch
+                }
+                if (level != null) level.update();
+
+                levelEndTimer += 1.0 / 60.0; // giả sử 60fps
+
+                if (levelEndTimer >= 0.5) { // Đợi 0.5s
+                    startNextLevel();
+                    gamestate = gameState.LEVEL_TRANSITION;
+                }
+            }
+
+            case LEVEL_TRANSITION -> {
+                // Đợi hiệu ứng fade xong, phần fade xử lý trong startNextLevel()
             }
         }
+    }
 
-        // ⚡ KIỂM TRA VA CHẠM GIỮA CÁC BÓNG VỚI NHAU
-        checkBallCollisions();
+    private void startNextLevel() {
+        javafx.animation.FadeTransition fadeOut = new javafx.animation.FadeTransition(javafx.util.Duration.seconds(1), gameCanvas);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
 
-        // CẬP NHẬT POWER-UP
-        if (powerup != null) {
-            powerup.update(gameCanvas.getHeight());
-            checkPowerUpCollision();
-        }
-
-        // KIỂM TRA HOÀN THÀNH LEVEL
-        if (level != null && level.isCleared()) {
+        fadeOut.setOnFinished(e -> {
             currentLevel++;
             if (currentLevel > 3) {
                 gameRunning = false;
                 showGameOver("YOU WIN!");
-            } else {
-                initializeLevelandPowerUp(currentLevel);
+                return;
             }
-        }
+
+            initializeLevelandPowerUp(currentLevel);
+            updateLevelDisplay();
+
+            // Reset bóng, paddle
+            initializePaddle();
+            initializeBall();
+
+            // Fade in lại
+            javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(javafx.util.Duration.seconds(1), gameCanvas);
+            fadeIn.setFromValue(0.0);
+            fadeIn.setToValue(1.0);
+            fadeIn.setOnFinished(ev -> gamestate = gameState.PLAYING);
+            fadeIn.play();
+        });
+
+        fadeOut.play();
     }
+
+
     private void loseLife() {
         lives--;
         updateLivesDisplay(); // Cập nhật hiển thị số mạng
@@ -504,6 +543,7 @@ public class GamePaneController {
 
                     // Vẽ lại bomb nếu đang nổ, hoặc gạch chưa bị phá
                     if (!brick.isDestroyed() || (brick instanceof BombBrick b && b.isExploding())) {
+                        brick.update();
                         brick.render(gc);
                     }
                 }

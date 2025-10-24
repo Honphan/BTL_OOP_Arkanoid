@@ -10,11 +10,12 @@ public class PowerUpBrick extends Brick {
 
     private PowerUpType spawnType;
     private Image image;
+    private static final int MAX_HP = 1;
 
     protected static final int defaultVelocityY = 3;
 
     public PowerUpBrick(double x, double y, double width, double height) {
-        super(x, y, width, height, 1, "powerup");
+        super(x, y, width, height, MAX_HP, "powerup");
 
         try {
             image = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/invincible_white1.png"));
@@ -70,4 +71,6 @@ public class PowerUpBrick extends Brick {
             gc.drawImage(image, x, y, width, height);
         }
     }
+
+    public int getScoreValue() {return 10;}
 }

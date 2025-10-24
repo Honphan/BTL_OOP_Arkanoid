@@ -16,7 +16,7 @@ public class Ball extends Movable {
         super(0, 0, x, y, 20, 20);
         this.radius = 10;
         this.speed = speed;
-        this.directionX = 0.7;
+        this.directionX = 0.8;
         this.directionY = -1;
         this.soundManager = SoundManager.getInstance();
         updateVelocity();
