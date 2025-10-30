@@ -340,7 +340,10 @@ public class GamePaneController {
                                     brick.update();
 
                                     if (currentBall.checkCollision(brick)) {
-                                        currentBall.bounceOff(brick);
+                                        // chỉ bật lại nếu không có piercing
+                                        if (!currentBall.isPiercing()) {
+                                            currentBall.bounceOff(brick);
+                                        }
 
                                         if (brick instanceof BombBrick bombBrick) {
                                             bombBrick.takeHit();
@@ -367,6 +370,7 @@ public class GamePaneController {
 
                 if (powerup != null) {
                     powerup.update(balls); // canvasHeight đã được set trước đó
+                    powerup.updatePiercingMode(balls);
                     powerup.checkCollisionWithPaddle(paddle, balls, this::addLife);
                 }
 

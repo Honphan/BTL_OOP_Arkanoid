@@ -17,9 +17,12 @@ public class PiercingBallPowerUp extends PowerUp {
 
     @Override
     public void applyPowerUp(Movable target) {
+        // RỖNG - Logic trong PowerUpManager.applyPiercingToAllBalls()
     }
 
     @Override
-    public void removePowerUp(Movable target) {}
+    public void removePowerUp(Movable target) {
+        // RỖNG - Logic trong Ball.updatePiercingStatus()
+    }
 
 }

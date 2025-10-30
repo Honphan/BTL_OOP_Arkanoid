@@ -16,6 +16,8 @@ public class PowerUpManager {
 
     private final List<PowerUp> powerups = new ArrayList<>();
     private double canvasHeight;
+    private boolean piercingMode = false;
+    private long piercingEndTime = 0;
 
     // Callback khi nhận power-up tức thời (ví dụ: thêm mạng, phát âm thanh)
     private Consumer<PowerUp> onInstantEffect;
@@ -85,6 +87,12 @@ public class PowerUpManager {
                         triggerInstantEffect(pu);
                         iterator.remove(); // loại ngay vì hiệu ứng tức thời
                     }
+
+                    case PIERCING_BALL -> {       // ← THÊM CASE NÀY
+                    applyPiercingToAllBalls(balls, (int) pu.getDuration());
+                    triggerInstantEffect(pu);
+                    iterator.remove();
+                    }
                     default -> {
                         pu.applyPowerUp(paddle, balls); // truyền danh sách bóng từ GamePaneController
                         pu.activate(paddle); // để PowerUpManager quản lý thời gian
@@ -139,6 +147,33 @@ public class PowerUpManager {
                 puX + puWidth > pX &&
                 puY < pY + pHeight &&
                 puY + puHeight > pY;
+    }
+
+    /**
+     * áp dụng piercing ball cho toàn bộ bóng
+     */
+    private void applyPiercingToAllBalls(List<Ball> balls, int duration) {
+        for (Ball ball : balls) {
+            ball.setPiercing(true, duration);
+        }
+        piercingMode = true;
+        piercingEndTime = System.currentTimeMillis() + duration;
+    }
+
+    /**
+     * update trạng thái
+     */
+    public void updatePiercingMode(List<Ball> balls) {
+        if (piercingMode && System.currentTimeMillis() >= piercingEndTime) {
+            for (Ball ball : balls) {
+                ball.setPiercing(false, 0);
+            }
+            piercingMode = false;
+        }
+
+        for (Ball ball : balls) {
+            ball.updatePiercingStatus();
+        }
     }
 
     public List<PowerUp> getPowerUps() {
