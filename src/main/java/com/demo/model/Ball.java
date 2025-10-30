@@ -15,6 +15,8 @@ public class Ball extends Movable {
     private double directionY; // hướng bay theo trục Y (giá trị từ -1 đến 1)
     private int radius;
     private double originalSpeed;
+    private boolean isPiercing = false;
+    private long piercingEndTime = 0;
     private SoundManager soundManager;
 
     // --- Constructor ---
@@ -73,11 +75,19 @@ public class Ball extends Movable {
 
     // --- Vẽ bóng ---
     public void render(GraphicsContext gc) {
-        gc.setFill(Color.RED);
-        gc.fillOval(x, y, 2 * radius, 2 * radius);
-        gc.setStroke(Color.BLACK);
-        gc.setLineWidth(2);
-        gc.strokeOval(x, y, 2 * radius, 2 * radius);
+        if (isPiercing) {
+            gc.setFill(Color.GOLD);
+            gc.fillOval(x, y, 2 * radius, 2 * radius);
+            gc.setStroke(Color.ORANGE);
+            gc.setLineWidth(3);
+            gc.strokeOval(x, y, 2 * radius, 2 * radius);
+        } else {
+            gc.setFill(Color.RED);
+            gc.fillOval(x, y, 2 * radius, 2 * radius);
+            gc.setStroke(Color.BLACK);
+            gc.setLineWidth(2);
+            gc.strokeOval(x, y, 2 * radius, 2 * radius);
+        }
     }
 
     // --- Va chạm với hình chữ nhật (gạch, paddle) ---
@@ -276,5 +286,31 @@ public class Ball extends Movable {
 
     public double getCenterY() {
         return y + radius;
+    }
+
+    /**
+     * set piercing time
+     */
+    public void setPiercing(boolean piercing, long duration) {
+        this.isPiercing = piercing;
+        if (piercing) {
+            this.piercingEndTime = System.currentTimeMillis() + duration;
+        } else {
+            this.piercingEndTime = 0;
+        }
+    }
+
+    /**
+     * cập nhật trạng thái piercing
+     */
+    public void updatePiercingStatus() {
+        if (isPiercing && System.currentTimeMillis() >= piercingEndTime) {
+            isPiercing = false;
+            piercingEndTime = 0;
+        }
+    }
+
+    public boolean isPiercing() {
+        return isPiercing;
     }
 }
