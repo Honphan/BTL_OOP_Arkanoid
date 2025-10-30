@@ -1,35 +1,34 @@
 package com.demo.model.powerup;
 
-import com.demo.model.GameObject;
 import com.demo.model.Movable;
 import com.demo.model.Paddle;
 import javafx.scene.image.Image;
 
 /**
- * Paddle rộng ra.
+ * PowerUp giúp paddle mở rộng gấp đôi trong thời gian giới hạn.
  */
 public class ExpandPaddlePowerUp extends PowerUp {
 
+
     public ExpandPaddlePowerUp(double x, double y, double width, double height, double velocityY) {
-        super(x, y, width, height, PowerUpType.EXPAND_PADDLE, PowerUp.getDefaultDuration(), velocityY,
-                new Image(ExpandPaddlePowerUp.class.getResourceAsStream("/com/demo/view/image/powerup/expandpaddle.png")));
+        super(x, y, width, height,
+                PowerUpType.EXPAND_PADDLE,
+                getDefaultDuration(),
+                velocityY,
+                new Image(PiercingBallPowerUp.class.getResourceAsStream("/com/demo/view/image/powerups/expandpaddle.png")));
     }
 
     @Override
     public void applyPowerUp(Movable target) {
-        if (target instanceof Paddle) {
-            Paddle paddle = (Paddle) target;
-            // x2 paddle
-            paddle.expandPaddle(2);
+        if (target instanceof Paddle paddle) {
+            paddle.expandPaddle(2); // Mở rộng gấp đôi
         }
     }
 
     @Override
     public void removePowerUp(Movable target) {
-        if (target instanceof Paddle) {
-            Paddle paddle = (Paddle) target;
-            // Reset về kích thước gốc
-            paddle.resetPaddleSize();
+        if (target instanceof Paddle paddle) {
+            paddle.resetPaddleSize(); // Trả về kích thước ban đầu
         }
     }
 }

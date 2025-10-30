@@ -11,28 +11,24 @@ public class Paddle extends Movable {
     private PowerUp currentPowerUp;
     private Image paddleImage;
     private Image paddlePowerUpImage; // Hình ảnh khi có power-up
-    private double originalWidth = width;
-    private long powerUpEndTime = 0;
+    private double originalWidth;
 
     public Paddle(double x, double y, double width, double height, double speed) {
         super(0, 0, x, y, width, height);
         this.speed = speed;
         this.currentPowerUp = null;
+        this.originalWidth = width;
         loadImages();
     }
 
     private void loadImages() {
         try {
             // Load hình ảnh paddle gốc
-            Image originalImage = new Image(getClass().getResource("/com/demo/view/image/paddle/paddle.png").toExternalForm());
-
-            // Xử lý để loại bỏ background
-            paddleImage = Background.remove(originalImage);
-            System.out.println("Tải và xử lý paddle_laser2.png thành công!");
+            paddleImage = new Image(getClass().getResourceAsStream("/com/demo/view/image/paddle/paddle.png"));
+            paddlePowerUpImage = new Image(getClass().getResourceAsStream("/com/demo/view/image/paddle/powerup.png"));
 
         } catch (Exception e) {
             System.err.println("Lỗi khi load hình ảnh paddle: " + e.getMessage());
-            e.printStackTrace();
             paddleImage = null;
             paddlePowerUpImage = null;
         }
@@ -41,33 +37,26 @@ public class Paddle extends Movable {
 
     public void update(double canvasWidth) {
         x += dx;
-        if (x < 0) {
-            x = 0;
-        } else if (x + width > canvasWidth) {
-            x = canvasWidth - width;
-        }
+        x = Math.max(0, Math.min(x, canvasWidth - width));
     }
 
     @Override
     public void update() {
-        // Implementation rỗng
+        // Không sử dụng trong context này
+    }
+
+    @Override
+    public void move() {
+        // Không sử dụng trong context này
     }
 
     public void render(GraphicsContext gc) {
         if (paddleImage != null) {
-            // Sử dụng hình ảnh thay vì vẽ hình chữ nhật
-            Image imageToUse = (currentPowerUp != null && paddlePowerUpImage != null)
-                    ? paddlePowerUpImage
-                    : paddleImage;
-
-            gc.drawImage(imageToUse, x, y, width, height);
+            Image img = (currentPowerUp != null && currentPowerUp.isActivated())
+                    ? paddlePowerUpImage : paddleImage;
+            gc.drawImage(img, x, y, width, height);
         } else {
-            // Fallback: vẽ hình chữ nhật nếu không load được hình ảnh
-            if (currentPowerUp != null) {
-                gc.setFill(Color.GOLD);
-            } else {
-                gc.setFill(Color.BLUE);
-            }
+            gc.setFill(currentPowerUp != null ? Color.GOLD : Color.BLUE);
             gc.fillRect(x, y, width, height);
             gc.setStroke(Color.BLACK);
             gc.setLineWidth(2);
@@ -75,25 +64,51 @@ public class Paddle extends Movable {
         }
     }
 
+    // --- Di chuyển ---
     public void moveLeft() {
-        this.dx = -speed;
+        dx = -speed;
     }
 
     public void moveRight() {
-        this.dx = speed;
+        dx = speed;
     }
 
     public void stop() {
-        this.dx = 0;
+        dx = 0;
     }
 
-    // Getters và setters giữ nguyên
+    // --- PowerUp ---
+    public void applyPowerUp(PowerUp powerUp) {
+        if (currentPowerUp != null) {
+            removePowerUp();
+        }
+        currentPowerUp = powerUp;
+        powerUp.applyPowerUp(this);
+    }
+
+    public void removePowerUp() {
+        if (currentPowerUp != null) {
+            currentPowerUp.removePowerUp(this);
+            currentPowerUp = null;
+        }
+    }
+
+    // --- Paddle kích thước ---
+    public void expandPaddle(double multiplier) {
+        width = originalWidth * multiplier;
+    }
+
+    public void shrinkPaddle(double multiplier) {
+        width = originalWidth * multiplier;
+    }
+
+    public void resetPaddleSize() {
+        width = originalWidth;
+    }
+
+    // --- Getter ---
     public double getSpeed() {
         return speed;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
     }
 
     public PowerUp getCurrentPowerUp() {
@@ -108,48 +123,7 @@ public class Paddle extends Movable {
         return y + height / 2;
     }
 
-    @Override
-    public void move() {
-        // Implementation rỗng
-    }
-
-    // Method để áp dụng power-up
-    public void applyPowerUp(PowerUp powerUp) {
-        // Nếu đang có power-up khác, xóa nó trước
-        if (currentPowerUp != null) {
-            removePowerUp();
-        }
-
-        currentPowerUp = powerUp;
-        powerUp.applyPowerUp(this);
-
-        // Set thời gian kết thúc
-        powerUpEndTime = System.currentTimeMillis() + powerUp.getDuration();
-    }
-
-    // Method để xóa power-up
-    public void removePowerUp() {
-        if (currentPowerUp != null) {
-            currentPowerUp.removePowerUp(this);
-            currentPowerUp = null;
-            powerUpEndTime = 0;
-        }
-    }
-
-    // Method để mở rộng paddle
-    public void expandPaddle(double multiplier) {
-        this.width = originalWidth * multiplier;
-    }
-    // Method để reset về kích thước gốc
-    public void resetPaddleSize() {
-        this.width = originalWidth;
-    }
-
     public double getOriginalWidth() {
         return originalWidth;
-    }
-
-    public long getPowerUpEndTime() {
-        return powerUpEndTime;
     }
 }

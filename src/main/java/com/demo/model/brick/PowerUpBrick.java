@@ -18,22 +18,26 @@ public class PowerUpBrick extends Brick {
         super(x, y, width, height, MAX_HP, "powerup");
 
         try {
-            image = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/invincible_white1.png"));
+            image = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/yellow-normal.png"));
         } catch (Exception e) {
-            System.err.println("Không load được ảnh gạch: " + e.getMessage());
+            System.err.println("Không load được ảnh gạch power-up: " + e.getMessage());
         }
 
         Random random = new Random();
 
         if (random.nextInt(100) < 100) {
-            int choice = random.nextInt(4);
+            int choice = random.nextInt(6);
             spawnType = switch (choice) {
                 case 0 -> PowerUpType.EXPAND_PADDLE;
                 case 1 -> PowerUpType.EXTRA_LIFE;
                 case 2 -> PowerUpType.PIERCING_BALL;
                 case 3 -> PowerUpType.MULTI_BALL;
+                case 4 -> PowerUpType.SHRINK_PADDLE;
+                case 5 -> PowerUpType.SPEED_UP;
+                case 6 -> PowerUpType.SPEED_DOWN;
                 default -> null;
             };
+
         } else {
             spawnType = null;
         }
@@ -53,6 +57,9 @@ public class PowerUpBrick extends Brick {
             case EXTRA_LIFE -> new ExtraLifePowerUp(spawnX, spawnY, powerupWidth, powerupHeight, defaultVelocityY);
             case PIERCING_BALL -> new PiercingBallPowerUp(spawnX, spawnY, powerupWidth, powerupHeight, defaultVelocityY);
             case MULTI_BALL -> new MultiBallPowerUp(spawnX, spawnY, powerupWidth, powerupHeight, defaultVelocityY);
+            case SHRINK_PADDLE -> new ShrinkPaddlePowerUp(spawnX, spawnY, powerupWidth, powerupHeight, defaultVelocityY);
+            case SPEED_DOWN ->  new SpeedDownPowerUp(spawnX, spawnY, powerupWidth, powerupHeight, defaultVelocityY);
+            case SPEED_UP -> new SpeedUpPowerUp(spawnX, spawnY, powerupWidth, powerupHeight, defaultVelocityY);
             default -> null;
         };
     }

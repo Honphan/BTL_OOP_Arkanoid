@@ -33,10 +33,9 @@ public class BombBrick extends Brick {
 
         // Tải ảnh bomb
         try {
-            image = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/invincible_white1.png"));
+            image = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/bombbrick.png"));
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Không load được ảnh gạch: " + e.getMessage());
+            System.err.println("Không load được ảnh gạch nổ: " + e.getMessage());
         }
     }
 

@@ -13,7 +13,7 @@ public class UnbreakableBrick extends Brick {
         try {
             image = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/unbreakable.png"));
         } catch (Exception e) {
-            System.err.println("Không load được ảnh gạch: " + e.getMessage());
+            System.err.println("Không load được ảnh gạch không phá được: " + e.getMessage());
         }
     }
 

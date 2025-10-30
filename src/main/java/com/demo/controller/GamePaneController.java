@@ -199,37 +199,37 @@ public class GamePaneController {
         balls.add(ball);
     }
 
-    private void createMultiBalls(Ball originalBall) {
-        double radius = 10;
-
-        Ball ball1 = new Ball(originalBall.getX(), originalBall.getY(), originalBall.getSpeed());
-        Ball ball2 = new Ball(originalBall.getX(), originalBall.getY(), originalBall.getSpeed());
-
-        // Lấy vận tốc hiện tại của bóng gốc
-        double originalDx = originalBall.getDx();
-        double originalDy = originalBall.getDy();
-
-        // Tính góc hiện tại của bóng gốc
-        double currentAngle = Math.atan2(originalDy, originalDx);
-
-        // Tạo 2 góc lệch 30 độ sang 2 bên
-        double angle1 = currentAngle - Math.toRadians(30);
-        double angle2 = currentAngle + Math.toRadians(30);
-
-        double speed = originalBall.getSpeed();
-
-        // Set vận tốc cho bóng 1 (lệch trái)
-        ball1.setDx(Math.cos(angle1) * speed);
-        ball1.setDy(Math.sin(angle1) * speed);
-
-        // Set vận tốc cho bóng 2 (lệch phải)
-        ball2.setDx(Math.cos(angle2) * speed);
-        ball2.setDy(Math.sin(angle2) * speed);
-
-        balls.add(ball1);
-        balls.add(ball2);
-
-    }
+//    private void createMultiBalls(Ball originalBall) {
+//        double radius = 10;
+//
+//        Ball ball1 = new Ball(originalBall.getX(), originalBall.getY(), originalBall.getSpeed());
+//        Ball ball2 = new Ball(originalBall.getX(), originalBall.getY(), originalBall.getSpeed());
+//
+//        // Lấy vận tốc hiện tại của bóng gốc
+//        double originalDx = originalBall.getDx();
+//        double originalDy = originalBall.getDy();
+//
+//        // Tính góc hiện tại của bóng gốc
+//        double currentAngle = Math.atan2(originalDy, originalDx);
+//
+//        // Tạo 2 góc lệch 30 độ sang 2 bên
+//        double angle1 = currentAngle - Math.toRadians(30);
+//        double angle2 = currentAngle + Math.toRadians(30);
+//
+//        double speed = originalBall.getSpeed();
+//
+//        // Set vận tốc cho bóng 1 (lệch trái)
+//        ball1.setDx(Math.cos(angle1) * speed);
+//        ball1.setDy(Math.sin(angle1) * speed);
+//
+//        // Set vận tốc cho bóng 2 (lệch phải)
+//        ball2.setDx(Math.cos(angle2) * speed);
+//        ball2.setDy(Math.sin(angle2) * speed);
+//
+//        balls.add(ball1);
+//        balls.add(ball2);
+//
+//    }
 
 
     private void initializePaddle() {
@@ -262,9 +262,16 @@ public class GamePaneController {
         double totalHeight = gameCanvas.getHeight();
 
         level = new LevelManager(levelNumber, totalWidth, totalHeight);
-        powerup = new PowerUpManager();
 
+        powerup = new PowerUpManager();
+        powerup.setCanvasHeight(totalHeight); // ✅ mới thêm
+        powerup.setOnInstantEffect(pu -> {
+            if (soundManager != null) {
+                soundManager.playSound("powerup");
+            }
+        });
     }
+
 
     private void setupGameLoop() {
         final long[] lastFrameTime = {0};
@@ -311,10 +318,13 @@ public class GamePaneController {
                     // Kiểm tra bóng rơi ra ngoài
                     if (currentBall.getY() > gameCanvas.getHeight()) {
                         ballIterator.remove();
+                    }
+
+                    // Sau vòng lặp bóng, kiểm tra nếu không còn bóng nào
+                    if (balls.isEmpty()) {
                         loseLife();
                         initializeBall();
                         initializePaddle();
-                        continue;
                     }
 
                     // KIỂM TRA VA CHẠM VỚI GẠCH
@@ -356,8 +366,8 @@ public class GamePaneController {
                 checkBallCollisions();
 
                 if (powerup != null) {
-                    powerup.update(gameCanvas.getHeight());
-                    checkPowerUpCollision();
+                    powerup.update(balls); // canvasHeight đã được set trước đó
+                    powerup.checkCollisionWithPaddle(paddle, balls, this::addLife);
                 }
 
                 // 🟡 Khi phá hết gạch → chuyển sang giai đoạn kết thúc màn
@@ -549,81 +559,19 @@ public class GamePaneController {
                 }
             }
         }
+        if (powerup != null) {
+            powerup.render(gc);
+        }
 
     }
 
     private void updatePaddle() {
-        if (paddle.getCurrentPowerUp() != null && System.currentTimeMillis() >= paddle.getPowerUpEndTime()) {
-            paddle.removePowerUp();
-        }
         if (inputHandle.isLeftKeyPressed() && !inputHandle.isRightKeyPressed()) {
             paddle.moveLeft();
         } else if (inputHandle.isRightKeyPressed() && !inputHandle.isLeftKeyPressed()) {
             paddle.moveRight();
         } else {
             paddle.stop();
-        }
-    }
-
-    private void checkPowerUpCollision() {
-        if (powerup == null || paddle == null) return;
-
-        List<PowerUp> powerUpList = powerup.getPowerUps();
-        Iterator<PowerUp> iterator = powerUpList.iterator();
-
-        while (iterator.hasNext()) {
-            PowerUp pu = iterator.next();
-
-            if (!pu.isActive()) {
-                iterator.remove();
-                continue;
-            }
-
-           
-            // Kiểm tra va chạm: power-up chạm paddle
-        if (checkCollision(pu, paddle)) {
-            // Xử lý theo từng loại power-up
-            switch (pu.getType()) {
-                case MULTI_BALL:
-                    // Tạo thêm 2 bóng mới từ bóng chính
-                    if (!balls.isEmpty()) {
-                        createMultiBalls(balls.get(0));
-                    }
-                    break;
-                    
-                case EXTRA_LIFE:
-                    // Thêm mạng
-                    addLife();
-                    break;
-                    
-                case EXPAND_PADDLE:
-                    // Mở rộng paddle
-                    paddle.applyPowerUp(pu);
-                    break;
-                    
-                case PIERCING_BALL:
-                    // Bóng xuyên gạch (implement sau)
-                    paddle.applyPowerUp(pu);
-                    break;
-                    
-                default:
-                    // Power-up khác (dự phòng)
-                    paddle.applyPowerUp(pu);
-                    break;
-            }
-            
-            // Vô hiệu hóa power-up
-            pu.setActive(false);
-            iterator.remove();
-            
-            System.out.println("✨ Power-up collected: " + pu.getType());
-        }
-
-            // Xóa power-up nếu rơi ra ngoài màn hình
-            if (pu.getY() > gameCanvas.getHeight()) {
-                pu.setActive(false);
-                iterator.remove();
-            }
         }
     }
 
