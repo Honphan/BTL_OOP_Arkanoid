@@ -12,19 +12,18 @@ public class NormalBrick extends Brick {
 
     public NormalBrick(double x, double y, double width, double height, int colorStyle) {
         super(x, y, width, height, MAX_HP, "normal");
+        this.colorStyle = colorStyle;
 
-        image = new Image[5];
+        image = new Image[4];
 
         try {
 
-            image[1] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/1hp_green1.png"));
-            image[2] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/2hp_violet1.png"));
-            image[3] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/3hp_blue1.png"));
-            image[4] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/4hp_yellow1.png"));
+            image[1] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/blue-normal.png"));
+            image[2] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/violet-normal.png"));
+            image[3] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/orange-normal.png"));
 
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Không load được ảnh gạch: " + e.getMessage());
+            System.err.println("Không load được ảnh gạch thường: " + e.getMessage());
         }
 
     }
@@ -54,7 +53,6 @@ public class NormalBrick extends Brick {
         if (isDestroyed()) return;
         // Gán hình ảnh cho các case hitPoints
         Image img = switch (colorStyle) {
-            case 4 -> image[4];
             case 3 -> image[3];
             case 2 -> image[2];
             default -> image[1];

@@ -262,9 +262,16 @@ public class GamePaneController {
         double totalHeight = gameCanvas.getHeight();
 
         level = new LevelManager(levelNumber, totalWidth, totalHeight);
-        powerup = new PowerUpManager();
 
+        powerup = new PowerUpManager();
+        powerup.setCanvasHeight(totalHeight); // ✅ mới thêm
+        powerup.setOnInstantEffect(pu -> {
+            if (soundManager != null) {
+                soundManager.playSound("powerup");
+            }
+        });
     }
+
 
     private void setupGameLoop() {
         final long[] lastFrameTime = {0};
@@ -311,10 +318,13 @@ public class GamePaneController {
                     // Kiểm tra bóng rơi ra ngoài
                     if (currentBall.getY() > gameCanvas.getHeight()) {
                         ballIterator.remove();
+                    }
+
+                    // Sau vòng lặp bóng, kiểm tra nếu không còn bóng nào
+                    if (balls.isEmpty()) {
                         loseLife();
                         initializeBall();
                         initializePaddle();
-                        continue;
                     }
 
                     // KIỂM TRA VA CHẠM VỚI GẠCH
@@ -356,8 +366,8 @@ public class GamePaneController {
                 checkBallCollisions();
 
                 if (powerup != null) {
-                    powerup.update(gameCanvas.getHeight());
-                    checkPowerUpCollision();
+                    powerup.update(balls); // canvasHeight đã được set trước đó
+                    powerup.checkCollisionWithPaddle(paddle, balls, this::addLife);
                 }
 
                 // 🟡 Khi phá hết gạch → chuyển sang giai đoạn kết thúc màn
@@ -549,81 +559,19 @@ public class GamePaneController {
                 }
             }
         }
+        if (powerup != null) {
+            powerup.render(gc);
+        }
 
     }
 
     private void updatePaddle() {
-        if (paddle.getCurrentPowerUp() != null && System.currentTimeMillis() >= paddle.getPowerUpEndTime()) {
-            paddle.removePowerUp();
-        }
         if (inputHandle.isLeftKeyPressed() && !inputHandle.isRightKeyPressed()) {
             paddle.moveLeft();
         } else if (inputHandle.isRightKeyPressed() && !inputHandle.isLeftKeyPressed()) {
             paddle.moveRight();
         } else {
             paddle.stop();
-        }
-    }
-
-    private void checkPowerUpCollision() {
-        if (powerup == null || paddle == null) return;
-
-        List<PowerUp> powerUpList = powerup.getPowerUps();
-        Iterator<PowerUp> iterator = powerUpList.iterator();
-
-        while (iterator.hasNext()) {
-            PowerUp pu = iterator.next();
-
-            if (!pu.isActive()) {
-                iterator.remove();
-                continue;
-            }
-
-           
-            // Kiểm tra va chạm: power-up chạm paddle
-        if (checkCollision(pu, paddle)) {
-            // Xử lý theo từng loại power-up
-            switch (pu.getType()) {
-                case MULTI_BALL:
-                    // Tạo thêm 2 bóng mới từ bóng chính
-                    if (!balls.isEmpty()) {
-                        createMultiBalls(balls.get(0));
-                    }
-                    break;
-                    
-                case EXTRA_LIFE:
-                    // Thêm mạng
-                    addLife();
-                    break;
-                    
-                case EXPAND_PADDLE:
-                    // Mở rộng paddle
-                    paddle.applyPowerUp(pu);
-                    break;
-                    
-                case PIERCING_BALL:
-                    // Bóng xuyên gạch (implement sau)
-                    paddle.applyPowerUp(pu);
-                    break;
-                    
-                default:
-                    // Power-up khác (dự phòng)
-                    paddle.applyPowerUp(pu);
-                    break;
-            }
-            
-            // Vô hiệu hóa power-up
-            pu.setActive(false);
-            iterator.remove();
-            
-            System.out.println("✨ Power-up collected: " + pu.getType());
-        }
-
-            // Xóa power-up nếu rơi ra ngoài màn hình
-            if (pu.getY() > gameCanvas.getHeight()) {
-                pu.setActive(false);
-                iterator.remove();
-            }
         }
     }
 

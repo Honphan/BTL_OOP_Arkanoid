@@ -1,23 +1,32 @@
 package com.demo.model.powerup;
 
 import com.demo.model.Movable;
-import com.demo.model.Paddle;
 import javafx.scene.image.Image;
 
 /**
- * Thêm mạng.
+ * PowerUp thêm mạng — hiệu ứng tức thời, xử lý trong controller.
  */
 public class ExtraLifePowerUp extends PowerUp {
 
+    private static final String IMAGE_PATH = "/com/demo/view/image/powerup/extralife.png";
+
     public ExtraLifePowerUp(double x, double y, double width, double height, double velocityY) {
-        super(x, y, width, height, PowerUpType.EXTRA_LIFE, 0, velocityY,
-                new Image(ExtraLifePowerUp.class.getResourceAsStream("/com/demo/view/image/powerup/extralife.png")));
+        super(x, y, width, height,
+                PowerUpType.EXTRA_LIFE,
+                0, // hiệu ứng tức thời
+                velocityY,
+                new Image(PiercingBallPowerUp.class.getResourceAsStream("/com/demo/view/image/powerups/extralife.png")));
     }
+
 
     @Override
     public void applyPowerUp(Movable target) {
+        // Không làm gì ở đây — controller sẽ xử lý tăng mạng
+        deactivate(); // đánh dấu đã xử lý
     }
 
     @Override
-    public void removePowerUp(Movable target) {}
+    public void removePowerUp(Movable target) {
+        // Không cần gỡ hiệu ứng
+    }
 }
