@@ -199,37 +199,37 @@ public class GamePaneController {
         balls.add(ball);
     }
 
-    private void createMultiBalls(Ball originalBall) {
-        double radius = 10;
-
-        Ball ball1 = new Ball(originalBall.getX(), originalBall.getY(), originalBall.getSpeed());
-        Ball ball2 = new Ball(originalBall.getX(), originalBall.getY(), originalBall.getSpeed());
-
-        // Lấy vận tốc hiện tại của bóng gốc
-        double originalDx = originalBall.getDx();
-        double originalDy = originalBall.getDy();
-
-        // Tính góc hiện tại của bóng gốc
-        double currentAngle = Math.atan2(originalDy, originalDx);
-
-        // Tạo 2 góc lệch 30 độ sang 2 bên
-        double angle1 = currentAngle - Math.toRadians(30);
-        double angle2 = currentAngle + Math.toRadians(30);
-
-        double speed = originalBall.getSpeed();
-
-        // Set vận tốc cho bóng 1 (lệch trái)
-        ball1.setDx(Math.cos(angle1) * speed);
-        ball1.setDy(Math.sin(angle1) * speed);
-
-        // Set vận tốc cho bóng 2 (lệch phải)
-        ball2.setDx(Math.cos(angle2) * speed);
-        ball2.setDy(Math.sin(angle2) * speed);
-
-        balls.add(ball1);
-        balls.add(ball2);
-
-    }
+//    private void createMultiBalls(Ball originalBall) {
+//        double radius = 10;
+//
+//        Ball ball1 = new Ball(originalBall.getX(), originalBall.getY(), originalBall.getSpeed());
+//        Ball ball2 = new Ball(originalBall.getX(), originalBall.getY(), originalBall.getSpeed());
+//
+//        // Lấy vận tốc hiện tại của bóng gốc
+//        double originalDx = originalBall.getDx();
+//        double originalDy = originalBall.getDy();
+//
+//        // Tính góc hiện tại của bóng gốc
+//        double currentAngle = Math.atan2(originalDy, originalDx);
+//
+//        // Tạo 2 góc lệch 30 độ sang 2 bên
+//        double angle1 = currentAngle - Math.toRadians(30);
+//        double angle2 = currentAngle + Math.toRadians(30);
+//
+//        double speed = originalBall.getSpeed();
+//
+//        // Set vận tốc cho bóng 1 (lệch trái)
+//        ball1.setDx(Math.cos(angle1) * speed);
+//        ball1.setDy(Math.sin(angle1) * speed);
+//
+//        // Set vận tốc cho bóng 2 (lệch phải)
+//        ball2.setDx(Math.cos(angle2) * speed);
+//        ball2.setDy(Math.sin(angle2) * speed);
+//
+//        balls.add(ball1);
+//        balls.add(ball2);
+//
+//    }
 
 
     private void initializePaddle() {
