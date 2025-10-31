@@ -328,42 +328,50 @@ public class GamePaneController {
                     }
 
                     // KIỂM TRA VA CHẠM VỚI GẠCH
+                    // KIỂM TRA VA CHẠM VỚI GẠCH — chỉ phản xạ với 1 viên duy nhất
                     if (level != null) {
                         Brick[][] bricks = level.getBricks();
                         int rows = level.getRows();
                         int cols = level.getCols();
 
-                        for (int r = 0; r < rows; r++) {
+                        Brick collidedBrick = null;
+
+                        for (int r = 0; r < rows && collidedBrick == null; r++) {
                             for (int c = 0; c < cols; c++) {
                                 Brick brick = bricks[r][c];
                                 if (brick != null && !brick.isDestroyed()) {
                                     brick.update();
 
                                     if (currentBall.checkCollision(brick)) {
-                                        // chỉ bật lại nếu không có piercing
-                                        if (!currentBall.isPiercing()) {
-                                            currentBall.bounceOff(brick);
-                                        }
-
-                                        if (brick instanceof BombBrick bombBrick) {
-                                            bombBrick.takeHit();
-                                        } else {
-                                            brick.takeHit();
-                                        }
-
-                                        if (brick.isDestroyed()) {
-                                            addScore(brick.getScoreValue());
-
-                                            if (brick instanceof PowerUpBrick powerbrick) {
-                                                PowerUp newPU = powerbrick.spawnPowerUp();
-                                                if (newPU != null) powerup.addPowerUp(newPU);
-                                            }
-                                        }
+                                        collidedBrick = brick;
+                                        break; // ✅ chỉ lấy viên đầu tiên bị chạm
                                     }
                                 }
                             }
                         }
+
+                        if (collidedBrick != null) {
+                            if (!currentBall.isPiercing()) {
+                                currentBall.bounceOff(collidedBrick); // ✅ chỉ phản xạ 1 lần
+                            }
+
+                            if (collidedBrick instanceof BombBrick bombBrick) {
+                                bombBrick.takeHit();
+                            } else {
+                                collidedBrick.takeHit();
+                            }
+
+                            if (collidedBrick.isDestroyed()) {
+                                addScore(collidedBrick.getScoreValue());
+
+                                if (collidedBrick instanceof PowerUpBrick powerbrick) {
+                                    PowerUp newPU = powerbrick.spawnPowerUp();
+                                    if (newPU != null) powerup.addPowerUp(newPU);
+                                }
+                            }
+                        }
                     }
+
                 }
 
                 checkBallCollisions();
@@ -409,7 +417,7 @@ public class GamePaneController {
 
         fadeOut.setOnFinished(e -> {
             currentLevel++;
-            if (currentLevel > 3) {
+            if (currentLevel > 4) {
                 gameRunning = false;
                 showGameOver("YOU WIN!");
                 return;

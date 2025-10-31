@@ -26,7 +26,7 @@ public class PowerUpBrick extends Brick {
         Random random = new Random();
 
         if (random.nextInt(100) < 100) {
-            int choice = random.nextInt(6);
+            int choice = random.nextInt(7);
             spawnType = switch (choice) {
                 case 0 -> PowerUpType.EXPAND_PADDLE;
                 case 1 -> PowerUpType.EXTRA_LIFE;

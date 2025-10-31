@@ -22,7 +22,6 @@ public class ExtraLifePowerUp extends PowerUp {
     @Override
     public void applyPowerUp(Movable target) {
         // Không làm gì ở đây — controller sẽ xử lý tăng mạng
-        deactivate(); // đánh dấu đã xử lý
     }
 
     @Override

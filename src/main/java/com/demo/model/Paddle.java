@@ -10,8 +10,8 @@ public class Paddle extends Movable {
     private double speed;
     private PowerUp currentPowerUp;
     private Image paddleImage;
-    private Image paddlePowerUpImage; // Hình ảnh khi có power-up
     private double originalWidth;
+
 
     public Paddle(double x, double y, double width, double height, double speed) {
         super(0, 0, x, y, width, height);
@@ -24,13 +24,10 @@ public class Paddle extends Movable {
     private void loadImages() {
         try {
             // Load hình ảnh paddle gốc
-            paddleImage = new Image(getClass().getResourceAsStream("/com/demo/view/image/paddle/paddle.png"));
-            paddlePowerUpImage = new Image(getClass().getResourceAsStream("/com/demo/view/image/paddle/powerup.png"));
-
+            paddleImage = new Image(getClass().getResourceAsStream("/com/demo/view/image/paddles/56-Breakout-Tiles.png"));
         } catch (Exception e) {
             System.err.println("Lỗi khi load hình ảnh paddle: " + e.getMessage());
             paddleImage = null;
-            paddlePowerUpImage = null;
         }
     }
 
@@ -38,6 +35,7 @@ public class Paddle extends Movable {
     public void update(double canvasWidth) {
         x += dx;
         x = Math.max(0, Math.min(x, canvasWidth - width));
+
     }
 
     @Override
@@ -52,9 +50,7 @@ public class Paddle extends Movable {
 
     public void render(GraphicsContext gc) {
         if (paddleImage != null) {
-            Image img = (currentPowerUp != null && currentPowerUp.isActivated())
-                    ? paddlePowerUpImage : paddleImage;
-            gc.drawImage(img, x, y, width, height);
+            gc.drawImage(paddleImage, x, y, width, height);
         } else {
             gc.setFill(currentPowerUp != null ? Color.GOLD : Color.BLUE);
             gc.fillRect(x, y, width, height);
@@ -89,9 +85,11 @@ public class Paddle extends Movable {
     public void removePowerUp() {
         if (currentPowerUp != null) {
             currentPowerUp.removePowerUp(this);
+            currentPowerUp.setConsumed(true);
             currentPowerUp = null;
         }
     }
+
 
     // --- Paddle kích thước ---
     public void expandPaddle(double multiplier) {

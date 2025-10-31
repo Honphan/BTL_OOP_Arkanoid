@@ -22,11 +22,11 @@ public class StrongBrick extends Brick {
             imageNormal[1] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/blue-normal.png"));
             imageCracked[1] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/blue-cracked.png"));
 
-            imageNormal[2] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/violet-normal.png"));
-            imageCracked[2] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/violet-cracked.png"));
+            imageNormal[2] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/green-normal.png"));
+            imageCracked[2] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/green-cracked.png"));
 
-            imageNormal[3] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/orange-normal.png"));
-            imageCracked[3] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/orange-cracked.png"));
+            imageNormal[3] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/yellow-normal.png"));
+            imageCracked[3] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/yellow-cracked.png"));
         } catch (Exception e) {
             System.err.println("Không load được ảnh gạch cứng: " + e.getMessage());;
         }

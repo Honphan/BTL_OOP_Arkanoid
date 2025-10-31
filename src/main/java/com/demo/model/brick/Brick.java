@@ -30,6 +30,14 @@ public abstract class Brick extends GameObject {
         return false;
     }
 
+    public boolean isDestructible() {
+        return true; // mặc định là có thể phá
+    }
+
+    public boolean shouldBounceBall() {
+        return true; // mặc định là bóng nên phản xạ
+    }
+
 
 
     public int getScoreValue(){
