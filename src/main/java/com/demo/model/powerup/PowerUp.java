@@ -17,32 +17,20 @@ import java.util.List;
  */
 public abstract class PowerUp extends GameObject {
 
-    // Thời gian hiệu lực mặc định (ms)
-    private static final long DEFAULT_DURATION = 8000L;
-
-    // Loại power-up (ví dụ: EXPAND_PADDLE, EXTRA_LIFE, MULTI_BALL...)
+    private static final long DEFAULT_DURATION = 5000L;
     protected final PowerUpType type;
-
-    // Thời gian hiệu lực (ms)
     protected final long duration;
-
-    // Tốc độ rơi theo trục Y
     protected final double velocityY;
-
-    // Hình ảnh hiển thị power-up
     protected final Image image;
-
-    // Đối tượng đang nhận hiệu ứng (thường là Paddle)
     private Movable target;
 
     // Trạng thái: đang rơi hay đã được kích hoạt
     private boolean falling = true;
     private boolean activated = false;
+    private boolean consumed = false;
+    private boolean visible = true;
 
-    // Thời điểm bắt đầu hiệu lực (ms)
-    private long startTime = 0;
-
-    // --- Constructor ---
+    private long activationTime = 0;
 
     /**
      * Tạo power-up với thời gian hiệu lực tùy chỉnh.
@@ -75,22 +63,18 @@ public abstract class PowerUp extends GameObject {
     public void update() {
         if (falling) {
             y += velocityY;
-        } else {
-            long elapsed = System.currentTimeMillis() - startTime;
-            System.out.println("⏱ PowerUp " + type + " active for " + elapsed + "ms");
-            if (isExpired()) {
-                System.out.println("⛔ PowerUp " + type + " expired");
+        } else if (activated) {
+            long now = System.currentTimeMillis();
+            if (now - activationTime >= duration) {
                 deactivate();
+                setConsumed(true);
             }
         }
     }
+
     /**
      * Kiểm tra xem power-up đã hết thời gian hiệu lực chưa.
      */
-    private boolean isExpired() {
-        return activated && duration > 0 &&
-                System.currentTimeMillis() - startTime >= duration;
-    }
 
     // --- Rendering ---
 
@@ -116,12 +100,13 @@ public abstract class PowerUp extends GameObject {
      * Kích hoạt power-up khi va chạm với paddle.
      * Gọi phương thức applyPowerUp() và bắt đầu đếm thời gian.
      */
+
     public void activate(Movable target) {
         if (!activated && target != null) {
             this.target = target;
             this.falling = false;
             this.activated = true;
-            this.startTime = System.currentTimeMillis();
+            this.activationTime = System.currentTimeMillis(); // ✅ lưu thời điểm kích hoạt
             applyPowerUp(target);
         }
     }
@@ -131,13 +116,12 @@ public abstract class PowerUp extends GameObject {
      * Gọi phương thức removePowerUp().
      */
     public void deactivate() {
-        System.out.println("🔻 Deactivating PowerUp: " + type);
+        System.out.println("Deactivating PowerUp: " + type);
         if (activated && target != null) {
             removePowerUp(target);
         }
         activated = false;
         target = null;
-        startTime = 0;
     }
 
     // --- Abstract methods ---
@@ -170,9 +154,19 @@ public abstract class PowerUp extends GameObject {
 
     public boolean isActivated() { return activated; }
 
-    public long getStartTime() { return startTime; }
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
 
     public Movable getTarget() { return target; }
+
+    public boolean isConsumed() { return consumed; }
+
+    public void setConsumed(boolean consumed) { this.consumed = consumed; }
 
     public static long getDefaultDuration() { return DEFAULT_DURATION; }
 }

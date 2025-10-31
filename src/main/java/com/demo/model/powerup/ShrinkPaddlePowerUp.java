@@ -20,7 +20,7 @@ public class ShrinkPaddlePowerUp extends PowerUp {
     @Override
     public void applyPowerUp(Movable target) {
         if (target instanceof Paddle paddle) {
-            paddle.shrinkPaddle(0.5); // Giảm kích thước còn 50%
+            paddle.shrinkPaddle(0.5); // Giảm kích thước còn một nửa
         }
     }
 

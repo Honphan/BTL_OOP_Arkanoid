@@ -1,7 +1,6 @@
 package com.demo.model;
 
 import com.demo.model.powerup.PowerUp;
-import com.demo.model.powerup.PowerUpType;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.util.ArrayList;
@@ -44,24 +43,25 @@ public class PowerUpManager {
         Iterator<PowerUp> iterator = powerups.iterator();
         while (iterator.hasNext()) {
             PowerUp p = iterator.next();
-            p.update(); // PowerUp tự kiểm tra thời gian và gọi deactivate()
+            p.update();
 
-            boolean expired = !p.isFalling() && !p.isActivated() && p.getDuration() > 0;
             boolean outOfBounds = p.isFalling() && p.getY() > canvasHeight;
+            boolean consumed = p.isConsumed();
 
-            if (expired || outOfBounds) {
-                if (expired) {
-                    p.removePowerUp(p.getTarget(), balls); // ✅ khôi phục trạng thái bóng hoặc paddle
-                }
+            if (outOfBounds || consumed) {
                 iterator.remove();
             }
         }
     }
 
+
     public void render(GraphicsContext gc) {
         for (PowerUp p : powerups) {
-            p.render(gc);
+            if (p.isVisible()) {
+                p.render(gc);
+            }
         }
+
     }
 
     /**
@@ -96,6 +96,7 @@ public class PowerUpManager {
                     default -> {
                         pu.applyPowerUp(paddle, balls); // truyền danh sách bóng từ GamePaneController
                         pu.activate(paddle); // để PowerUpManager quản lý thời gian
+                        pu.setVisible(false);
                         triggerInstantEffect(pu);
                         // KHÔNG remove ở đây
                     }
@@ -107,24 +108,27 @@ public class PowerUpManager {
     private void spawnMultiBalls(List<Ball> balls) {
         if (balls.isEmpty()) return;
 
+        int currentCount = balls.size();
+        int maxBalls = 3;
+
+        if (currentCount >= maxBalls) return; // ❌ Đã đủ bóng, không sinh thêm
+
         Ball original = balls.get(0);
         double speed = original.getSpeed();
         double angle = Math.atan2(original.getDy(), original.getDx());
 
-        Ball ball1 = new Ball(original.getX(), original.getY(), speed);
-        Ball ball2 = new Ball(original.getX(), original.getY(), speed);
+        // Tính số bóng cần sinh thêm
+        int ballsToAdd = Math.min(maxBalls - currentCount, 2);
 
-        double angle1 = angle - Math.toRadians(30);
-        double angle2 = angle + Math.toRadians(30);
-
-        ball1.setDx(Math.cos(angle1) * speed);
-        ball1.setDy(Math.sin(angle1) * speed);
-        ball2.setDx(Math.cos(angle2) * speed);
-        ball2.setDy(Math.sin(angle2) * speed);
-
-        balls.add(ball1);
-        balls.add(ball2);
+        for (int i = 0; i < ballsToAdd; i++) {
+            double offsetAngle = Math.toRadians(30 * (i == 0 ? -1 : 1));
+            Ball newBall = new Ball(original.getX(), original.getY(), speed);
+            newBall.setDx(Math.cos(angle + offsetAngle) * speed);
+            newBall.setDy(Math.sin(angle + offsetAngle) * speed);
+            balls.add(newBall);
+        }
     }
+
 
     private void triggerInstantEffect(PowerUp pu) {
         if (onInstantEffect != null) {

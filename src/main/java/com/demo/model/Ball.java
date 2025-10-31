@@ -1,7 +1,9 @@
 package com.demo.model;
 
+import com.demo.model.brick.Brick;
 import com.demo.util.SoundManager;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 /**
@@ -10,35 +12,46 @@ import javafx.scene.paint.Color;
  */
 public class Ball extends Movable {
 
+    // Tốc độ và hướng bay
     private double speed;
-    private double directionX; // hướng bay theo trục X (giá trị từ -1 đến 1)
-    private double directionY; // hướng bay theo trục Y (giá trị từ -1 đến 1)
-    private int radius;
-    private double originalSpeed;
+    private double directionX;
+    private double directionY;
+
+    // Kích thước bóng
+    private final int radius = 10;
+    private final double originalSpeed;
+
+    // Ảnh bóng thường
+    private Image ballImage;
+
+    // Trạng thái xuyên gạch
     private boolean isPiercing = false;
     private long piercingEndTime = 0;
-    private SoundManager soundManager;
 
-    // --- Constructor ---
+    // Trạng thái tăng tốc
+    private long speedBoostEndTime = 0;
+
+    // Quản lý âm thanh
+    private final SoundManager soundManager;
+
+    // Khởi tạo bóng
     public Ball(double x, double y, double speed) {
-        super(0, 0, x, y, 20, 20); // dx, dy sẽ được tính từ hướng bay
-        this.radius = 10;
+        super(0, 0, x, y, 20, 20);
         this.speed = speed;
-        this.originalSpeed = speed; // lưu tốc độ gốc
+        this.originalSpeed = speed;
         this.directionX = 0.8;
         this.directionY = -1;
         this.soundManager = SoundManager.getInstance();
-        updateVelocity(); // tính dx, dy từ hướng bay
-    }
-
-    public void resetSpeed() {
-        this.speed = originalSpeed;
         updateVelocity();
+
+        try {
+            ballImage = new Image(getClass().getResource("/com/demo/view/image/balls/58-Breakout-Tiles.png").toExternalForm(), true);
+        } catch (Exception e) {
+            System.err.println("Không load được ảnh bóng: " + e.getMessage());
+        }
     }
 
-    /**
-     * Chuẩn hóa hướng bay thành vận tốc thực tế (dx, dy) theo tốc độ.
-     */
+    // Tính dx, dy từ hướng bay và tốc độ
     private void updateVelocity() {
         double mag = Math.sqrt(directionX * directionX + directionY * directionY);
         if (mag > 0) {
@@ -61,32 +74,33 @@ public class Ball extends Movable {
         }
     }
 
-    // --- Di chuyển ---
+    // Reset về tốc độ gốc
+    public void resetSpeed() {
+        this.speed = originalSpeed;
+        updateVelocity();
+    }
+
+    // Di chuyển bóng
     @Override
     public void move() {
         x += dx;
         y += dy;
     }
 
+    // Cập nhật trạng thái bóng mỗi frame
     @Override
     public void update() {
         move();
+        updateSpeedBoostStatus();
+        updatePiercingStatus();
     }
 
-    // --- Vẽ bóng ---
+    // Vẽ bóng lên canvas
     public void render(GraphicsContext gc) {
         if (isPiercing) {
-            gc.setFill(Color.GOLD);
-            gc.fillOval(x, y, 2 * radius, 2 * radius);
-            gc.setStroke(Color.ORANGE);
-            gc.setLineWidth(3);
-            gc.strokeOval(x, y, 2 * radius, 2 * radius);
-        } else {
-            gc.setFill(Color.RED);
-            gc.fillOval(x, y, 2 * radius, 2 * radius);
-            gc.setStroke(Color.BLACK);
-            gc.setLineWidth(2);
-            gc.strokeOval(x, y, 2 * radius, 2 * radius);
+            gc.drawImage(ballImage, x, y, radius, radius);
+        } else if (ballImage != null) {
+            gc.drawImage(ballImage, x, y, radius, radius);
         }
     }
 
@@ -251,6 +265,7 @@ public class Ball extends Movable {
         return this.y > canvasHeight;
     }
 
+    // Reset vị trí và hướng bóng
     public void reset(double x, double y) {
         this.x = x;
         this.y = y;
@@ -263,9 +278,10 @@ public class Ball extends Movable {
         return speed;
     }
 
-    public void setSpeed(double speed) {
+    public void setSpeed(double speed, long durationMillis) {
         this.speed = speed;
         updateVelocity();
+        this.speedBoostEndTime = System.currentTimeMillis() + durationMillis;
     }
 
     public double getDirectionX() {
@@ -307,6 +323,13 @@ public class Ball extends Movable {
         if (isPiercing && System.currentTimeMillis() >= piercingEndTime) {
             isPiercing = false;
             piercingEndTime = 0;
+        }
+    }
+
+    private void updateSpeedBoostStatus() {
+        if (speedBoostEndTime > 0 && System.currentTimeMillis() >= speedBoostEndTime) {
+            resetSpeed(); // trở về tốc độ gốc
+            speedBoostEndTime = 0;
         }
     }
 

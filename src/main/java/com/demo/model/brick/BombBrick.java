@@ -57,34 +57,39 @@ public class BombBrick extends Brick {
         double w = getWidth();
         double h = getHeight();
 
-        // Nếu đang nổ → vẽ hiệu ứng nổ
         if (exploding) {
             double centerX = x + w / 2;
             double centerY = y + h / 2;
             double base = Math.max(w, h);
             double radius = base * (1 + (explosionRadius / (base * MAX_RADIUS_MULTIPLIER)));
 
+            centerX += Math.random() * 4 - 2;
+            centerY += Math.random() * 4 - 2;
+
             gc.setGlobalAlpha(Math.max(0, explosionOpacity));
 
-            // Vẽ 3 lớp vòng sáng màu
-            gc.setFill(Color.rgb(255, 255, 150, 0.9)); // lõi sáng vàng
-            gc.fillOval(centerX - radius * 0.4, centerY - radius * 0.4, radius * 0.8, radius * 0.8);
+            // Vòng sáng cam đậm
+            gc.setFill(Color.rgb(255, 120, 0, 0.5));
+            gc.fillOval(centerX - radius * 0.6, centerY - radius * 0.6, radius * 1.2, radius * 1.2);
 
-            gc.setFill(Color.rgb(255, 150, 50, 0.6)); // cam nhạt
-            gc.fillOval(centerX - radius * 0.7, centerY - radius * 0.7, radius * 1.4, radius * 1.4);
-
-            gc.setFill(Color.rgb(255, 50, 0, 0.35)); // đỏ nhạt ngoài cùng
+            // Vòng sáng đỏ nhạt ngoài cùng
+            gc.setFill(Color.rgb(255, 40, 0, 0.3));
             gc.fillOval(centerX - radius, centerY - radius, radius * 2, radius * 2);
+
+            // Khói mờ xám
+            gc.setFill(Color.rgb(80, 80, 80, 0.15));
+            gc.fillOval(centerX - radius * 1.2, centerY - radius * 1.2, radius * 2.4, radius * 2.4);
 
             gc.setGlobalAlpha(1.0);
             return;
         }
 
-        // Nếu chưa bị phá hủy → vẽ ảnh bomb
         if (!isDestroyed() && image != null) {
             gc.drawImage(image, x, y, w, h);
         }
     }
+
+
 
     @Override
     public void takeHit() {
@@ -126,10 +131,12 @@ public class BombBrick extends Brick {
                     if (!bb.isDestroyed()) {
                         bb.setDestroyed(true);
                         bb.startExplosion();
-                        Platform.runLater(() ->bb.explode()); // lan nổ dây chuyền
+                        Platform.runLater(() -> bb.explode());
                     }
                 } else {
-                    neighbor.setDestroyed(true);
+                    if (neighbor.isDestructible()) {
+                        neighbor.setDestroyed(true);
+                    }
                 }
             }
         }
