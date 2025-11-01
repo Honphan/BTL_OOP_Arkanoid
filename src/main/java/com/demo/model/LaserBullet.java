@@ -1,12 +1,9 @@
 package com.demo.model;
 
 import com.demo.model.brick.Brick;
-import com.sun.source.tree.TryTree;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 
-import java.util.concurrent.Callable;
 
 
 public class LaserBullet {
