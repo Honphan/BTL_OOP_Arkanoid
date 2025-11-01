@@ -8,7 +8,6 @@ import javafx.scene.paint.Color;
 
 /**
  * Lớp Ball đại diện cho quả bóng trong game.
- * Xử lý di chuyển, va chạm, phản xạ, và âm thanh.
  */
 public class Ball extends Movable {
 
@@ -42,6 +41,10 @@ public class Ball extends Movable {
         this.directionX = 0.8;
         this.directionY = -1;
         this.soundManager = SoundManager.getInstance();
+
+        //Chuẩn hóa direction thành vector đơn vị
+        normalizeDirection();
+
         updateVelocity();
 
         try {
@@ -51,16 +54,23 @@ public class Ball extends Movable {
         }
     }
 
-    // Tính dx, dy từ hướng bay và tốc độ
-    private void updateVelocity() {
+    //  Chuẩn hóa directionX/Y thành vector đơn vị ---
+    private void normalizeDirection() {
         double mag = Math.sqrt(directionX * directionX + directionY * directionY);
         if (mag > 0) {
-            this.dx = (directionX / mag) * speed;
-            this.dy = (directionY / mag) * speed;
+            directionX /= mag;
+            directionY /= mag;
         } else {
-            this.dx = 0;
-            this.dy = 0;
+            directionX = 0.8;
+            directionY = -1;
+            normalizeDirection();
         }
+    }
+
+    // Tính dx, dy từ hướng bay và tốc độ
+    private void updateVelocity() {
+        this.dx = directionX * speed;
+        this.dy = directionY * speed;
     }
 
     /**
@@ -97,10 +107,11 @@ public class Ball extends Movable {
 
     // Vẽ bóng lên canvas
     public void render(GraphicsContext gc) {
-        if (isPiercing) {
-            gc.drawImage(ballImage, x, y, radius, radius);
-        } else if (ballImage != null) {
-            gc.drawImage(ballImage, x, y, radius, radius);
+        if (ballImage != null) {
+            gc.drawImage(ballImage, x, y, radius * 2, radius * 2); // SỬA: width, height = 2 * radius
+        } else {
+            gc.setFill(Color.WHITE);
+            gc.fillOval(x, y, radius * 2, radius * 2);
         }
     }
 
@@ -153,10 +164,10 @@ public class Ball extends Movable {
         double magnitude = Math.sqrt(normalX * normalX + normalY * normalY);
 
         if (magnitude == 0) {
-            // Nếu tâm bóng nằm đúng trên cạnh gạch
             normalX = -directionX;
             normalY = -directionY;
             magnitude = Math.sqrt(normalX * normalX + normalY * normalY);
+            if (magnitude == 0) return;
         }
 
         normalX /= magnitude;
@@ -167,11 +178,16 @@ public class Ball extends Movable {
         dx = dx - 2 * dot * normalX;
         dy = dy - 2 * dot * normalY;
 
+        // cập nhật direction từ dx, dy
         updateDirectionFromVelocity();
 
         // Đẩy bóng ra khỏi vùng va chạm
-        x += normalX * radius * 0.5;
-        y += normalY * radius * 0.5;
+        double pushDistance = radius - magnitude + 1; // +1 để tránh kẹt
+        x += normalX * pushDistance;
+        y += normalY * pushDistance;
+
+        //Giữ tốc độ ổn định
+        updateVelocity();
 
         soundManager.playSound("/com/demo/view/sound/barkanoid-wallbounce.wav");
     }
@@ -189,8 +205,11 @@ public class Ball extends Movable {
         directionX = Math.sin(angle);
         directionY = -Math.cos(angle);
 
+        // đảm bảo direction là vector đơn vị
+        normalizeDirection();
+
         updateVelocity();
-        this.y = paddle.getY() - 2 * radius;
+        this.y = paddle.getY() - 2 * radius - 1; // +1 tránh kẹt
         soundManager.playSound("/com/demo/view/sound/barkanoid-wallbounce.wav");
     }
 
@@ -236,8 +255,13 @@ public class Ball extends Movable {
         other.dx += (v2nNew - v2n) * nx;
         other.dy += (v2nNew - v2n) * ny;
 
+        // Cập nhật direction cho cả hai
         updateDirectionFromVelocity();
         other.updateDirectionFromVelocity();
+
+        // Giữ tốc độ ổn định
+        updateVelocity();
+        other.updateVelocity();
     }
 
     /**
@@ -278,6 +302,10 @@ public class Ball extends Movable {
         this.y = y;
         this.directionX = 1;
         this.directionY = -1;
+
+        // Chuẩn hóa hướng
+        normalizeDirection();
+
         updateVelocity();
     }
 
@@ -287,16 +315,13 @@ public class Ball extends Movable {
 
     public void setSpeed(double newSpeed, long durationMillis) {
         if (System.currentTimeMillis() < speedBoostEndTime) {
-            // Đang boost → chỉ gia hạn thời gian nếu cần
             speedBoostEndTime = Math.max(speedBoostEndTime, System.currentTimeMillis() + durationMillis);
         } else {
-            // Chưa boost → áp dụng boost mới
             this.speed = newSpeed;
             updateVelocity();
             speedBoostEndTime = System.currentTimeMillis() + durationMillis;
         }
     }
-
 
     public double getDirectionX() {
         return directionX;
@@ -318,9 +343,6 @@ public class Ball extends Movable {
         return y + radius;
     }
 
-    /**
-     * set piercing time
-     */
     public void setPiercing(boolean piercing, long duration) {
         this.isPiercing = piercing;
         if (piercing) {
@@ -330,9 +352,6 @@ public class Ball extends Movable {
         }
     }
 
-    /**
-     * cập nhật trạng thái piercing
-     */
     public void updatePiercingStatus() {
         if (isPiercing && System.currentTimeMillis() >= piercingEndTime) {
             isPiercing = false;
@@ -342,7 +361,7 @@ public class Ball extends Movable {
 
     private void updateSpeedBoostStatus() {
         if (speedBoostEndTime > 0 && System.currentTimeMillis() >= speedBoostEndTime) {
-            resetSpeed(); // trở về tốc độ gốc
+            resetSpeed();
             speedBoostEndTime = 0;
         }
     }
