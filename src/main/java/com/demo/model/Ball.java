@@ -142,31 +142,38 @@ public class Ball extends Movable {
      * Phản xạ khi va chạm với hình chữ nhật (gạch, paddle).
      */
     public void bounceOff(GameObject other) {
-        double ballCenterX = this.x + radius;
-        double ballCenterY = this.y + radius;
+        double ballCenterX = getCenterX();
+        double ballCenterY = getCenterY();
 
         double closestX = Math.max(other.getX(), Math.min(ballCenterX, other.getX() + other.getWidth()));
         double closestY = Math.max(other.getY(), Math.min(ballCenterY, other.getY() + other.getHeight()));
 
-        double dx = ballCenterX - closestX;
-        double dy = ballCenterY - closestY;
+        double normalX = ballCenterX - closestX;
+        double normalY = ballCenterY - closestY;
+        double magnitude = Math.sqrt(normalX * normalX + normalY * normalY);
 
-        double absDx = Math.abs(dx);
-        double absDy = Math.abs(dy);
-        double epsilon = radius * 0.25;
+        if (magnitude == 0) {
+            // Nếu tâm bóng nằm đúng trên cạnh gạch
+            normalX = -directionX;
+            normalY = -directionY;
+            magnitude = Math.sqrt(normalX * normalX + normalY * normalY);
+        }
+
+        normalX /= magnitude;
+        normalY /= magnitude;
+
+        // Phản xạ theo công thức vật lý
+        double dot = dx * normalX + dy * normalY;
+        dx = dx - 2 * dot * normalX;
+        dy = dy - 2 * dot * normalY;
+
+        updateDirectionFromVelocity();
+
+        // Đẩy bóng ra khỏi vùng va chạm
+        x += normalX * radius * 0.5;
+        y += normalY * radius * 0.5;
 
         soundManager.playSound("/com/demo/view/sound/barkanoid-wallbounce.wav");
-
-        if (Math.abs(absDx - absDy) < epsilon * 0.5) {
-            bounceHorizontally();
-            bounceVertically();
-        } else if (absDx > absDy) {
-            bounceHorizontally();
-            this.x += Math.signum(dx) * 1.0;
-        } else {
-            bounceVertically();
-            this.y += Math.signum(dy) * 1.0;
-        }
     }
 
     /**
@@ -278,11 +285,18 @@ public class Ball extends Movable {
         return speed;
     }
 
-    public void setSpeed(double speed, long durationMillis) {
-        this.speed = speed;
-        updateVelocity();
-        this.speedBoostEndTime = System.currentTimeMillis() + durationMillis;
+    public void setSpeed(double newSpeed, long durationMillis) {
+        if (System.currentTimeMillis() < speedBoostEndTime) {
+            // Đang boost → chỉ gia hạn thời gian nếu cần
+            speedBoostEndTime = Math.max(speedBoostEndTime, System.currentTimeMillis() + durationMillis);
+        } else {
+            // Chưa boost → áp dụng boost mới
+            this.speed = newSpeed;
+            updateVelocity();
+            speedBoostEndTime = System.currentTimeMillis() + durationMillis;
+        }
     }
+
 
     public double getDirectionX() {
         return directionX;

@@ -17,7 +17,7 @@ import java.util.List;
  */
 public abstract class PowerUp extends GameObject {
 
-    private static final long DEFAULT_DURATION = 5000L;
+    private static final long DEFAULT_DURATION = 10000L;
     protected final PowerUpType type;
     protected final long duration;
     protected final double velocityY;
