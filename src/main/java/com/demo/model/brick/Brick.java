@@ -38,8 +38,6 @@ public abstract class Brick extends GameObject {
         return true; // mặc định là bóng nên phản xạ
     }
 
-
-
     public int getScoreValue(){
         return 10;
     }

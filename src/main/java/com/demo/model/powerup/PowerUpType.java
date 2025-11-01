@@ -9,4 +9,5 @@ public enum PowerUpType {
     SPEED_DOWN, // Giảm tốc độ bóng
     PIERCING_BALL, // Bóng xuyên gạch (không bật lại)
     MULTI_BALL, // Nhân đôi bóng
+    LASER
 }

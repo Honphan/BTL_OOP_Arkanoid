@@ -2,15 +2,22 @@ package com.demo.model;
 
 import com.demo.util.Background;
 import com.demo.model.powerup.PowerUp;
+import com.demo.model.brick.Brick;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+
+import java.util.List;
 
 public class Paddle extends Movable {
     private double speed;
     private PowerUp currentPowerUp;
     private Image paddleImage;
     private double originalWidth;
+
+    private boolean laserEnabled = false;
+    private long lastLaserShotTime = 0;
+    private static final long LASER_COOLDOWN = 300; // thời gian giữa các lần bắn (ms)
 
 
     public Paddle(double x, double y, double width, double height, double speed) {
@@ -49,6 +56,7 @@ public class Paddle extends Movable {
     }
 
     public void render(GraphicsContext gc) {
+        // Vẽ paddle
         if (paddleImage != null) {
             gc.drawImage(paddleImage, x, y, width, height);
         } else {
@@ -59,6 +67,7 @@ public class Paddle extends Movable {
             gc.strokeRect(x, y, width, height);
         }
     }
+
 
     // --- Di chuyển ---
     public void moveLeft() {
@@ -90,6 +99,15 @@ public class Paddle extends Movable {
         }
     }
 
+    public boolean canShootLaser() {
+        if (!laserEnabled) return false;
+        long now = System.currentTimeMillis();
+        return now - lastLaserShotTime >= LASER_COOLDOWN;
+    }
+
+    public void markLaserShot() {
+        lastLaserShotTime = System.currentTimeMillis();
+    }
 
     // --- Paddle kích thước ---
     public void expandPaddle(double multiplier) {
@@ -124,4 +142,21 @@ public class Paddle extends Movable {
     public double getOriginalWidth() {
         return originalWidth;
     }
+
+    public void setLaserEnabled(boolean enabled) {
+        this.laserEnabled = enabled;
+    }
+
+    public boolean isLaserEnabled() {
+        return laserEnabled;
+    }
+
+    public long getLastLaserShotTime() {
+        return lastLaserShotTime;
+    }
+
+    public void setLastLaserShotTime(long time) {
+        this.lastLaserShotTime = time;
+    }
+
 }

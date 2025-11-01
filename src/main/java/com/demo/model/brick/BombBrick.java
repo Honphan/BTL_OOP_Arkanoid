@@ -135,7 +135,10 @@ public class BombBrick extends Brick {
                     }
                 } else {
                     if (neighbor.isDestructible()) {
-                        neighbor.setDestroyed(true);
+                        if (neighbor instanceof PowerUpBrick puBrick) {
+                            puBrick.setDisableSpawn(true); // ❌ không cho sinh PowerUp
+                        }
+                        neighbor.takeHit(); // dùng takeHit để xử lý đúng logic
                     }
                 }
             }

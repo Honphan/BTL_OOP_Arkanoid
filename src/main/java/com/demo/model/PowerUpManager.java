@@ -1,5 +1,6 @@
 package com.demo.model;
 
+import com.demo.model.brick.Brick;
 import com.demo.model.powerup.PowerUp;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -17,6 +18,14 @@ public class PowerUpManager {
     private double canvasHeight;
     private boolean piercingMode = false;
     private long piercingEndTime = 0;
+
+    private boolean laserMode = false;
+    private long laserEndTime = 0;
+
+    private List<Brick> bricks;
+
+    private final List<LaserBullet> laserBullets = new ArrayList<>();
+
 
     // Callback khi nhận power-up tức thời (ví dụ: thêm mạng, phát âm thanh)
     private Consumer<PowerUp> onInstantEffect;
@@ -93,6 +102,16 @@ public class PowerUpManager {
                     triggerInstantEffect(pu);
                     iterator.remove();
                     }
+
+                    case LASER -> {
+                        pu.applyPowerUp(paddle, balls); // paddle.setLaserEnabled(true)
+                        pu.activate(paddle);
+                        pu.setVisible(false);
+                        activateLaser((int) pu.getDuration());
+                        triggerInstantEffect(pu);
+                    }
+
+
                     default -> {
                         pu.applyPowerUp(paddle, balls); // truyền danh sách bóng từ GamePaneController
                         pu.activate(paddle); // để PowerUpManager quản lý thời gian
@@ -178,6 +197,75 @@ public class PowerUpManager {
         for (Ball ball : balls) {
             ball.updatePiercingStatus();
         }
+    }
+
+    private void activateLaser(int durationMs) {
+        laserMode = true;
+        laserEndTime = System.currentTimeMillis() + durationMs;
+    }
+
+    public void updateLaserMode(Paddle paddle) {
+        if (laserMode && System.currentTimeMillis() >= laserEndTime) {
+            paddle.setLaserEnabled(false);
+            laserMode = false;
+        }
+
+        if (paddle.isLaserEnabled() && paddle.canShootLaser()) {
+            paddle.markLaserShot(); // ✅ cập nhật thời gian bắn sau khi tạo đạn
+            spawnLaserBullets(paddle);
+        }
+        updateLaserBullets();
+    }
+
+    private void spawnLaserBullets(Paddle paddle) {
+        double laserOffset = 10;
+        double leftX = paddle.getX() + laserOffset;
+        double rightX = paddle.getX() + paddle.getWidth() - laserOffset;
+        double y = paddle.getY();
+
+        laserBullets.add(new LaserBullet(leftX, y));
+        laserBullets.add(new LaserBullet(rightX, y));
+    }
+
+    private void updateLaserBullets() {
+        Iterator<LaserBullet> iterator = laserBullets.iterator();
+        while (iterator.hasNext()) {
+            LaserBullet bullet = iterator.next();
+            bullet.update();
+
+            for (Brick brick : bricks) {
+                if (bullet.checkCollisionArea(brick)) {
+                    if (brick.isDestructible()) {
+                        brick.takeHit();
+                    }
+                    bullet.destroy(); // ✅ laser mất dù phá được hay không
+                    break;
+                }
+            }
+
+
+            if (!bullet.isActive()) {
+                iterator.remove();
+            }
+        }
+    }
+
+    public void renderLaserBullets(GraphicsContext gc) {
+        for (LaserBullet bullet : laserBullets) {
+            bullet.render(gc);
+        }
+    }
+
+    private boolean canShootLaser(Paddle paddle) {
+        long now = System.currentTimeMillis();
+        long lastShot = paddle.getLastLaserShotTime();
+        return now - lastShot >= 500; // LASER_COOLDOWN
+    }
+
+
+
+    public void setBricks(List<Brick> bricks) {
+        this.bricks = bricks;
     }
 
     public List<PowerUp> getPowerUps() {

@@ -83,7 +83,10 @@ public class GamePaneController {
     private InputHandle inputHandle;
     private ScoreManager scoreManager;
     private int lives = 3; // Số mạng ban đầu
-    private List<Ball> balls = new java.util.ArrayList<>();
+    private List<Ball> balls = new ArrayList<>();
+
+    private static final int MAX_LEVEL = 7;
+
 
     private enum gameState {
         PLAYING,
@@ -233,7 +236,7 @@ public class GamePaneController {
 
 
     private void initializePaddle() {
-        double paddleWidth = 200;
+        double paddleWidth = 150;
         double paddleHeight = 20;
         double paddleSpeed = 15;
 
@@ -265,12 +268,27 @@ public class GamePaneController {
 
         powerup = new PowerUpManager();
         powerup.setCanvasHeight(totalHeight); // ✅ mới thêm
+        Brick[][] grid = level.getBricks();
+        List<Brick> flatBricks = flattenBricks(grid);
+        powerup.setBricks(flatBricks);
+
         powerup.setOnInstantEffect(pu -> {
             if (soundManager != null) {
                 soundManager.playSound("powerup");
             }
         });
     }
+
+    private List<Brick> flattenBricks(Brick[][] grid) {
+        List<Brick> result = new ArrayList<>();
+        for (Brick[] row : grid) {
+            for (Brick brick : row) {
+                if (brick != null) result.add(brick);
+            }
+        }
+        return result;
+    }
+
 
 
     private void setupGameLoop() {
@@ -334,42 +352,56 @@ public class GamePaneController {
                         int rows = level.getRows();
                         int cols = level.getCols();
 
-                        Brick collidedBrick = null;
+                        Brick bestBrick = null;
+                        double minDistance = Double.MAX_VALUE;
 
-                        for (int r = 0; r < rows && collidedBrick == null; r++) {
+                        for (int r = 0; r < rows; r++) {
                             for (int c = 0; c < cols; c++) {
                                 Brick brick = bricks[r][c];
-                                if (brick != null && !brick.isDestroyed()) {
-                                    brick.update();
+                                if (brick != null && !brick.isDestroyed() && currentBall.checkCollision(brick)) {
+                                    // Tính khoảng cách từ tâm bóng đến tâm gạch
+                                    double dx = currentBall.getCenterX() - (brick.getX() + brick.getWidth() / 2);
+                                    double dy = currentBall.getCenterY() - (brick.getY() + brick.getHeight() / 2);
+                                    double distance = dx * dx + dy * dy;
 
-                                    if (currentBall.checkCollision(brick)) {
-                                        collidedBrick = brick;
-                                        break; // ✅ chỉ lấy viên đầu tiên bị chạm
+                                    if (distance < minDistance) {
+                                        minDistance = distance;
+                                        bestBrick = brick;
                                     }
                                 }
                             }
                         }
 
-                        if (collidedBrick != null) {
-                            if (!currentBall.isPiercing()) {
-                                currentBall.bounceOff(collidedBrick); // ✅ chỉ phản xạ 1 lần
-                            }
-
-                            if (collidedBrick instanceof BombBrick bombBrick) {
-                                bombBrick.takeHit();
+                        if (bestBrick != null) {
+                            if (currentBall.isPiercing()) {
+                                if (bestBrick.isDestructible()) {
+                                    bestBrick.takeHit();
+                                    if (bestBrick.isDestroyed()) {
+                                        addScore(bestBrick.getScoreValue());
+                                        if (bestBrick instanceof PowerUpBrick powerbrick) {
+                                            PowerUp newPU = powerbrick.spawnPowerUp();
+                                            if (newPU != null) powerup.addPowerUp(newPU);
+                                        }
+                                    }
+                                    // ❌ Không phản xạ — xuyên qua
+                                } else {
+                                    // ✅ Gạch không phá được → phản xạ như bình thường
+                                    currentBall.bounceOff(bestBrick);
+                                }
                             } else {
-                                collidedBrick.takeHit();
-                            }
-
-                            if (collidedBrick.isDestroyed()) {
-                                addScore(collidedBrick.getScoreValue());
-
-                                if (collidedBrick instanceof PowerUpBrick powerbrick) {
-                                    PowerUp newPU = powerbrick.spawnPowerUp();
-                                    if (newPU != null) powerup.addPowerUp(newPU);
+                                // ✅ Bóng thường → phản xạ và xử lý như cũ
+                                currentBall.bounceOff(bestBrick);
+                                bestBrick.takeHit();
+                                if (bestBrick.isDestroyed()) {
+                                    addScore(bestBrick.getScoreValue());
+                                    if (bestBrick instanceof PowerUpBrick powerbrick) {
+                                        PowerUp newPU = powerbrick.spawnPowerUp();
+                                        if (newPU != null) powerup.addPowerUp(newPU);
+                                    }
                                 }
                             }
                         }
+
                     }
 
                 }
@@ -379,6 +411,7 @@ public class GamePaneController {
                 if (powerup != null) {
                     powerup.update(balls); // canvasHeight đã được set trước đó
                     powerup.updatePiercingMode(balls);
+                    powerup.updateLaserMode(paddle);
                     powerup.checkCollisionWithPaddle(paddle, balls, this::addLife);
                 }
 
@@ -417,7 +450,7 @@ public class GamePaneController {
 
         fadeOut.setOnFinished(e -> {
             currentLevel++;
-            if (currentLevel > 4) {
+            if (currentLevel > MAX_LEVEL) {
                 gameRunning = false;
                 showGameOver("YOU WIN!");
                 return;
@@ -573,6 +606,7 @@ public class GamePaneController {
         }
         if (powerup != null) {
             powerup.render(gc);
+            powerup.renderLaserBullets(gc); // ← THÊM DÒNG NÀY
         }
 
     }
