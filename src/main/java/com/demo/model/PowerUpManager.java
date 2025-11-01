@@ -234,11 +234,13 @@ public class PowerUpManager {
             bullet.update();
 
             for (Brick brick : bricks) {
+                if (brick == null || brick.isDestroyed()) continue; // ✅ bỏ qua gạch đã phá
+
                 if (bullet.checkCollisionArea(brick)) {
                     if (brick.isDestructible()) {
                         brick.takeHit();
                     }
-                    bullet.destroy(); // ✅ laser mất dù phá được hay không
+                    bullet.destroy();
                     break;
                 }
             }
