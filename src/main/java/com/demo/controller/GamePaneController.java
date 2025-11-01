@@ -14,8 +14,6 @@ import com.demo.model.PowerUpManager;
 import com.demo.model.brick.PowerUpBrick;
 import com.demo.model.score.ScoreManager;
 import javafx.animation.AnimationTimer;
-import javafx.animation.FadeTransition;
-import javafx.util.Duration;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -72,7 +70,7 @@ public class GamePaneController {
     private Ball ball;
     private Paddle paddle;
     private LevelManager level;
-    private int currentLevel = 1;
+    private int currentLevel;
     private PowerUpManager powerup;
     private int score = 0;
     private AnimationTimer gameLoop;
@@ -85,7 +83,7 @@ public class GamePaneController {
     private int lives = 3; // Số mạng ban đầu
     private List<Ball> balls = new ArrayList<>();
 
-    private static final int MAX_LEVEL = 7;
+    private static final int MAX_LEVEL = 8;
 
 
     private enum gameState {
@@ -236,7 +234,7 @@ public class GamePaneController {
 
 
     private void initializePaddle() {
-        double paddleWidth = 150;
+        double paddleWidth = 120;
         double paddleHeight = 20;
         double paddleSpeed = 15;
 
@@ -252,7 +250,7 @@ public class GamePaneController {
         }
 
         double paddleX = (canvasWidth - paddleWidth) / 2;
-        double paddleY = canvasHeight * 0.9;
+        double paddleY = canvasHeight * 0.95;
 
         paddle = new Paddle(paddleX, paddleY, paddleWidth, paddleHeight, paddleSpeed);
         paddleInitialized = true;
@@ -343,6 +341,10 @@ public class GamePaneController {
                         loseLife();
                         initializeBall();
                         initializePaddle();
+                        if (powerup != null && powerup.isLaserActive()) {
+                            paddle.setLaserEnabled(true);
+                        }
+
                     }
 
                     // KIỂM TRA VA CHẠM VỚI GẠCH

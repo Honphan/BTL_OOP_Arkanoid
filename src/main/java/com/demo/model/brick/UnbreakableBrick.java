@@ -19,7 +19,7 @@ public class UnbreakableBrick extends Brick {
         super(x, y, width, height, Integer.MAX_VALUE, "unbreakable");
 
         try {
-            image = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/unbreakable.png"));
+            image = new Image(getClass().getResource("/com/demo/view/image/bricks/unbreakable.png").toExternalForm(), true);
         } catch (Exception e) {
             System.err.println("Không load được ảnh gạch không phá được: " + e.getMessage());
         }

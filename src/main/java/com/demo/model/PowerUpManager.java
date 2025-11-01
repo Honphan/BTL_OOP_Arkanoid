@@ -109,7 +109,6 @@ public class PowerUpManager {
                         triggerInstantEffect(pu);
                     }
 
-
                     default -> {
                         pu.applyPowerUp(paddle, balls); // truyền danh sách bóng từ GamePaneController
                         pu.activate(paddle); // để PowerUpManager quản lý thời gian
@@ -255,14 +254,6 @@ public class PowerUpManager {
         }
     }
 
-    private boolean canShootLaser(Paddle paddle) {
-        long now = System.currentTimeMillis();
-        long lastShot = paddle.getLastLaserShotTime();
-        return now - lastShot >= 500; // LASER_COOLDOWN
-    }
-
-
-
     public void setBricks(List<Brick> bricks) {
         this.bricks = bricks;
     }
@@ -270,4 +261,9 @@ public class PowerUpManager {
     public List<PowerUp> getPowerUps() {
         return powerups;
     }
+
+    public boolean isLaserActive() {
+        return laserMode;
+    }
+
 }

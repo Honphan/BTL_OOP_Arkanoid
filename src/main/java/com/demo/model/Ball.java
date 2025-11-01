@@ -323,26 +323,6 @@ public class Ball extends Movable {
         }
     }
 
-    public double getDirectionX() {
-        return directionX;
-    }
-
-    public double getDirectionY() {
-        return directionY;
-    }
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public double getCenterX() {
-        return x + radius;
-    }
-
-    public double getCenterY() {
-        return y + radius;
-    }
-
     public void setPiercing(boolean piercing, long duration) {
         this.isPiercing = piercing;
         if (piercing) {
@@ -369,4 +349,30 @@ public class Ball extends Movable {
     public boolean isPiercing() {
         return isPiercing;
     }
+
+    public double getOriginalSpeed() {
+        return originalSpeed;
+    }
+
+    public double getDirectionX() {
+        return directionX;
+    }
+
+    public double getDirectionY() {
+        return directionY;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public double getCenterX() {
+        return x + radius;
+    }
+
+    public double getCenterY() {
+        return y + radius;
+    }
+
+
 }

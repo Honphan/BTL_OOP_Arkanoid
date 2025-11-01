@@ -15,7 +15,7 @@ public class ExtraLifePowerUp extends PowerUp {
                 PowerUpType.EXTRA_LIFE,
                 0, // hiệu ứng tức thời
                 velocityY,
-                new Image(PiercingBallPowerUp.class.getResourceAsStream("/com/demo/view/image/powerups/extralife.png")));
+                new Image(PiercingBallPowerUp.class.getResource("/com/demo/view/image/powerups/extralife.png").toExternalForm(), true));
     }
 
 

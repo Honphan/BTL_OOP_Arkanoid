@@ -15,7 +15,7 @@ public class HiddenBrick extends Brick{
         revealed = false;
 
         try {
-            image = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/red-normal.png"));
+            image = new Image(getClass().getResource("/com/demo/view/image/bricks/violet-normal.png").toExternalForm(), true);
         } catch (Exception e) {
             System.err.println("Không load được ảnh gạch ẩn: " + e.getMessage());;
         }

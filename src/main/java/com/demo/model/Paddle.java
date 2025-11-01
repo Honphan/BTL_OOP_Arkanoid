@@ -31,7 +31,7 @@ public class Paddle extends Movable {
     private void loadImages() {
         try {
             // Load hình ảnh paddle gốc
-            paddleImage = new Image(getClass().getResourceAsStream("/com/demo/view/image/paddles/56-Breakout-Tiles.png"));
+            paddleImage = new Image(getClass().getResource("/com/demo/view/image/paddles/56-Breakout-Tiles.png").toExternalForm(), true);
         } catch (Exception e) {
             System.err.println("Lỗi khi load hình ảnh paddle: " + e.getMessage());
             paddleImage = null;

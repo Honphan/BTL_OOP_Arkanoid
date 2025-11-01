@@ -16,7 +16,7 @@ public class SpeedDownPowerUp extends PowerUp {
                 PowerUpType.SPEED_DOWN,
                 getDefaultDuration(),
                 velocityY,
-                new Image(SpeedDownPowerUp.class.getResourceAsStream("/com/demo/view/image/powerups/speeddown.png")));
+                new Image(SpeedDownPowerUp.class.getResource("/com/demo/view/image/powerups/speeddown.png").toExternalForm(), true));
     }
 
     @Override
@@ -27,7 +27,7 @@ public class SpeedDownPowerUp extends PowerUp {
     @Override
     public void applyPowerUp(Movable target, List<Ball> balls) {
         for (Ball ball : balls) {
-            double reducedSpeed = ball.getSpeed() * 0.5;
+            double reducedSpeed = ball.getOriginalSpeed() * 0.5;
             ball.setSpeed(reducedSpeed, getDuration());
         }
     }
