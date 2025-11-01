@@ -16,16 +16,14 @@ public class PowerUpManager {
 
     private final List<PowerUp> powerups = new ArrayList<>();
     private double canvasHeight;
-    private boolean piercingMode = false;
-    private long piercingEndTime = 0;
 
-    private boolean laserMode = false;
+    private long piercingEndTime = 0;
     private long laserEndTime = 0;
+    private boolean laserMode = false;
+    private boolean piercingMode = false;
 
     private List<Brick> bricks;
-
     private final List<LaserBullet> laserBullets = new ArrayList<>();
-
 
     // Callback khi nhận power-up tức thời (ví dụ: thêm mạng, phát âm thanh)
     private Consumer<PowerUp> onInstantEffect;
@@ -221,7 +219,7 @@ public class PowerUpManager {
         double laserOffset = 10;
         double leftX = paddle.getX() + laserOffset;
         double rightX = paddle.getX() + paddle.getWidth() - laserOffset;
-        double y = paddle.getY();
+        double y = paddle.getY() - 20;
 
         laserBullets.add(new LaserBullet(leftX, y));
         laserBullets.add(new LaserBullet(rightX, y));
@@ -234,15 +232,16 @@ public class PowerUpManager {
             bullet.update();
 
             for (Brick brick : bricks) {
+                if (brick == null || brick.isDestroyed()) continue; // ✅ bỏ qua gạch đã phá
+
                 if (bullet.checkCollisionArea(brick)) {
                     if (brick.isDestructible()) {
                         brick.takeHit();
                     }
-                    bullet.destroy(); // ✅ laser mất dù phá được hay không
+                    bullet.destroy();
                     break;
                 }
             }
-
 
             if (!bullet.isActive()) {
                 iterator.remove();
