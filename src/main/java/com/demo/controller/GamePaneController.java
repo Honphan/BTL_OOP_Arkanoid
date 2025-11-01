@@ -1,10 +1,7 @@
 package com.demo.controller;
 
+import com.demo.util.*;
 import com.demo.view.Render;
-import com.demo.util.Background;
-import com.demo.util.CanvasUtil;
-import com.demo.util.InputHandle;
-import com.demo.util.SoundManager;
 import com.demo.model.Ball;
 import com.demo.model.Paddle;
 import com.demo.model.brick.*;
@@ -14,6 +11,7 @@ import com.demo.model.PowerUpManager;
 import com.demo.model.brick.PowerUpBrick;
 import com.demo.model.score.ScoreManager;
 import javafx.animation.AnimationTimer;
+
 import javafx.animation.FadeTransition;
 import javafx.util.Duration;
 import javafx.application.Platform;
@@ -36,7 +34,7 @@ import java.util.*;
 import java.io.IOException;
 import java.util.List;
 
-public class GamePaneController {
+public class GamePaneController implements GameControl {
     @FXML
     private Canvas gameCanvas;
 
@@ -310,10 +308,26 @@ public class GamePaneController {
         };
     }
 
+    // Implement GameControl so InputHandle can call these methods
+    @Override
     public boolean isGameRunning() {
         return gameRunning;
     }
 
+    @Override
+    public void startBySpace() {
+        // If game already running, do nothing; otherwise start the game
+        if (!gameRunning) {
+            // reuse existing startGame logic without resetting state
+            // ensure paddle/ball initialized
+            if (!paddleInitialized) initializePaddle();
+            if (ball == null) initializeBall();
+            gameRunning = true;
+            if (gameLoop != null) gameLoop.start();
+            if (gameStatusOverlay != null) gameStatusOverlay.setVisible(false);
+            if (inputHandle != null) inputHandle.requestCanvasFocus();
+        }
+    }
 
     private void updateGame() {
         switch (gamestate) {
@@ -672,10 +686,13 @@ public class GamePaneController {
 
         // Reinitialize game components
         initializeLevelandPowerUp(currentLevel);
-            if (paddle != null) {
+        initializePaddle();
+        initializeBall();
+        if (paddle != null) {
             double paddleWidth = paddle.getWidth();
             paddle.setX((gameCanvas.getWidth() - paddleWidth) / 2);
         }
+
 
         // Reset ball position
         if (ball != null) {
@@ -721,6 +738,8 @@ public class GamePaneController {
         lives = 3;
         updateLivesDisplay();
         initializeLevelandPowerUp(currentLevel);
+        initializePaddle();
+        initializeBall();
 
         // Update displays
         updateScoreDisplay();
@@ -782,3 +801,4 @@ public class GamePaneController {
     }
 
 }
+

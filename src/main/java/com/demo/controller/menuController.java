@@ -19,7 +19,15 @@ import java.util.Optional;
 public class menuController {
     private int selectedLevel = 1;
     private SoundManager soundManager;
-    String[] imagePaths = new String[]{"/com/demo/view/image/levels/level1.png", "/com/demo/view/image/levels/level2.png", "/com/demo/view/image/levels/level3.png"};
+    String[] imagePaths = new String[]{
+            "/com/demo/view/image/levels/level1.png",
+            "/com/demo/view/image/levels/level2.png",
+            "/com/demo/view/image/levels/level3.png",
+            "/com/demo/view/image/levels/level4.png",
+            "/com/demo/view/image/levels/level5.png",
+            "/com/demo/view/image/levels/level6.png",
+            "/com/demo/view/image/levels/level7.png",
+    };
 
 
     @FXML
@@ -111,7 +119,7 @@ public class menuController {
 
         // Update arrow button states
         leftArrowButton.setDisable(selectedLevel == 1);
-        rightArrowButton.setDisable(selectedLevel == 3);
+        rightArrowButton.setDisable(selectedLevel == imagePaths.length);
     }
 
 

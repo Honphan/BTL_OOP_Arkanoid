@@ -201,25 +201,25 @@
 }
 
 .start-button {
-    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #ff4400, #ff8800);
-    -fx-text-fill: white;
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #00e5ff, #00bcd4);
+    -fx-text-fill: #001033;
     -fx-font-weight: bold;
     -fx-font-size: 16px;
     -fx-padding: 12px 25px;
     -fx-background-radius: 25px;
-    -fx-border-color: #ff6600;
+    -fx-border-color: rgba(0, 230, 255, 0.8);
     -fx-border-width: 2px;
     -fx-border-radius: 25px;
-    -fx-effect: dropshadow(gaussian, rgba(255, 100, 0, 0.6), 15, 0.4, 0, 0);
+    -fx-effect: dropshadow(gaussian, rgba(0, 180, 200, 0.25), 8, 0.3, 0, 2);
     -fx-cursor: hand;
     -fx-min-width: 100px;
 }
 
 .start-button:hover {
-    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #ff6600, #ffaa00);
-    -fx-effect: dropshadow(gaussian, rgba(255, 100, 0, 0.8), 20, 0.5, 0, 0);
-    -fx-scale-x: 1.05;
-    -fx-scale-y: 1.05;
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #33f3ff, #33d6e6);
+    -fx-effect: dropshadow(gaussian, rgba(0, 180, 200, 0.35), 10, 0.35, 0, 3);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
 }
 
 
@@ -266,7 +266,7 @@
 /*  RESPONSIVE DESIGN */
 .game-content .side-panel {
     -fx-min-width: 180px;
-    -fx-max-width: 220px;
+    /*-fx-max-width: 220px;*/
 }
 
 .game-area {

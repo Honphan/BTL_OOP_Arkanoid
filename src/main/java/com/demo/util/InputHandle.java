@@ -1,16 +1,16 @@
 package com.demo.util;
 
-import com.demo.controller.GamePaneController;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.canvas.Canvas;
 
 public class InputHandle {
-    private GamePaneController controller;
-    private Canvas gameCanvas;
+    private final GameControl controller;
+    private final Canvas gameCanvas;
     private boolean leftKeyPressed = false;
     private boolean rightKeyPressed = false;
 
-    public InputHandle(GamePaneController controller, Canvas gameCanvas) {
+    public InputHandle(GameControl controller, Canvas gameCanvas) {
         this.controller = controller;
         this.gameCanvas = gameCanvas;
         setupKeyHandlers();
@@ -26,6 +26,18 @@ public class InputHandle {
     }
 
     private void handleKeyPressed(KeyEvent event) {
+        // Luôn lắng nghe phím SPACE để bắt đầu game khi vào màn chơi
+        if (event.getCode() == KeyCode.SPACE) {
+            try {
+                controller.startBySpace();
+            } catch (Exception e) {
+                // Không để crash nếu controller chưa sẵn sàng
+            }
+            event.consume();
+            return; // SPACE đã được xử lý
+        }
+
+        // Các phím di chuyển chỉ có hiệu lực khi game đang chạy
         if (controller.isGameRunning()) {
             switch (event.getCode()) {
                 case LEFT:
@@ -39,6 +51,16 @@ public class InputHandle {
                 case UP:
                 case DOWN:
                     event.consume(); // Prevent focus traversal
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            // Khi game không chạy, vẫn ngăn UP/DOWN làm thay đổi focus
+            switch (event.getCode()) {
+                case UP:
+                case DOWN:
+                    event.consume();
                     break;
                 default:
                     break;
@@ -64,6 +86,16 @@ public class InputHandle {
                 default:
                     break;
             }
+        } else {
+            // Ngăn UP/DOWN khi game không chạy
+            switch (event.getCode()) {
+                case UP:
+                case DOWN:
+                    event.consume();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -79,4 +111,3 @@ public class InputHandle {
         gameCanvas.requestFocus();
     }
 }
-
