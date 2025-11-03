@@ -45,7 +45,7 @@ public class SoundManager {
 
             backgroundMusicPlayer = new MediaPlayer(media);
             backgroundMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            backgroundMusicPlayer.setVolume(0.8);
+            backgroundMusicPlayer.setVolume(1);
 
             backgroundMusicPlayer.setOnReady(() -> {
                 backgroundMusicPlayer.play();

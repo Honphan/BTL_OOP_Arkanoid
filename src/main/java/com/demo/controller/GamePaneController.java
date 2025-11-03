@@ -223,44 +223,31 @@ public class GamePaneController implements GameControl {
         double ballSpeed = 8;
 
         double startX = (gameCanvas.getWidth() / 2) - radius;
-        double startY = gameCanvas.getHeight() - 2 * radius - 20;
+
+        double startY;
+        // If paddle exists, position the ball just above the paddle to avoid starting below it
+        if (paddle != null) {
+            // Ensure paddle Y is correct relative to the current canvas height
+            paddle.setY(gameCanvas.getHeight() - paddle.getHeight() - 20);
+
+            // place the ball centered above the paddle
+            startX = paddle.getX() + (paddle.getWidth() / 2) - radius;
+            // put the ball above the paddle with a small gap (match bounceOffPaddle)
+            startY = paddle.getY() - (2 * radius) - 1;
+            // if computed startY is off-screen, fallback to default bottom placement
+            if (startY < 0) {
+                startY = Math.max(10, gameCanvas.getHeight() - 2 * radius - 20);
+            }
+        } else {
+            startY = gameCanvas.getHeight() - 2 * radius - 20;
+        }
 
         ball = new Ball(startX, startY, ballSpeed);
         balls.clear();
         balls.add(ball);
+        // redraw so the ball is visually above the paddle immediately
+        redrawCanvas();
     }
-
-//    private void createMultiBalls(Ball originalBall) {
-//        double radius = 10;
-//
-//        Ball ball1 = new Ball(originalBall.getX(), originalBall.getY(), originalBall.getSpeed());
-//        Ball ball2 = new Ball(originalBall.getX(), originalBall.getY(), originalBall.getSpeed());
-//
-//        // Lấy vận tốc hiện tại của bóng gốc
-//        double originalDx = originalBall.getDx();
-//        double originalDy = originalBall.getDy();
-//
-//        // Tính góc hiện tại của bóng gốc
-//        double currentAngle = Math.atan2(originalDy, originalDx);
-//
-//        // Tạo 2 góc lệch 30 độ sang 2 bên
-//        double angle1 = currentAngle - Math.toRadians(30);
-//        double angle2 = currentAngle + Math.toRadians(30);
-//
-//        double speed = originalBall.getSpeed();
-//
-//        // Set vận tốc cho bóng 1 (lệch trái)
-//        ball1.setDx(Math.cos(angle1) * speed);
-//        ball1.setDy(Math.sin(angle1) * speed);
-//
-//        // Set vận tốc cho bóng 2 (lệch phải)
-//        ball2.setDx(Math.cos(angle2) * speed);
-//        ball2.setDy(Math.sin(angle2) * speed);
-//
-//        balls.add(ball1);
-//        balls.add(ball2);
-//
-//    }
 
 
     private void initializePaddle() {
@@ -268,8 +255,9 @@ public class GamePaneController implements GameControl {
         double paddleHeight = 20;
         double paddleSpeed = 15;
 
-        double canvasWidth = gameArea.getWidth();
-        double canvasHeight = gameArea.getHeight();
+        // Prefer actual canvas size if available (canvas is bound to gameArea), fallback to gameArea
+        double canvasWidth = gameCanvas.getWidth() > 0 ? gameCanvas.getWidth() : gameArea.getWidth();
+        double canvasHeight = gameCanvas.getHeight() > 0 ? gameCanvas.getHeight() : gameArea.getHeight();
 
         System.out.println("Initializing paddle with canvas size: " + canvasWidth + "x" + canvasHeight);
 
@@ -280,7 +268,8 @@ public class GamePaneController implements GameControl {
         }
 
         double paddleX = (canvasWidth - paddleWidth) / 2;
-        double paddleY = canvasHeight * 0.9;
+        // Place paddle near bottom with a fixed offset from bottom edge
+        double paddleY = canvasHeight - paddleHeight - 20;
 
         paddle = new Paddle(paddleX, paddleY, paddleWidth, paddleHeight, paddleSpeed);
         paddleInitialized = true;
@@ -466,9 +455,10 @@ public class GamePaneController implements GameControl {
 
                 levelEndTimer += 1.0 / 60.0; // giả sử 60fps
 
-                if (levelEndTimer >= 0.5) { // Đợi 0.5s
-                    startNextLevel();
+                if (levelEndTimer >= 0.5) {
                     gamestate = gameState.LEVEL_TRANSITION;
+                    System.out.println("Level transitioning...");
+                    startNextLevel();
                 }
             }
 
@@ -490,27 +480,29 @@ public class GamePaneController implements GameControl {
                 showGameOver("YOU WIN!");
                 return;
             }
+            System.out.println("Starting next level: " + currentLevel);
 
-            updateLivesDisplay();
-            updateScoreDisplay();
-            updateLevelDisplay();
-            updateHighScoreDisplay();
-
+            // Initialize level first (so bricks are ready), then paddle, then ball
             initializeLevelandPowerUp(currentLevel);
             initializePaddle();
             initializeBall();
+            // Ensure UI reflects new values and canvas is redrawn so ball sits above paddle
+            updateScoreDisplay();
+            updateLevelDisplay();
+            redrawCanvas();
+            if (inputHandle != null) inputHandle.requestCanvasFocus();
 
 
-            // Fade in lại
-            javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(javafx.util.Duration.seconds(1), gameCanvas);
-            fadeIn.setFromValue(0.0);
-            fadeIn.setToValue(1.0);
-            fadeIn.setOnFinished(ev -> gamestate = gameState.PLAYING);
-            fadeIn.play();
-        });
+             // Fade in lại
+             javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(javafx.util.Duration.seconds(1), gameCanvas);
+             fadeIn.setFromValue(0.0);
+             fadeIn.setToValue(1.0);
+             fadeIn.setOnFinished(ev -> gamestate = gameState.PLAYING);
+             fadeIn.play();
+         });
 
-        fadeOut.play();
-    }
+         fadeOut.play();
+     }
 
 
     private void loseLife() {
@@ -567,24 +559,6 @@ public class GamePaneController implements GameControl {
 //            // Có thể thêm hiệu ứng đặc biệt khi đạt điểm cao mới
 //            showNewHighScoreAnimation();
         }
-    }
-
-    // Phương thức hiển thị hiệu ứng đạt điểm cao mới
-    private void showNewHighScoreAnimation() {
-        // Hiệu ứng khi đạt điểm cao mới, ví dụ:
-        // - Làm sáng label điểm cao
-        // - Phát âm thanh đặc biệt
-        highScoreLabel.setStyle("-fx-text-fill: gold;");
-
-        // Sau 2 giây, trở về bình thường
-        new Thread(() -> {
-            try {
-                Thread.sleep(2000);
-                Platform.runLater(() -> highScoreLabel.setStyle("-fx-text-fill: white;"));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
     }
 
 
