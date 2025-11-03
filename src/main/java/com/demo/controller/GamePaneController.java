@@ -103,7 +103,8 @@ public class GamePaneController implements GameControl {
         System.out.println(gameArea.getWidth());
         System.out.println(gameArea.getHeight());
 
-        gameRunning = true;
+        // Do not auto-start the game. Wait for SPACE or START button.
+        gameRunning = false;
 
         soundManager = SoundManager.getInstance();
 
@@ -184,9 +185,38 @@ public class GamePaneController implements GameControl {
         updateScoreDisplay();
         updateLevelDisplay();
 
-        gameLoop.start();
+        // Do NOT start the game loop automatically here. Start is triggered by SPACE or START button.
         gameCanvas.requestFocus();
     }
+
+    /**
+     * Start the gameplay loop. If reset==true, reinitialize level, paddle, ball and score to starting state.
+     */
+    private void startPlaying(boolean reset) {
+        if (reset) {
+            currentLevel = 1;
+            score = 0;
+            lives = 3;
+            updateLivesDisplay();
+            updateScoreDisplay();
+            updateLevelDisplay();
+            updateHighScoreDisplay();
+
+            initializeLevelandPowerUp(currentLevel);
+            initializePaddle();
+            initializeBall();
+        } else {
+            // Ensure objects exist
+            if (!paddleInitialized) initializePaddle();
+            if (ball == null) initializeBall();
+        }
+
+        gameRunning = true;
+        if (gameLoop != null) gameLoop.start();
+        if (gameStatusOverlay != null) gameStatusOverlay.setVisible(false);
+        if (inputHandle != null) inputHandle.requestCanvasFocus();
+    }
+
 
     private void initializeBall() {
         double radius = 10;
@@ -316,17 +346,8 @@ public class GamePaneController implements GameControl {
 
     @Override
     public void startBySpace() {
-        // If game already running, do nothing; otherwise start the game
-        if (!gameRunning) {
-            // reuse existing startGame logic without resetting state
-            // ensure paddle/ball initialized
-            if (!paddleInitialized) initializePaddle();
-            if (ball == null) initializeBall();
-            gameRunning = true;
-            if (gameLoop != null) gameLoop.start();
-            if (gameStatusOverlay != null) gameStatusOverlay.setVisible(false);
-            if (inputHandle != null) inputHandle.requestCanvasFocus();
-        }
+        // Start the game without resetting state (SPACE should resume/start current game)
+        if (!gameRunning) startPlaying(false);
     }
 
     private void updateGame() {
@@ -470,12 +491,15 @@ public class GamePaneController implements GameControl {
                 return;
             }
 
-            initializeLevelandPowerUp(currentLevel);
+            updateLivesDisplay();
+            updateScoreDisplay();
             updateLevelDisplay();
+            updateHighScoreDisplay();
 
-            // Reset bóng, paddle
+            initializeLevelandPowerUp(currentLevel);
             initializePaddle();
             initializeBall();
+
 
             // Fade in lại
             javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(javafx.util.Duration.seconds(1), gameCanvas);
@@ -674,44 +698,9 @@ public class GamePaneController implements GameControl {
 
   @FXML
     public void startGame() {
-        currentLevel = 1;
-        score = 0;
-        System.out.println("Canvas size after startGame : " + gameCanvas.getWidth() + "x" + gameCanvas.getHeight());
-        System.out.println("Game area size after startGame: "                                      + gameArea.getWidth() + "x" + gameArea.getHeight());
-        // Update displays
-        updateScoreDisplay();
-        if (levelLabel != null) {
-            levelLabel.setText(String.valueOf(currentLevel));
-        }
-
-        // Reinitialize game components
-        initializeLevelandPowerUp(currentLevel);
-        initializePaddle();
-        initializeBall();
-        if (paddle != null) {
-            double paddleWidth = paddle.getWidth();
-            paddle.setX((gameCanvas.getWidth() - paddleWidth) / 2);
-        }
-
-
-        // Reset ball position
-        if (ball != null) {
-            ball.reset(gameCanvas.getWidth() / 2 - 10, gameCanvas.getHeight() - 10 - 20);
-            balls.clear();
-            balls.add(ball);
-        }
-
-        // Reset power-ups
-        if (powerup != null) {
-            powerup = new PowerUpManager();
-        }
-
-        // Start the game
-        gameRunning = true;
-        if (gameStatusOverlay != null) {
-            gameStatusOverlay.setVisible(false);
-        }
-        inputHandle.requestCanvasFocus();
+        // When START button is clicked we treat it as a reset + start
+        System.out.println("Start button pressed. Starting/resetting game.");
+        startPlaying(true);
     }
 
     @FXML
