@@ -87,7 +87,7 @@ public abstract class PowerUp extends GameObject {
 
         gc.save();
         if (falling) {
-            gc.setEffect(new DropShadow(15, Color.web("#00FFFF", 0.8)));
+            gc.setEffect(new DropShadow(50, Color.web("#00FFFF", 0.8)));
             gc.setGlobalAlpha(0.9);
         }
         gc.drawImage(image, x, y, width, height);

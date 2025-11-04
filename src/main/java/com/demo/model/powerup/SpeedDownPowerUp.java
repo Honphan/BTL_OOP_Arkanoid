@@ -16,7 +16,7 @@ public class SpeedDownPowerUp extends PowerUp {
                 PowerUpType.SPEED_DOWN,
                 getDefaultDuration(),
                 velocityY,
-                new Image(SpeedDownPowerUp.class.getResourceAsStream("/com/demo/view/image/powerups/speeddown.png")));
+                new Image(SpeedDownPowerUp.class.getResource("/com/demo/view/image/powerups/speeddown.png").toExternalForm(), true));
     }
 
     @Override

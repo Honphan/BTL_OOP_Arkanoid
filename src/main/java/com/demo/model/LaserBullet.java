@@ -19,7 +19,7 @@ public class LaserBullet {
         this.y = y;
 
         try {
-            image = new Image(getClass().getResourceAsStream("/com/demo/view/image/powerups/bangbang.png"));
+            image = new Image(getClass().getResource("/com/demo/view/image/powerups/bangbang.png").toExternalForm(), true);
         } catch (Exception e) {
             System.err.println("Lỗi không load được ảnh đạn: " + e.getMessage());
         }

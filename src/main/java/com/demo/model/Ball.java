@@ -322,22 +322,6 @@ public class Ball extends Movable {
         updateVelocity();
     }
 
-    public void setPiercing(boolean piercing, long duration) {
-        this.isPiercing = piercing;
-        if (piercing) {
-            this.piercingEndTime = System.currentTimeMillis() + duration;
-        } else {
-            this.piercingEndTime = 0;
-        }
-    }
-
-    public void updatePiercingStatus() {
-        if (isPiercing && System.currentTimeMillis() >= piercingEndTime) {
-            isPiercing = false;
-            piercingEndTime = 0;
-        }
-    }
-
     public void applySpeedUp(double newSpeed, long durationMillis) {
         this.speed = newSpeed;
         if (directionX != 0 || directionY != 0) {
@@ -394,24 +378,21 @@ public class Ball extends Movable {
         return speed;
     }
 
-    public double getDirectionX() {
-        return directionX;
+
+    public void setPiercing(boolean piercing, long duration) {
+        this.isPiercing = piercing;
+        if (piercing) {
+            this.piercingEndTime = System.currentTimeMillis() + duration;
+        } else {
+            this.piercingEndTime = 0;
+        }
     }
 
-    public double getDirectionY() {
-        return directionY;
-    }
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public double getCenterX() {
-        return x + radius;
-    }
-
-    public double getCenterY() {
-        return y + radius;
+    public void updatePiercingStatus() {
+        if (isPiercing && System.currentTimeMillis() >= piercingEndTime) {
+            isPiercing = false;
+            piercingEndTime = 0;
+        }
     }
 
     public boolean isPiercing() {
@@ -488,4 +469,25 @@ public class Ball extends Movable {
             ballImage = null;
         }
     }
+
+    public double getDirectionX() {
+        return directionX;
+    }
+
+    public double getDirectionY() {
+        return directionY;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public double getCenterX() {
+        return x + radius;
+    }
+
+    public double getCenterY() {
+        return y + radius;
+    }
+
 }

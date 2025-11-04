@@ -34,7 +34,7 @@ public class BombBrick extends Brick {
 
         // Tải ảnh bomb
         try {
-            image = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/bombbrick.png"));
+            image = new Image(getClass().getResource("/com/demo/view/image/bricks/bombbrick.png").toExternalForm(), true);
         } catch (Exception e) {
             System.err.println("Không load được ảnh gạch nổ: " + e.getMessage());
         }

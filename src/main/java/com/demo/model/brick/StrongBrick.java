@@ -19,14 +19,14 @@ public class StrongBrick extends Brick {
         imageCracked = new Image[4];
 
         try {
-            imageNormal[1] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/blue-normal.png"));
-            imageCracked[1] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/blue-cracked.png"));
+            imageNormal[1] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/lightblue-normal.png"));
+            imageCracked[1] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/lightblue-cracked.png"));
 
-            imageNormal[2] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/green-normal.png"));
-            imageCracked[2] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/green-cracked.png"));
+            imageNormal[2] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/yellow-normal.png"));
+            imageCracked[2] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/yellow-cracked.png"));
 
-            imageNormal[3] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/yellow-normal.png"));
-            imageCracked[3] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/yellow-cracked.png"));
+            imageNormal[3] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/green-normal.png"));
+            imageCracked[3] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/green-cracked.png"));
         } catch (Exception e) {
             System.err.println("Không load được ảnh gạch cứng: " + e.getMessage());
             ;

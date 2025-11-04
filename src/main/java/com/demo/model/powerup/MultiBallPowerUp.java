@@ -13,7 +13,7 @@ public class MultiBallPowerUp extends PowerUp {
                 PowerUpType.MULTI_BALL,
                 0, // hiệu ứng tức thời, không cần thời gian
                 velocityY,
-                new Image(MultiBallPowerUp.class.getResourceAsStream("/com/demo/view/image/powerups/multiball.png")));
+                new Image(MultiBallPowerUp.class.getResource("/com/demo/view/image/powerups/multiball.png").toExternalForm(), true));
     }
 
     @Override

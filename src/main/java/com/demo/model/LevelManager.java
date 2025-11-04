@@ -14,7 +14,7 @@ public class LevelManager {
     private static final double brickWidth = 60;
     private static final double brickHeight = 30;
 
-    public static final int MAX_LEVEL_BRICK = 7; // số level tối đa
+    public static final int MAX_LEVEL_BRICK = 8; // số level tối đa
 
     // Layout các level, -1 = unbreakable, 0 = trống, >0 = hit points của gạch
 
@@ -32,6 +32,21 @@ public class LevelManager {
     };
 
     public static final int[][] LEVEL2 = {
+            {1,3,3,1,1,1,7,1,3,3,1},
+            {7,3,2,3,7,1,1,3,2,3,1},
+            {1,3,2,2,3,9,3,2,2,3,1},
+            {1,3,2,2,2,3,2,2,2,3,7},
+            {7,9,2,2,2,3,2,2,8,9,1},
+            {1,3,2,8,2,9,2,8,2,3,1},
+            {7,3,2,2,2,3,2,2,2,3,7},
+            {1,3,2,2,2,9,2,2,2,3,1},
+            {1,3,8,2,2,3,8,2,2,3,1},
+            {1,1,3,2,2,3,2,2,3,1,1},
+            {1,1,7,3,2,9,2,3,1,1,7},
+            {1,1,1,1,3,3,3,1,7,1,1}
+    };
+
+    public static final int[][] LEVEL3 = {
             {-999, -999, -999, -999, -999, -999, -999, -999, -999, -999},
             {1, 1, 4, 2, 2, 5, 3, 3, 6, -2},
             {1, 10, 2, 2, 5, 3, 3, 6, -2, 6},
@@ -46,7 +61,7 @@ public class LevelManager {
 
     };
 
-    public static final int[][] LEVEL3 = {
+    public static final int[][] LEVEL4 = {
             {-999, -999, -999, -999, -999, -999, -999, -999, -999, -999},
             {-999, 13, -1, -1, 2, 2, -1, -1, -1, -999},
             {-999, -1, -1, -1, -1, -1, -1, -1, -1, -999},
@@ -58,7 +73,7 @@ public class LevelManager {
             {-999, -1, 13, -1, 2, 2, 13, -1, 13, -999}
     };
 
-    public static final int[][] LEVEL4 = {
+    public static final int[][] LEVEL5 = {
             {-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999},
             {-999,   3,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,-999},
             {-999,   9,   3,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,-999},
@@ -73,7 +88,7 @@ public class LevelManager {
             {-999,  12,   6,   6,   6,  12,   6,   6,   6,   6,  12,   6,   0,-999}
     };
 
-    public static final int[][] LEVEL5 = {
+    public static final int[][] LEVEL6 = {
             {0,0,0,0,0,4,0,0,0,0,0},
             {0,0,1,1,1,4,1,7,1,0,0},
             {0,1,7,1,-999,-999,-999,1,7,1,0},
@@ -93,7 +108,7 @@ public class LevelManager {
 
     };
 
-    public static final int[][] LEVEL6 = {
+    public static final int[][] LEVEL7 = {
             {0,0,9,0,0,0,0,0,3,0,0},
             {0,0,3,0,0,0,0,0,9,0,0},
             {0,0,0,3,0,0,0,3,0,0,0},
@@ -108,7 +123,7 @@ public class LevelManager {
             {0,0,4,10,4,0,4,10,4,0,0}
     };
 
-    public static final int[][] LEVEL7 = {
+    public static final int[][] LEVEL8 = {
             {-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999},
             {0,0,0,0,0,0,0,0,0,0,0,0,0},
             {0,0,13,-1,-1,0,-1,13,-1,0,-1,13,-1},
