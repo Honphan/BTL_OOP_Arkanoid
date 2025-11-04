@@ -262,4 +262,6 @@ public class LevelManager {
     public double getBrickHeight() { return brickHeight; }
     public int getCurrentLevel() { return currentLevel; }
     public int getLevel() { return MAX_LEVEL_BRICK; }
+
+
 }

@@ -159,4 +159,23 @@ public class Paddle extends Movable {
         this.lastLaserShotTime = time;
     }
 
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    public void setCurrentPowerUp(PowerUp currentPowerUp) {
+        this.currentPowerUp = currentPowerUp;
+    }
+
+    public Image getPaddleImage() {
+        return paddleImage;
+    }
+
+    public void setPaddleImage(Image paddleImage) {
+        this.paddleImage = paddleImage;
+    }
+
+    public void setOriginalWidth(double originalWidth) {
+        this.originalWidth = originalWidth;
+    }
 }

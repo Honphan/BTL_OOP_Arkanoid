@@ -28,7 +28,8 @@ public class StrongBrick extends Brick {
             imageNormal[3] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/yellow-normal.png"));
             imageCracked[3] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/yellow-cracked.png"));
         } catch (Exception e) {
-            System.err.println("Không load được ảnh gạch cứng: " + e.getMessage());;
+            System.err.println("Không load được ảnh gạch cứng: " + e.getMessage());
+            ;
         }
     }
 
@@ -68,15 +69,14 @@ public class StrongBrick extends Brick {
             case 5 -> {
                 if (getHitPoints() == MAX_HP) {
                     img = imageNormal[2];
-                }  else {
+                } else {
                     img = imageCracked[2];
                 }
             }
             default -> {
                 if (getHitPoints() == MAX_HP) {
                     img = imageNormal[1];
-                }
-                else {
+                } else {
                     img = imageCracked[1];
                 }
             }
@@ -94,5 +94,21 @@ public class StrongBrick extends Brick {
 
     public void setColorStyle(int colorStyle) {
         this.colorStyle = colorStyle;
+    }
+
+    public Image[] getImageNormal() {
+        return imageNormal;
+    }
+
+    public void setImageNormal(Image[] imageNormal) {
+        this.imageNormal = imageNormal;
+    }
+
+    public Image[] getImageCracked() {
+        return imageCracked;
+    }
+
+    public void setImageCracked(Image[] imageCracked) {
+        this.imageCracked = imageCracked;
     }
 }

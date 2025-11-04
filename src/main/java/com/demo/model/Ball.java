@@ -17,7 +17,7 @@ public class Ball extends Movable {
     private double directionY;
 
     // Kích thước bóng
-    private final int radius = 10;
+    private int radius = 10;
     private final double originalSpeed;
 
     // Ảnh bóng thường
@@ -414,10 +414,6 @@ public class Ball extends Movable {
         return y + radius;
     }
 
-    public double getOriginalSpeed() {
-        return originalSpeed;
-    }
-
     public boolean isPiercing() {
         return isPiercing;
     }
@@ -428,5 +424,68 @@ public class Ball extends Movable {
 
     public void setBallReady(boolean ballReady) {
         this.ballReady = ballReady;
+    }
+
+
+    public void setDirectionX(double directionX) {
+        this.directionX = directionX;
+    }
+
+    public void setDirectionY(double directionY) {
+        this.directionY = directionY;
+    }
+
+    public double getOriginalSpeed() {
+        return originalSpeed;
+    }
+
+    public Image getBallImage() {
+        return ballImage;
+    }
+
+    public void setBallImage(Image ballImage) {
+        this.ballImage = ballImage;
+    }
+
+    public void setPiercing(boolean piercing) {
+        isPiercing = piercing;
+    }
+
+    public long getPiercingEndTime() {
+        return piercingEndTime;
+    }
+
+    public void setPiercingEndTime(long piercingEndTime) {
+        this.piercingEndTime = piercingEndTime;
+    }
+
+    public SoundManager getSoundManager() {
+        return soundManager;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+    public Ball(double x, double y, double speed, boolean loadImage) {
+        super(0, 0, x, y, 20, 20);
+        this.speed = speed;
+        this.originalSpeed = speed;
+        this.directionX = 0.8;
+        this.directionY = -1;
+        this.soundManager = SoundManager.getInstance();
+
+        normalizeDirection();
+        updateVelocity();
+
+        if (loadImage) {
+            try {
+                ballImage = new Image(getClass().getResource("/com/demo/view/image/balls/58-Breakout-Tiles.png").toExternalForm(), true);
+            } catch (Exception e) {
+                System.err.println("Không load được ảnh bóng: " + e.getMessage());
+            }
+        } else {
+            ballImage = null;
+        }
     }
 }
