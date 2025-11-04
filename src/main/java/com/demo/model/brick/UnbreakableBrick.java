@@ -89,4 +89,28 @@ public class UnbreakableBrick extends Brick {
             gc.setGlobalAlpha(1.0);
         }
     }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
+    public boolean isFlashing() {
+        return flashing;
+    }
+
+    public void setFlashing(boolean flashing) {
+        this.flashing = flashing;
+    }
+
+    public double getFlashProgress() {
+        return flashProgress;
+    }
+
+    public void setFlashProgress(double flashProgress) {
+        this.flashProgress = flashProgress;
+    }
 }
