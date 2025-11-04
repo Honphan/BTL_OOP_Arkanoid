@@ -226,16 +226,11 @@ public class GamePaneController implements GameControl {
         double startX = (gameCanvas.getWidth() / 2) - radius;
 
         double startY;
-        // If paddle exists, position the ball just above the paddle to avoid starting below it
         if (paddle != null) {
-            // Ensure paddle Y is correct relative to the current canvas height
             paddle.setY(gameCanvas.getHeight() - paddle.getHeight() - 20);
 
-            // place the ball centered above the paddle
             startX = paddle.getX() + (paddle.getWidth() / 2) - radius;
-            // put the ball above the paddle with a small gap (match bounceOffPaddle)
             startY = paddle.getY() - (2 * radius) - 1;
-            // if computed startY is off-screen, fallback to default bottom placement
             if (startY < 0) {
                 startY = Math.max(10, gameCanvas.getHeight() - 2 * radius - 20);
             }
@@ -249,7 +244,6 @@ public class GamePaneController implements GameControl {
         // bóng chưa bay ngay
         balls.clear();
         balls.add(ball);
-        // redraw so the ball is visually above the paddle immediately
         redrawCanvas();
     }
 
@@ -259,7 +253,6 @@ public class GamePaneController implements GameControl {
         double paddleHeight = 20;
         double paddleSpeed = 15;
 
-        // Prefer actual canvas size if available (canvas is bound to gameArea), fallback to gameArea
         double canvasWidth = gameCanvas.getWidth() > 0 ? gameCanvas.getWidth() : gameArea.getWidth();
         double canvasHeight = gameCanvas.getHeight() > 0 ? gameCanvas.getHeight() : gameArea.getHeight();
 
@@ -272,7 +265,6 @@ public class GamePaneController implements GameControl {
         }
 
         double paddleX = (canvasWidth - paddleWidth) / 2;
-        // Place paddle near bottom with a fixed offset from bottom edge
         double paddleY = canvasHeight - paddleHeight - 20;
 
         paddle = new Paddle(paddleX, paddleY, paddleWidth, paddleHeight, paddleSpeed);
@@ -331,7 +323,6 @@ public class GamePaneController implements GameControl {
         };
     }
 
-    // Implement GameControl so InputHandle can call these methods
     @Override
     public boolean isGameRunning() {
         return gameRunning;
@@ -339,7 +330,6 @@ public class GamePaneController implements GameControl {
 
     @Override
     public void startBySpace() {
-        // Start the game without resetting state (SPACE should resume/start current game)
         if (ball != null) {
             ball.setBallReady(true); // bắt đầu bay
         }
@@ -500,11 +490,9 @@ public class GamePaneController implements GameControl {
             }
             System.out.println("Starting next level: " + currentLevel);
 
-            // Initialize level first (so bricks are ready), then paddle, then ball
             initializeLevelandPowerUp(currentLevel);
             initializePaddle();
             initializeBall();
-            // Ensure UI reflects new values and canvas is redrawn so ball sits above paddle
             updateScoreDisplay();
             updateLevelDisplay();
             redrawCanvas();
@@ -686,7 +674,6 @@ public class GamePaneController implements GameControl {
 
     @FXML
     public void startGame() {
-        // When START button is clicked we treat it as a reset + start
         System.out.println("Start button pressed. Starting/resetting game.");
         startPlaying(true);
     }
@@ -753,24 +740,19 @@ public class GamePaneController implements GameControl {
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-        // Get current window size
         double windowWidth = stage.getWidth();
         double windowHeight = stage.getHeight();
 
-        // Load the menu view
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/demo/view/fxml/menu.fxml"));
         Parent root = loader.load();
 
-        // Create a scene with the same dimensions
         Scene scene = new Scene(root, windowWidth, windowHeight);
 
-        // Play menu background music
         if (soundManager != null) {
             soundManager.stopBackgroundMusic();
             soundManager.playBackgroundMusic("/com/demo/view/sound/barkanoid_background.mp3");
         }
 
-        // Set the scene and show
         stage.setScene(scene);
         stage.show();
 
