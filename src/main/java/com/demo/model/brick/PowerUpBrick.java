@@ -87,4 +87,24 @@ public class PowerUpBrick extends Brick {
     public void setDisableSpawn(boolean disable) {
         this.disableSpawn = disable;
     }
+
+    public Brick getBaseBrick() {
+        return baseBrick;
+    }
+
+    public PowerUpType getSpawnType() {
+        return spawnType;
+    }
+
+    public boolean isPowerUpSpawned() {
+        return powerUpSpawned;
+    }
+
+    public void setPowerUpSpawned(boolean powerUpSpawned) {
+        this.powerUpSpawned = powerUpSpawned;
+    }
+
+    public boolean isDisableSpawn() {
+        return disableSpawn;
+    }
 }
