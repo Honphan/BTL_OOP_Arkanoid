@@ -87,4 +87,12 @@ public class NormalBrick extends Brick {
             image = new Image[4]; // tránh NPE
         }
     }
+
+    public Image[] getImage() {
+        return image;
+    }
+
+    public void setImage(Image[] image) {
+        this.image = image;
+    }
 }
