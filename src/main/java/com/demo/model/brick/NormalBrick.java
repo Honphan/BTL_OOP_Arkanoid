@@ -18,9 +18,9 @@ public class NormalBrick extends Brick {
 
         try {
 
-            image[1] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/blue-normal.png"));
-            image[2] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/green-normal.png"));
-            image[3] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/yellow-normal.png"));
+            image[1] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/lightblue-normal.png"));
+            image[2] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/yellow-normal.png"));
+            image[3] = new Image(getClass().getResourceAsStream("/com/demo/view/image/bricks/green-normal.png"));
 
         } catch (Exception e) {
             System.err.println("Không load được ảnh gạch thường: " + e.getMessage());

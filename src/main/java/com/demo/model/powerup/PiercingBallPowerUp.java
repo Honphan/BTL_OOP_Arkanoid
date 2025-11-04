@@ -12,7 +12,7 @@ public class PiercingBallPowerUp extends PowerUp {
 
     public PiercingBallPowerUp(double x, double y, double width, double height, double velocityY) {
         super(x, y, width, height, PowerUpType.PIERCING_BALL, getDefaultDuration(), velocityY,
-                new Image(PiercingBallPowerUp.class.getResourceAsStream("/com/demo/view/image/powerups/piercingball.png")));
+                new Image(PiercingBallPowerUp.class.getResource("/com/demo/view/image/powerups/piercingball.png").toExternalForm(), true));
     }
 
     @Override

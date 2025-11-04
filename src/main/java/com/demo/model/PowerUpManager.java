@@ -1,7 +1,9 @@
 package com.demo.model;
 
+import com.demo.model.brick.BombBrick;
 import com.demo.model.brick.Brick;
 import com.demo.model.powerup.PowerUp;
+import com.demo.util.SoundManager;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.util.ArrayList;
@@ -109,7 +111,6 @@ public class PowerUpManager {
                         triggerInstantEffect(pu);
                     }
 
-
                     default -> {
                         pu.applyPowerUp(paddle, balls); // truyền danh sách bóng từ GamePaneController
                         pu.activate(paddle); // để PowerUpManager quản lý thời gian
@@ -142,6 +143,7 @@ public class PowerUpManager {
             Ball newBall = new Ball(original.getX(), original.getY(), speed);
             newBall.setDx(Math.cos(angle + offsetAngle) * speed);
             newBall.setDy(Math.sin(angle + offsetAngle) * speed);
+            newBall.setBallReady(true);
             balls.add(newBall);
         }
     }
@@ -223,6 +225,8 @@ public class PowerUpManager {
 
         laserBullets.add(new LaserBullet(leftX, y));
         laserBullets.add(new LaserBullet(rightX, y));
+
+        SoundManager.getInstance().playSound("/com/demo/view/sound/laser-312360 (mp3cut.net) (1).mp3");
     }
 
     private void updateLaserBullets() {
@@ -236,7 +240,15 @@ public class PowerUpManager {
 
                 if (bullet.checkCollisionArea(brick)) {
                     if (brick.isDestructible()) {
-                        brick.takeHit();
+
+                        if (brick instanceof BombBrick) {
+                            brick.takeHit();
+                        }
+                        else {
+                            brick.takeHit();
+
+                            SoundManager.getInstance().playSound("/com/demo/view/sound/barkanoid-laser.wav");
+                        }
                     }
                     bullet.destroy();
                     break;
@@ -255,14 +267,6 @@ public class PowerUpManager {
         }
     }
 
-    private boolean canShootLaser(Paddle paddle) {
-        long now = System.currentTimeMillis();
-        long lastShot = paddle.getLastLaserShotTime();
-        return now - lastShot >= 500; // LASER_COOLDOWN
-    }
-
-
-
     public void setBricks(List<Brick> bricks) {
         this.bricks = bricks;
     }
@@ -270,4 +274,9 @@ public class PowerUpManager {
     public List<PowerUp> getPowerUps() {
         return powerups;
     }
+
+    public boolean isLaserActive() {
+        return laserMode;
+    }
+
 }

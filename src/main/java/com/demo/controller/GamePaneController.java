@@ -11,9 +11,7 @@ import com.demo.model.PowerUpManager;
 import com.demo.model.brick.PowerUpBrick;
 import com.demo.model.score.ScoreManager;
 import javafx.animation.AnimationTimer;
-
 import javafx.animation.FadeTransition;
-import javafx.util.Duration;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -30,6 +28,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+
 import java.util.*;
 import java.io.IOException;
 import java.util.List;
@@ -70,7 +70,7 @@ public class GamePaneController implements GameControl {
     private Ball ball;
     private Paddle paddle;
     private LevelManager level;
-    private int currentLevel = 1;
+    private int currentLevel;
     private PowerUpManager powerup;
     private int score = 0;
     private AnimationTimer gameLoop;
@@ -83,7 +83,7 @@ public class GamePaneController implements GameControl {
     private int lives = 3; // Số mạng ban đầu
     private List<Ball> balls = new ArrayList<>();
 
-    private static final int MAX_LEVEL = 7;
+    private static final int MAX_LEVEL = 8;
 
 
     private enum gameState {
@@ -185,6 +185,7 @@ public class GamePaneController implements GameControl {
         updateScoreDisplay();
         updateLevelDisplay();
 
+
         // Do NOT start the game loop automatically here. Start is triggered by SPACE or START button.
         gameCanvas.requestFocus();
     }
@@ -243,6 +244,9 @@ public class GamePaneController implements GameControl {
         }
 
         ball = new Ball(startX, startY, ballSpeed);
+        ball.setBallReady(false);
+        ball.setPiercing(false, 0); // ← tắt chế độ xuyên gạch
+        // bóng chưa bay ngay
         balls.clear();
         balls.add(ball);
         // redraw so the ball is visually above the paddle immediately
@@ -251,7 +255,7 @@ public class GamePaneController implements GameControl {
 
 
     private void initializePaddle() {
-        double paddleWidth = 150;
+        double paddleWidth = 120;
         double paddleHeight = 20;
         double paddleSpeed = 15;
 
@@ -291,7 +295,7 @@ public class GamePaneController implements GameControl {
 
         powerup.setOnInstantEffect(pu -> {
             if (soundManager != null) {
-                soundManager.playSound("powerup");
+                soundManager.playSound("/com/demo/view/sound/coin_c_02-102844 (mp3cut.net) (5).mp3");
             }
         });
     }
@@ -336,6 +340,10 @@ public class GamePaneController implements GameControl {
     @Override
     public void startBySpace() {
         // Start the game without resetting state (SPACE should resume/start current game)
+        if (ball != null) {
+            ball.setBallReady(true); // bắt đầu bay
+        }
+
         if (!gameRunning) startPlaying(false);
     }
 
@@ -344,6 +352,12 @@ public class GamePaneController implements GameControl {
             case PLAYING -> {
                 updatePaddle();
                 paddle.update(gameCanvas.getWidth());
+
+                if (!ball.getBallReady()) {
+                    ball.setX(paddle.getX() + (paddle.getWidth() / 2) - ball.getRadius());
+                    ball.setY(paddle.getY() - (2 * ball.getRadius()) - 1);
+                }
+
 
                 // CẬP NHẬT TẤT CẢ BÓNG
                 Iterator<Ball> ballIterator = balls.iterator();
@@ -367,6 +381,10 @@ public class GamePaneController implements GameControl {
                         loseLife();
                         initializeBall();
                         initializePaddle();
+                        if (powerup != null && powerup.isLaserActive()) {
+                            paddle.setLaserEnabled(true);
+                        }
+
                     }
 
                     // KIỂM TRA VA CHẠM VỚI GẠCH
@@ -469,7 +487,7 @@ public class GamePaneController implements GameControl {
     }
 
     private void startNextLevel() {
-        javafx.animation.FadeTransition fadeOut = new javafx.animation.FadeTransition(javafx.util.Duration.seconds(1), gameCanvas);
+        FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), gameCanvas);
         fadeOut.setFromValue(1.0);
         fadeOut.setToValue(0.0);
 
@@ -493,16 +511,16 @@ public class GamePaneController implements GameControl {
             if (inputHandle != null) inputHandle.requestCanvasFocus();
 
 
-             // Fade in lại
-             javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(javafx.util.Duration.seconds(1), gameCanvas);
-             fadeIn.setFromValue(0.0);
-             fadeIn.setToValue(1.0);
-             fadeIn.setOnFinished(ev -> gamestate = gameState.PLAYING);
-             fadeIn.play();
-         });
+            // Fade in lại
+            FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), gameCanvas);
+            fadeIn.setFromValue(0.0);
+            fadeIn.setToValue(1.0);
+            fadeIn.setOnFinished(ev -> gamestate = gameState.PLAYING);
+            fadeIn.play();
+        });
 
-         fadeOut.play();
-     }
+        fadeOut.play();
+    }
 
 
     private void loseLife() {
@@ -525,10 +543,6 @@ public class GamePaneController implements GameControl {
         if (lives < 3) {
             lives++;
             updateLivesDisplay();
-        }
-
-        if (soundManager != null) {
-            soundManager.playSound("addLife");
         }
     }
 
@@ -670,7 +684,7 @@ public class GamePaneController implements GameControl {
     }
 
 
-  @FXML
+    @FXML
     public void startGame() {
         // When START button is clicked we treat it as a reset + start
         System.out.println("Start button pressed. Starting/resetting game.");
@@ -764,4 +778,3 @@ public class GamePaneController implements GameControl {
     }
 
 }
-

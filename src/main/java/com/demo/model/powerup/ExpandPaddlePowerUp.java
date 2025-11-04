@@ -15,13 +15,13 @@ public class ExpandPaddlePowerUp extends PowerUp {
                 PowerUpType.EXPAND_PADDLE,
                 getDefaultDuration(),
                 velocityY,
-                new Image(PiercingBallPowerUp.class.getResourceAsStream("/com/demo/view/image/powerups/expandpaddle.png")));
+                new Image(PiercingBallPowerUp.class.getResource("/com/demo/view/image/powerups/expandpaddle.png").toExternalForm(), true));
     }
 
     @Override
     public void applyPowerUp(Movable target) {
         if (target instanceof Paddle paddle) {
-            paddle.expandPaddle(2); // Mở rộng gấp đôi
+            paddle.expandPaddle(1.5); // Mở rộng gấp đôi
         }
     }
 

@@ -13,7 +13,7 @@ public class LaserPowerUp extends PowerUp {
         super(x, y, width, height,
                 PowerUpType.LASER,
                 velocityY,
-                new Image(LaserPowerUp.class.getResourceAsStream("/com/demo/view/image/powerups/laser.png")));
+                new Image(LaserPowerUp.class.getResource("/com/demo/view/image/powerups/laser.png").toExternalForm(), true));
     }
 
     @Override

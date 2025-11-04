@@ -14,7 +14,7 @@ public class ShrinkPaddlePowerUp extends PowerUp {
                 PowerUpType.SHRINK_PADDLE,
                 getDefaultDuration(),
                 velocityY,
-                new Image(ShrinkPaddlePowerUp.class.getResourceAsStream("/com/demo/view/image/powerups/shrinkpaddle.png")));
+                new Image(ShrinkPaddlePowerUp.class.getResource("/com/demo/view/image/powerups/shrinkpaddle.png").toExternalForm(),true));
     }
 
     @Override
