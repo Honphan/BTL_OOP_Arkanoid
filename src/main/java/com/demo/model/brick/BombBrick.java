@@ -90,7 +90,6 @@ public class BombBrick extends Brick {
     }
 
 
-
     @Override
     public void takeHit() {
         if (isDestroyed()) return;
@@ -136,7 +135,7 @@ public class BombBrick extends Brick {
                 } else {
                     if (neighbor.isDestructible()) {
                         if (neighbor instanceof PowerUpBrick puBrick) {
-                            puBrick.setDisableSpawn(true); // ❌ không cho sinh PowerUp
+                            puBrick.setDisableSpawn(true); // không cho sinh PowerUp
                         }
                         neighbor.takeHit(); // dùng takeHit để xử lý đúng logic
                     }
@@ -158,5 +157,45 @@ public class BombBrick extends Brick {
     @Override
     public int getScoreValue() {
         return 50;
+    }
+
+    public Brick[][] getField() {
+        return field;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
+    public void setExploding(boolean exploding) {
+        this.exploding = exploding;
+    }
+
+    public double getExplosionRadius() {
+        return explosionRadius;
+    }
+
+    public void setExplosionRadius(double explosionRadius) {
+        this.explosionRadius = explosionRadius;
+    }
+
+    public double getExplosionOpacity() {
+        return explosionOpacity;
+    }
+
+    public void setExplosionOpacity(double explosionOpacity) {
+        this.explosionOpacity = explosionOpacity;
     }
 }
