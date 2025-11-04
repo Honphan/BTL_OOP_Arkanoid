@@ -84,9 +84,17 @@ public class SoundManager {
                 effectPlayer.dispose();
             }
 
-            effectPlayer = new MediaPlayer(media);
-            effectPlayer.setVolume(1);
-            effectPlayer.setOnReady(() -> effectPlayer.play());
+            // ✅ Tạo mới MediaPlayer mỗi lần
+            MediaPlayer player = new MediaPlayer(media);
+            player.setVolume(1);
+
+            // ✅ Phát khi sẵn sàng
+            player.setOnReady(player::play);
+
+            // ✅ Giải phóng sau khi phát xong
+            player.setOnEndOfMedia(() -> {
+                player.dispose();
+            });
 
         } catch (Exception e) {
             System.err.println("Lỗi khi phát âm thanh: " + e.getMessage());

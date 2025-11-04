@@ -1,6 +1,7 @@
 package com.demo.model.brick;
 
 import com.demo.model.Ball;
+import com.demo.util.SoundManager;
 import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -105,6 +106,8 @@ public class BombBrick extends Brick {
         exploding = true;
         explosionRadius = 0;
         explosionOpacity = 1.0;
+
+        SoundManager.getInstance().playSound("/com/demo/view/sound/mixkit-far-away-war-explosions-2786 (mp3cut.net) (1).wav");
     }
 
     /**

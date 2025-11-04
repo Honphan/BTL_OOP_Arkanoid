@@ -27,8 +27,8 @@ public class SpeedDownPowerUp extends PowerUp {
     @Override
     public void applyPowerUp(Movable target, List<Ball> balls) {
         for (Ball ball : balls) {
-            double reducedSpeed = ball.getSpeed() * 0.5;
-            ball.setSpeed(reducedSpeed, getDuration());
+            double reducedSpeed = ball.getOriginalSpeed() * 0.5;
+            ball.applySpeedDown(reducedSpeed, getDuration());
         }
     }
 
