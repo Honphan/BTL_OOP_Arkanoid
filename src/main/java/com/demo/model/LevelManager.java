@@ -164,6 +164,7 @@ public class LevelManager {
             case 5 -> LEVEL5;
             case 6 -> LEVEL6;
             case 7 -> LEVEL7;
+            case 8 -> LEVEL8;
             default -> LEVEL1;
         };
     }

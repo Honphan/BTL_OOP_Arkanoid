@@ -27,6 +27,7 @@ public class menuController {
             "/com/demo/view/image/levels/level5.png",
             "/com/demo/view/image/levels/level6.png",
             "/com/demo/view/image/levels/level7.png",
+            "/com/demo/view/image/levels/level8.png"
     };
 
 
